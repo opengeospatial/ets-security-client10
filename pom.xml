@@ -82,7 +82,7 @@
           <docfilessubdirs>true</docfilessubdirs>
           <show>package</show>
           <links>
-            <link>http://testng.org/javadocs/</link>
+            <link>https://jitpack.io/com/github/cbeust/testng/master/javadoc/</link>
           </links>
         </configuration>
         <executions>
