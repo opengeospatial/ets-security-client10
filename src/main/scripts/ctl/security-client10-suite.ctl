@@ -7,15 +7,15 @@
   xmlns:tng="java:org.opengis.cite.securityclient10.TestNGController">
 
   <ctl:function name="tns:run-ets-security-client10">
-		<ctl:param name="testRunArgs">A Document node containing test run arguments (as XML properties).</ctl:param>
+    <ctl:param name="testRunArgs">A Document node containing test run arguments (as XML properties).</ctl:param>
     <ctl:param name="outputDir">The directory in which the test results will be written.</ctl:param>
-		<ctl:return>The test results as a Source object (root node).</ctl:return>
-		<ctl:description>Runs the security-client10 ${version} test suite.</ctl:description>
+    <ctl:return>The test results as a Source object (root node).</ctl:return>
+    <ctl:description>Runs the security-client10 ${version} test suite.</ctl:description>
     <ctl:code>
       <xsl:variable name="controller" select="tng:new($outputDir)" />
       <xsl:copy-of select="tng:doTestRun($controller, $testRunArgs)" />
     </ctl:code>
-	</ctl:function>
+  </ctl:function>
 
    <ctl:suite name="tns:ets-security-client10-${version}">
      <ctl:title>Test suite: ets-security-client10</ctl:title>
@@ -25,45 +25,46 @@
  
    <ctl:test name="tns:Main">
       <ctl:assertion>The test subject satisfies all applicable constraints.</ctl:assertion>
-	  <ctl:code>
+    <ctl:code>
         <xsl:variable name="form-data">
            <ctl:form method="POST" width="800" height="600" xmlns="http://www.w3.org/1999/xhtml">
              <h2>Test suite: ets-security-client10</h2>
              <div style="background:#F0F8FF" bgcolor="#F0F8FF">
-               <p>The implementation under test (IUT) is checked against the following specifications:</p>
+               <p>The client implementation under test is checked against the following specification(s):</p>
                <ul>
-                 <li><a href="http://www.w3.org/TR/xml/">Extensible Markup Language (XML) 1.0</a>, 
-				 Fifth Edition</li>
-				 <li><a href="http://www.w3.org/TR/xmlbase/">XML Base</a>, Second Edition</li>
+                 <li><a href="http://www.opengeospatial.org/standards/requests/164">OGC Web Services Security Standard</a>, 
+         version 0.12</li>
                </ul>
-               <p>Two conformance levels are defined:</p>
+               <p>Multiple use case conformance levels are defined:</p>
                <ul>
-                 <li>Level 1</li>
-                 <li>Level 2</li>
+                 <li>Use Case 0: Public Service, Public Data, Public Catalogue, Public Communication</li>
+                 <li>Use Case 1: Authenticated Public Service, Public Data, Public Catalogue, Secure Communication</li>
+                 <li>Use Case 2: Protected Service, Open Data, Public Catalogue, Secure Communication</li>
+                 <li>Use Case 3: Protected Service, Private Data, Public Catalogue</li>
+                 <li>Use Case 4: Protected Service, Private Data, Protected Catalogue, Secure Communication</li>
                </ul>
+               <p>Only some of the levels are implemented for this test suite.</p>
              </div>
              <fieldset style="background:#ccffff">
                <legend style="font-family: sans-serif; color: #000099; 
-			                 background-color:#F0F8FF; border-style: solid; 
+                       background-color:#F0F8FF; border-style: solid; 
                        border-width: medium; padding:4px">Implementation under test</legend>
                <p>
-                 <label for="uri">
-                   <h4 style="margin-bottom: 0.5em">Location of IUT (absolute http: or file: URI)</h4>
+                 <label for="service-type">
+                   <h4 style="margin-bottom: 0.5em">Service Type to Emulate</h4>
                  </label>
-                 <input id="uri" name="uri" size="128" type="text" value="http://www.w3schools.com/xml/note.xml" />
-               </p>
-               <p>
-                 <label for="doc">
-                   <h4 style="margin-bottom: 0.5em">Upload IUT</h4>
-                 </label>
-                 <input name="doc" id="doc" size="128" type="file" />
+                 <select id="service-type" name="service-type">
+                    <option value="wms-111">WMS 1.1.1</option>
+                    <option value="wms-130">WMS 1.3.0</option>
+                    <option value="wps-100">WPS 1.0.0</option>
+                 </select>
                </p>
                <p>
                  <label for="level">Conformance class: </label>
                  <input id="level-1" type="radio" name="level" value="1" checked="checked" />
-                 <label for="level-1"> Level 1 | </label>
+                 <label for="level-1"> Use Case 1 | </label>
                  <input id="level-2" type="radio" name="level" value="2" />
-                 <label class="form-label" for="level-2"> Level 2</label>
+                 <label class="form-label" for="level-2"> Use Case 2</label>
                </p>
              </fieldset>
              <p>
@@ -72,31 +73,23 @@
              </p>
            </ctl:form>
         </xsl:variable>
-        <xsl:variable name="iut-file" select="$form-data//value[@key='doc']/ctl:file-entry/@full-path" />
-	      <xsl:variable name="test-run-props">
-		    <properties version="1.0">
-          <entry key="iut">
-            <xsl:choose>
-              <xsl:when test="empty($iut-file)">
-                <xsl:value-of select="normalize-space($form-data/values/value[@key='uri'])"/>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:copy-of select="concat('file:///', $iut-file)" />
-              </xsl:otherwise>
-            </xsl:choose>
+        <xsl:variable name="test-run-props">
+        <properties version="1.0">
+          <entry key="service-type">
+            <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
           </entry>
           <entry key="ics"><xsl:value-of select="$form-data/values/value[@key='level']"/></entry>
-		    </properties>
-		   </xsl:variable>
+        </properties>
+       </xsl:variable>
        <xsl:variable name="testRunDir">
          <xsl:value-of select="tec:getTestRunDirectory($te:core)"/>
        </xsl:variable>
        <xsl:variable name="test-results">
         <ctl:call-function name="tns:run-ets-security-client10">
-			    <ctl:with-param name="testRunArgs" select="$test-run-props"/>
+          <ctl:with-param name="testRunArgs" select="$test-run-props"/>
           <ctl:with-param name="outputDir" select="$testRunDir" />
-			  </ctl:call-function>
-		  </xsl:variable>
+        </ctl:call-function>
+      </xsl:variable>
       <xsl:call-template name="tns:testng-report">
         <xsl:with-param name="results" select="$test-results" />
         <xsl:with-param name="outputDir" select="$testRunDir" />
@@ -111,9 +104,9 @@ select="concat(substring-after($testRunDir, 'users/'), '/html/')" /> directory.
           <xsl:for-each select="$test-results//test-method[@status='FAIL' and not(@is-config='true')]">
             <ctl:message>
 Test method <xsl:value-of select="./@name"/>: <xsl:value-of select=".//message"/>
-		    </ctl:message>
-		  </xsl:for-each>
-		  <ctl:fail/>
+        </ctl:message>
+      </xsl:for-each>
+      <ctl:fail/>
         </xsl:if>
         <xsl:if test="xs:integer($test-results/testng-results/@skipped) eq xs:integer($test-results/testng-results/@total)">
         <ctl:message>All tests were skipped. One or more preconditions were not satisfied.</ctl:message>
@@ -124,7 +117,7 @@ Test method <xsl:value-of select="./@name"/>: <xsl:value-of select=".//message"/
         </xsl:for-each>
         <ctl:skipped />
       </xsl:if>
-	  </ctl:code>
+    </ctl:code>
    </ctl:test>
 
   <xsl:template name="tns:testng-report">
