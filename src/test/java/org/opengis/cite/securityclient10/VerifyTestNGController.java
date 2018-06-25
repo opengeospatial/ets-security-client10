@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 
@@ -53,9 +52,8 @@ public class VerifyTestNGController {
 
     @Test
     public void doTestRun() throws Exception {
-        URL testSubject = getClass().getResource("/atom-feed-2.xml");
-        this.testRunProps.setProperty(TestRunArg.IUT.toString(), testSubject
-                .toURI().toString());
+        String testServiceType = "wms111";
+        this.testRunProps.setProperty(TestRunArg.ServiceType.toString(), testServiceType);
         ByteArrayOutputStream outStream = new ByteArrayOutputStream(1024);
         this.testRunProps.storeToXML(outStream, "Integration test");
         Document testRunArgs = docBuilder.parse(new ByteArrayInputStream(
@@ -66,6 +64,6 @@ public class VerifyTestNGController {
         XdmValue failed = XMLUtils.evaluateXPath2(results, xpath, null);
         int numFailed = Integer.parseInt(failed.getUnderlyingValue()
                 .getStringValue());
-        assertEquals("Unexpected number of fail verdicts.", 2, numFailed);
+        assertEquals("Unexpected number of fail verdicts.", 1, numFailed);
     }
 }

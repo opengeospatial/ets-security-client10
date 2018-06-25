@@ -1,14 +1,11 @@
 package org.opengis.cite.securityclient10;
 
-import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -17,7 +14,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.opengis.cite.securityclient10.util.NamespaceBindings;
 import org.opengis.cite.securityclient10.util.XMLUtils;
-import org.opengis.cite.validation.SchematronValidator;
 import org.opengis.cite.validation.ValidationErrorHandler;
 import org.testng.Assert;
 import org.w3c.dom.Document;

@@ -2,10 +2,6 @@ package org.opengis.cite.securityclient10;
 
 import com.sun.jersey.api.client.Client;
 
-import java.io.File;
-
-import org.w3c.dom.Document;
-
 /**
  * An enumerated type defining ISuite attributes that may be set to constitute a
  * shared test fixture.
@@ -18,13 +14,10 @@ public enum SuiteAttribute {
      */
     CLIENT("httpClient", Client.class),
     /**
-     * A DOM Document that represents the test subject or metadata about it.
+     * A String that identifies the type of OGC Web Service that will be emulated.
      */
-    TEST_SUBJECT("testSubject", Document.class),
-    /**
-     * A File containing the test subject or a description of it.
-     */
-    TEST_SUBJ_FILE("testSubjectFile", File.class);
+    TEST_SERVICE_TYPE("testServiceType", String.class);
+	
     private final Class attrType;
     private final String attrName;
 

@@ -4,9 +4,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,18 +50,18 @@ public class VerifySuiteFixtureListener {
         SuiteFixtureListener iut = new SuiteFixtureListener();
         iut.onStart(suite);
     }
-
+    
     @Test
-    public void processIUTParameter() throws URISyntaxException {
-        URL url = this.getClass().getResource("/atom-feed.xml");
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(TestRunArg.IUT.toString(), url.toURI().toString());
-        when(xmlSuite.getParameters()).thenReturn(params);
-        SuiteFixtureListener iut = new SuiteFixtureListener();
+    public void processServiceTypeParameter() {
+    	String serviceType = "wms111";
+    	Map<String, String> params = new HashMap<String, String>();
+    	params.put(TestRunArg.ServiceType.toString(), serviceType);
+    	when(xmlSuite.getParameters()).thenReturn(params);
+    	SuiteFixtureListener iut = new SuiteFixtureListener();
         iut.onStart(suite);
         verify(suite).setAttribute(
-                Matchers.eq(SuiteAttribute.TEST_SUBJ_FILE.getName()), 
-                Matchers.isA(File.class));
+                Matchers.eq(SuiteAttribute.TEST_SERVICE_TYPE.getName()), 
+                Matchers.isA(String.class));
     }
 
 }

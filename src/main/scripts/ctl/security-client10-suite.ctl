@@ -75,7 +75,7 @@
         </xsl:variable>
         <xsl:variable name="test-run-props">
         <properties version="1.0">
-          <entry key="service-type">
+          <entry key="servicetype">
             <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
           </entry>
           <entry key="ics"><xsl:value-of select="$form-data/values/value[@key='level']"/></entry>

@@ -49,9 +49,9 @@ public class CommonFixture {
         if (null != obj) {
             this.client = Client.class.cast(obj);
         }
-        obj = testContext.getSuite().getAttribute(SuiteAttribute.TEST_SUBJECT.getName());
+        obj = testContext.getSuite().getAttribute(SuiteAttribute.TEST_SERVICE_TYPE.getName());
         if (null == obj) {
-            throw new SkipException("Test subject not found in ITestContext.");
+            throw new SkipException("Test service type not found in ITestContext.");
         }
     }
 

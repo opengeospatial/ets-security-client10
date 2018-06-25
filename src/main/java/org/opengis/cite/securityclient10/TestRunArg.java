@@ -5,11 +5,11 @@ package org.opengis.cite.securityclient10;
  */
 public enum TestRunArg {
 
-    /**
-     * An absolute URI that refers to a representation of the test subject or
-     * metadata about it.
-     */
-    IUT;
+	/**
+	 * A string for the type of OGC Web Service to emulate for client security 
+	 * testing.
+	 */
+	ServiceType;
 
     @Override
     public String toString() {
