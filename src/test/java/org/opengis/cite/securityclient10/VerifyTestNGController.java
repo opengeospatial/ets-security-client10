@@ -52,8 +52,6 @@ public class VerifyTestNGController {
 
     @Test
     public void doTestRun() throws Exception {
-        String testServiceType = "wms111";
-        this.testRunProps.setProperty(TestRunArg.ServiceType.toString(), testServiceType);
         ByteArrayOutputStream outStream = new ByteArrayOutputStream(1024);
         this.testRunProps.storeToXML(outStream, "Integration test");
         Document testRunArgs = docBuilder.parse(new ByteArrayInputStream(

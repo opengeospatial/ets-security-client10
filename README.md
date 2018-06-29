@@ -28,14 +28,14 @@ You can modify the sample file in `src/main/config/test-run-props.xml`
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties version="1.0">
   <comment>Sample test run arguments (ets-security-client10)</comment>
-  <entry key="servicetype">wms111</entry>
+  <entry key="service_type">wms111</entry>
   <entry key="host">127.0.0.1</entry>
   <entry key="port">10080</entry>
   <entry key="jks_path">security.jks</entry>
 </properties>
 ```
 
-Valid values for `servicetype` are:
+Valid values for `service_type` are:
 
 * `wms111` for WMS 1.1.1 Conformance Class
 * `wms13` for WMS 1.3.0 Conformance Class

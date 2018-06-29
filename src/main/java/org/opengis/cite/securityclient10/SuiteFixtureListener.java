@@ -40,16 +40,36 @@ public class SuiteFixtureListener implements ISuiteListener {
      * @param suite
      *            An ISuite object representing a TestNG test suite.
      */
-    void processSuiteParameters(ISuite suite) {
+    @SuppressWarnings("unlikely-arg-type")
+	void processSuiteParameters(ISuite suite) {
         Map<String, String> params = suite.getXmlSuite().getParameters();
         TestSuiteLogger.log(Level.CONFIG, "Suite parameters\n" + params.toString());
-        String serviceTypeParam = params.get(TestRunArg.ServiceType.toString());
+        String serviceTypeParam = params.get(TestRunArg.Service_Type.toString());
         
         if ((null == serviceTypeParam) || serviceTypeParam.isEmpty()) {
-            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.ServiceType.toString());
+            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.Service_Type.toString());
         }
 
         suite.setAttribute(SuiteAttribute.TEST_SERVICE_TYPE.getName(), serviceTypeParam);
+        
+        String hostParam = params.get(TestRunArg.Host.toString());
+        
+        if ((null == hostParam) || hostParam.isEmpty()) {
+            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.Host.toString());
+        }
+        
+        suite.setAttribute(SuiteAttribute.TEST_HOST.getName(), hostParam);
+        
+        Integer portParam = Integer.parseInt(params.get(TestRunArg.Port.toString()));
+        suite.setAttribute(SuiteAttribute.TEST_PORT.getName(), portParam);
+        
+        String jksParam = params.get(TestRunArg.JKS_Path.toString());
+        
+        if ((null == jksParam) || jksParam.isEmpty()) {
+            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.JKS_Path.toString());
+        }
+        
+        suite.setAttribute(SuiteAttribute.TEST_JKS_PATH.getName(), jksParam);
     }
 
     /**

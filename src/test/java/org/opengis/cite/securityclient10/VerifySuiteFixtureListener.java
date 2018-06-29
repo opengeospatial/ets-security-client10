@@ -55,7 +55,10 @@ public class VerifySuiteFixtureListener {
     public void processServiceTypeParameter() {
     	String serviceType = "wms111";
     	Map<String, String> params = new HashMap<String, String>();
-    	params.put(TestRunArg.ServiceType.toString(), serviceType);
+    	params.put(TestRunArg.Service_Type.toString(), serviceType);
+    	params.put(TestRunArg.Host.toString(), "127.0.0.1");
+    	params.put(TestRunArg.Port.toString(), "10080");
+    	params.put(TestRunArg.JKS_Path.toString(), "security.jks");
     	when(xmlSuite.getParameters()).thenReturn(params);
     	SuiteFixtureListener iut = new SuiteFixtureListener();
         iut.onStart(suite);
