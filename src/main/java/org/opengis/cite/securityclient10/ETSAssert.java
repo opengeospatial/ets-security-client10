@@ -24,7 +24,7 @@ import org.w3c.dom.NodeList;
 import com.sun.jersey.api.client.ClientResponse;
 
 /**
- * Provides a set of custom assertion methods.
+ * Provides a set of custom assertion methods, in addition to the assertions included in TestNG.
  */
 public class ETSAssert {
 
