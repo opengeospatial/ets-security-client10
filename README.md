@@ -18,8 +18,8 @@ Use a Java IDE such as Eclipse, NetBeans, or IntelliJ. Clone the repository and 
 Set the main class to run: `org.opengis.cite.security-client10.TestNGController`
 
 Arguments: The first argument must refer to an XML properties file containing the 
-required test run arguments. If not specified, the default location at `$
-{user.home}/test-run-props.xml` will be used.
+required test run arguments. If not specified, the default location at 
+`${user.home}/test-run-props.xml` will be used.
    
 You can modify the sample file in `src/main/config/test-run-props.xml`
 
