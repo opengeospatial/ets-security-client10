@@ -3,5 +3,7 @@
 <properties version="1.0">
   <comment>Sample test run arguments (ets-security-client10)</comment>
   <entry key="servicetype">wms111</entry>
-  <entry key="ics">class-A,class-B</entry>
+  <entry key="host">127.0.0.1</entry>
+  <entry key="port">10080</entry>
+  <entry key="jks_path">security.jks</entry>
 </properties>

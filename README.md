@@ -27,10 +27,33 @@ You can modify the sample file in `src/main/config/test-run-props.xml`
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties version="1.0">
-  <comment>Test run arguments</comment>
-  <entry key="iut">http://schemas.opengis.net/gml/3.2.1/gml.xsd</entry>
+  <comment>Sample test run arguments (ets-security-client10)</comment>
+  <entry key="servicetype">wms111</entry>
+  <entry key="host">127.0.0.1</entry>
+  <entry key="port">10080</entry>
+  <entry key="jks_path">security.jks</entry>
 </properties>
 ```
+
+Valid values for `servicetype` are:
+
+* `wms111` for WMS 1.1.1 Conformance Class
+* `wms13` for WMS 1.3.0 Conformance Class
+* `wps10` for WPS 1.0.0 on the OGC Common Conformance Class 
+
+The base "Common Security" Conformance Class will apply regardless of setting, with
+an additional Conformance Class for one of "WMS 1.1.1", "WMS 1.3.0", or
+"OGC Common" depending on the type of service being emulated. Additional
+OGC Common services may be added to this test suite in the future.
+
+The values for `host` and `port` are for starting the embedded Jetty web
+server. The test suite will fail if the server cannot bind to that address
+or port.
+
+A Java KeyStore containing the X.509 certificates for the `host` address
+must be located at `jks_path` in order for the embedded Jetty server to
+provide HTTPS. Self-signed certificates are permitted, although the test
+client will have to trust that certificate manually.
 
 The TestNG results file (`testng-results.xml`) will be written to a subdirectory
 in `${user.home}/testng/` having a UUID value as its name.
