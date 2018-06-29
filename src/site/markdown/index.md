@@ -56,8 +56,8 @@ The general structure of the test suite is shown in Table 1.
   </thead>
   <tbody>
     <tr>
-      <td>Conformance Level 1</td>
-      <td>org.opengis.cite.securityclient10.level1.*</td>
+      <td>Conformance Level Common Security</td>
+      <td>org.opengis.cite.securityclient10.levelCommonSecurity.*</td>
     </tr>
     <tr>
       <td>Conformance Level 2</td>

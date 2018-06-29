@@ -39,12 +39,12 @@ Valid values for `service_type` are:
 
 * `wms111` for WMS 1.1.1 Conformance Class
 * `wms13` for WMS 1.3.0 Conformance Class
-* `wps10` for WPS 1.0.0 on the OGC Common Conformance Class 
+* `wps10` for WPS 1.0.0 on the OWS Common Conformance Class 
 
 The base "Common Security" Conformance Class will apply regardless of setting, with
 an additional Conformance Class for one of "WMS 1.1.1", "WMS 1.3.0", or
-"OGC Common" depending on the type of service being emulated. Additional
-OGC Common services may be added to this test suite in the future.
+"OWS Common" depending on the type of service being emulated. Additional
+OWS Common services may be added to this test suite in the future.
 
 The values for `host` and `port` are for starting the embedded Jetty web
 server. The test suite will fail if the server cannot bind to that address

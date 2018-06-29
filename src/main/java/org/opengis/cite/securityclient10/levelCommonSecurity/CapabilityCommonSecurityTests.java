@@ -1,4 +1,4 @@
-package org.opengis.cite.securityclient10.level1;
+package org.opengis.cite.securityclient10.levelCommonSecurity;
 
 import org.opengis.cite.securityclient10.CommonFixture;
 import org.opengis.cite.securityclient10.ErrorMessage;
@@ -10,9 +10,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Includes various tests of capability 1.
+ * Includes various tests of Common Security capability.
  */
-public class Capability1Tests extends CommonFixture {
+public class CapabilityCommonSecurityTests extends CommonFixture {
 
     private String testServiceType;
 

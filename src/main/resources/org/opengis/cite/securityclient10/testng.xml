@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="security-client10-${version}" verbose="0" configfailurepolicy="continue">
-  <parameter name="iut"  value=""/>
-  <parameter name="ics"  value=""/>
+  <parameter name="service_type" value=""/>
+  <parameter name="host" value=""/>
+  <parameter name="port" value=""/>
+  <parameter name="jks_path" value=""/>
 
   <listeners>
     <listener class-name="org.opengis.cite.securityclient10.TestRunListener" />
@@ -10,9 +12,9 @@
     <listener class-name="org.opengis.cite.securityclient10.TestFailureListener" />
   </listeners>
 
-  <test name="Conformance Level 1">
+  <test name="Conformance Level Common Security">
     <packages>
-      <package name="org.opengis.cite.securityclient10.level1" />
+      <package name="org.opengis.cite.securityclient10.levelCommonSecurity" />
     </packages>
     <classes>
       <class name="org.opengis.cite.securityclient10.SuitePreconditions" />

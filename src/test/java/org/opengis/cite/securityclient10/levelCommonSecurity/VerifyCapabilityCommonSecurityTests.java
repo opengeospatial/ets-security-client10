@@ -1,26 +1,28 @@
-package org.opengis.cite.securityclient10.level1;
+package org.opengis.cite.securityclient10.levelCommonSecurity;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.cite.securityclient10.levelCommonSecurity.CapabilityCommonSecurityTests;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.testng.ISuite;
 import org.testng.ITestContext;
 
 /**
- * Verifies the behavior of the Capability1Tests test class. Test stubs replace
+ * Verifies the behavior of the CapabilityCommonSecurityTests test class. Test stubs replace
  * fixture constituents where appropriate.
  */
-public class VerifyCapability1Tests {
+public class VerifyCapabilityCommonSecurityTests {
 
     private static DocumentBuilder docBuilder;
     private static ITestContext testContext;
     private static ISuite suite;
 
-    public VerifyCapability1Tests() {
+    public VerifyCapabilityCommonSecurityTests() {
     }
 
     @BeforeClass
@@ -39,13 +41,13 @@ public class VerifyCapability1Tests {
 
     @Test(expected = AssertionError.class)
     public void testIsEmpty() {
-        Capability1Tests iut = new Capability1Tests();
+        CapabilityCommonSecurityTests iut = new CapabilityCommonSecurityTests();
         iut.isEmpty();
     }
 
     @Test
     public void testTrim() {
-        Capability1Tests iut = new Capability1Tests();
+        CapabilityCommonSecurityTests iut = new CapabilityCommonSecurityTests();
         iut.trim();
     }
 }
