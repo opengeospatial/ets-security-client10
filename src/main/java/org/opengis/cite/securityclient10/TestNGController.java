@@ -35,7 +35,8 @@ public class TestNGController implements TestSuiteController {
 
     /**
      * A convenience method for running the test suite using a command-line
-     * interface. The default values of the test run arguments are as follows:
+     * interface. This method is skipped by TEAM Engine. The default values 
+     * of the test run arguments are as follows:
      * <ul>
      * <li>XML properties file: ${user.home}/test-run-props.xml</li>
      * <li>outputDir: ${user.home}</li>
