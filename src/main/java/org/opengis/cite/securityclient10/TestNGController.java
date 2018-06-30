@@ -32,6 +32,11 @@ public class TestNGController implements TestSuiteController {
 
     private TestRunExecutor executor;
     private Properties etsProperties = new Properties();
+    /**
+     * A singleton to refer to the HTTP server process, which should be re-used between test sessions.
+     * Re-use is only needed for TEAM Engine to run multiple test sessions simultaneously.
+     */
+    private static volatile String httpServer;
 
     /**
      * A convenience method for running the test suite using a command-line
@@ -79,6 +84,35 @@ public class TestNGController implements TestSuiteController {
         Source testResults = controller.doTestRun(testRunProps);
         System.out.println("Test results: " + testResults.getSystemId());
     }
+    
+    /**
+     * Return a reference to the HTTP Server instance. If it has not been initialized (i.e. null) then
+     * a new instance is created.
+     * 
+     * Note this currently is a String to test that a singleton works here. (It does.)
+     * 
+     * @return A String that will represent the HTTP Server instance in the future.
+     */
+    public static String getServer() {
+    	// Use double-checked locking to prevent race condition.
+    	if (null == httpServer) {
+    		if (httpServer == null) {
+    			httpServer = "";
+    		}
+    	}
+    	
+    	return httpServer;
+    }
+    
+    /**
+     * Update the singleton representing the HTTP Server. Will not be needed soon as the instance will
+     * be accessed directly and never re-initialized.
+     * 
+     * @param newServer A String to change the server test value.
+     */
+    public static void setServer(String newServer) {
+    	httpServer = newServer;
+    }
 
     /**
      * Default constructor uses the location given by the "java.io.tmpdir"
@@ -97,6 +131,12 @@ public class TestNGController implements TestSuiteController {
      *            created if it does not exist.
      */
     public TestNGController(String outputDir) {
+    	System.out.println("Server Test String: " + getServer());
+    	
+    	if (getServer().isEmpty()) {
+    		setServer("HI THERE");
+    	}
+    	
         InputStream is = getClass().getResourceAsStream("ets.properties");
         try {
             this.etsProperties.load(is);
