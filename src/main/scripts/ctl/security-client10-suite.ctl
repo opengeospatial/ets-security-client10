@@ -35,36 +35,24 @@
                  <li><a href="http://www.opengeospatial.org/standards/requests/164">OGC Web Services Security Standard</a>, 
          version 0.12</li>
                </ul>
-               <p>Multiple use case conformance levels are defined:</p>
+               <p>The conformance classes tested depends on the OGC Web Service type being emulated.</p>
                <ul>
-                 <li>Use Case 0: Public Service, Public Data, Public Catalogue, Public Communication</li>
-                 <li>Use Case 1: Authenticated Public Service, Public Data, Public Catalogue, Secure Communication</li>
-                 <li>Use Case 2: Protected Service, Open Data, Public Catalogue, Secure Communication</li>
-                 <li>Use Case 3: Protected Service, Private Data, Public Catalogue</li>
-                 <li>Use Case 4: Protected Service, Private Data, Protected Catalogue, Secure Communication</li>
+                 <li>WMS 1.1.1: Conformance Class "WMS 1.1.1"</li>
+                 <li>WMS 1.3.0: Conformance Class "WMS 1.3.0"</li>
+                 <li>WPS 1.0.0: Conformance Class "OGC Common"</li>
                </ul>
-               <p>Only some of the levels are implemented for this test suite.</p>
+               <p>The base "Common Security" Conformance Class will always apply before the service-specific conformance class is ran.</p>
              </div>
              <fieldset style="background:#ccffff">
-               <legend style="font-family: sans-serif; color: #000099; 
-                       background-color:#F0F8FF; border-style: solid; 
-                       border-width: medium; padding:4px">Implementation under test</legend>
                <p>
                  <label for="service-type">
                    <h4 style="margin-bottom: 0.5em">Service Type to Emulate</h4>
                  </label>
                  <select id="service-type" name="service-type">
                     <option value="wms-111">WMS 1.1.1</option>
-                    <option value="wms-130">WMS 1.3.0</option>
-                    <option value="wps-100">WPS 1.0.0</option>
+                    <option value="wms-13">WMS 1.3.0</option>
+                    <option value="wps-10">WPS 1.0.0</option>
                  </select>
-               </p>
-               <p>
-                 <label for="level">Conformance class: </label>
-                 <input id="level-1" type="radio" name="level" value="1" checked="checked" />
-                 <label for="level-1"> Use Case 1 | </label>
-                 <input id="level-2" type="radio" name="level" value="2" />
-                 <label class="form-label" for="level-2"> Use Case 2</label>
                </p>
              </fieldset>
              <p>
@@ -75,10 +63,12 @@
         </xsl:variable>
         <xsl:variable name="test-run-props">
         <properties version="1.0">
-          <entry key="servicetype">
+          <entry key="service_type">
             <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
           </entry>
-          <entry key="ics"><xsl:value-of select="$form-data/values/value[@key='level']"/></entry>
+          <entry key="host">127.0.0.1</entry>
+          <entry key="port">10080</entry>
+          <entry key="jks_path">security.jks</entry>
         </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">
