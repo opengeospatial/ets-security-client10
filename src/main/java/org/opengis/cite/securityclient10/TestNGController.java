@@ -196,6 +196,9 @@ public class TestNGController implements TestSuiteController {
     	// or for the timeout to be reached.
     	server.waitForRequest(nonce);
     	
+    	// Release the servlet as the path is not needed anymore
+    	server.unregisterHandler(nonce);
+    	
         return executor.execute(testRunArgs);
     }
 

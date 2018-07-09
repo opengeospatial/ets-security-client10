@@ -11,16 +11,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.servlet.AsyncContext;
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.http.pathmap.MappedResource;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class TestServer {
@@ -93,6 +97,29 @@ public class TestServer {
 	
 	public void shutdown() throws Exception {
 		server.stop();
+	}
+	
+	/**
+	 * Iterate through the registered ServerContextHandler instances on this server for the first one to
+	 * have a mapping matching `path`, and if found then that ServerContextHandler is removed. If no match
+	 * is found then nothing is done.
+	 * 
+	 * @param path
+	 * @throws ServletException
+	 */
+	public void unregisterHandler(String path) throws ServletException {
+		Handler[] handlers = serverHandlers.getHandlers();
+		
+		for (Handler context : handlers) {
+			if (context.getClass() == ServletContextHandler.class) {
+				ServletHandler servletHandler = ((ServletContextHandler) context).getServletHandler();
+				MappedResource<ServletHolder> a = servletHandler.getMappedServlet("/" + path);
+				if (a != null) {
+					serverHandlers.removeHandler(context);
+					break;
+				}
+			}
+		}
 	}
 	
 	/**
