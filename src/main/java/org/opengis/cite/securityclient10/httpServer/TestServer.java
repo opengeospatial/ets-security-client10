@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.servlet.AsyncContext;
-import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,21 +26,48 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+/**
+ * A wrapper class around the Jetty Server class. This adds functionality for the testing suite for
+ * adding/removing servlets to capture test client requests.
+ * 
+ * @author jpbadger
+ *
+ */
 public class TestServer {
 	
 	private int serverPort;
-	private Server server;
+	private Server jettyServer;
+	
+	/**
+	 * A ContextHandlerCollection is used to dynamically add and remove servlets from the running
+	 * embedded server. (Otherwise the server would have to be stopped before new servlets could be
+	 * added.)
+	 */
 	private ContextHandlerCollection serverHandlers;
 	
-	// Use a HashMap to track which servlet handlers are waiting for test requests
+	/**
+	 * Use a HashMap to track which servlet handlers are waiting for test requests.
+	 * When unfulfilled, the Boolean will be true. It is set to false in the TestAsyncServlet class.
+	 */
 	private static volatile HashMap<String, Boolean> handlerBlocks;
 	
-	// Use a servlet class to catch test requests
+	/**
+	 * Use a servlet class to capture requests from the secure client. The path that is requested by the
+	 * client corresponds to the test session created in TestNGController; in the parent class here
+	 * (TestServer) the path is used to track if a request is fulfilled using the handlerBlocks HashMap.
+	 * 
+	 * @author jpbadger
+	 *
+	 */
 	@SuppressWarnings("serial")
 	public static class TestAsyncServlet extends HttpServlet {
+		/**
+		 * Override the reception of GET requests
+		 */
 		@Override
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             final AsyncContext ctxt = req.startAsync();
+            // Remove the leading slash from the path to determine the nonce
             String path = req.getServletPath().substring(1);
             ctxt.start(new Runnable() {
                 @Override
@@ -58,27 +84,40 @@ public class TestServer {
 		handlerBlocks = new HashMap<String, Boolean>();
 		serverPort = port;
 		
-		server = new Server();
-		server.setStopAtShutdown(true);
-		server.setStopTimeout(1);
+		jettyServer = new Server();
+		jettyServer.setStopAtShutdown(true);
+		jettyServer.setStopTimeout(1);
 		
 		// Use a ServerConnector so we can force the host address and port 
-		ServerConnector connector = new ServerConnector(server);
+		ServerConnector connector = new ServerConnector(jettyServer);
 		connector.setPort(port);
 		connector.setHost(host);
-		server.setConnectors(new Connector[] { connector });
+		jettyServer.setConnectors(new Connector[] { connector });
 		
 		// Use ContextHandlerCollection to add contexts/handlers *after* the server has been started
 		serverHandlers = new ContextHandlerCollection();
-		server.setHandler(serverHandlers);
+		jettyServer.setHandler(serverHandlers);
 		
-		server.start();
+		jettyServer.start();
 	}
 	
+	/**
+	 * Return the port the server is currently using.
+	 * 
+	 * @return int
+	 */
 	public int getPort() {
 		return serverPort;
 	}
 	
+	/**
+	 * Create a new ServletContextHandler for the given `path`, and create a shared handler block boolean.
+	 * The boolean will be used by the waitForRequest thread to delay until the request is fulfilled or a
+	 * timeout is hit.
+	 * 
+	 * @param path HTTP path to dynamically add to the embedded server
+	 * @throws Exception
+	 */
 	public void registerHandler(String path) throws Exception {
 		handlerBlocks.put(path, true);
 
@@ -95,16 +134,20 @@ public class TestServer {
         }
 	}
 	
+	/**
+	 * Shut down the embedded server. This will force close any open HTTP connections.
+	 * @throws Exception
+	 */
 	public void shutdown() throws Exception {
-		server.stop();
+		jettyServer.stop();
 	}
 	
 	/**
-	 * Iterate through the registered ServerContextHandler instances on this server for the first one to
-	 * have a mapping matching `path`, and if found then that ServerContextHandler is removed. If no match
+	 * Iterate through the registered ServletContextHandler instances on this server for the first one to
+	 * have a mapping matching `path`, and if found then that ServletContextHandler is removed. If no match
 	 * is found then nothing is done.
 	 * 
-	 * @param path
+	 * @param path HTTP path to dynamically remove from the embedded server
 	 * @throws ServletException
 	 */
 	public void unregisterHandler(String path) throws ServletException {
@@ -147,8 +190,12 @@ public class TestServer {
         executor.shutdownNow();
 	}
 	
-	// Thread class for delaying until a servlet request has been made.
-	// TODO: Return the request data to waitForRequest
+	/**
+	 * Thread class for delaying until a servlet request has been made
+	 * @author jpbadger
+	 *
+	 * TODO: Return the request data to waitForRequest
+	 */
 	class WaitTask implements Callable<String> {
 		private String nonce;
 		
