@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -90,28 +89,6 @@ public class TestNGController implements TestSuiteController {
         TestServer server = getServer();
         server.shutdown();
     }
-    
-    /**
-     * Return a reference to the HTTP Server instance. If it has not been initialized (i.e. null) then
-     * a new instance is created.
-     * 
-     * @return A TestServer instance that is the embedded Jetty web server.
-     */
-    public static TestServer getServer() {
-    	// Use double-checked locking to prevent race condition.
-    	if (null == httpServer) {
-    		if (httpServer == null) {
-    			try {
-					httpServer = new TestServer();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		}
-    	}
-    	
-    	return httpServer;
-    }
 
     /**
      * Default constructor uses the location given by the "java.io.tmpdir"
@@ -160,6 +137,32 @@ public class TestNGController implements TestSuiteController {
     public String getVersion() {
         return etsProperties.getProperty("ets-version");
     }
+    
+    /**
+     * Return a reference to the HTTP Server instance. If it has not been initialized (i.e. null) then
+     * a new instance is created.
+     * 
+     * @return A TestServer instance that is the embedded Jetty web server.
+     */
+    public static TestServer getServer(String host, int port) {
+    	// Use double-checked locking to prevent race condition.
+    	if (null == httpServer) {
+    		if (httpServer == null) {
+    			try {
+					httpServer = new TestServer(host, port);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    	}
+    	
+    	return httpServer;
+    }
+    
+    public static TestServer getServer() {    	
+    	return httpServer;
+    }
 
     @Override
     public String getTitle() {
@@ -168,9 +171,9 @@ public class TestNGController implements TestSuiteController {
 
     @Override
     public Source doTestRun(Document testRunArgs) throws Exception {
-        validateTestRunArgs(testRunArgs);
+    	Map<String, String> args = validateTestRunArgs(testRunArgs);
         
-        TestServer server = getServer();
+        TestServer server = getServer(args.get("host"), Integer.parseInt(args.get("port")));
     	System.out.println("Test Server Port: " + server.getPort());
     	
     	// Wait for TestServer to receive a request for this test run,
@@ -187,10 +190,11 @@ public class TestNGController implements TestSuiteController {
      * @param testRunArgs
      *            A DOM Document containing a set of XML properties (key-value
      *            pairs).
+     * @return 
      * @throws IllegalArgumentException
      *             If any arguments are missing or invalid for some reason.
      */
-    void validateTestRunArgs(Document testRunArgs) {
+    Map<String, String> validateTestRunArgs(Document testRunArgs) {
         if (null == testRunArgs || !testRunArgs.getDocumentElement().getNodeName().equals("properties")) {
             throw new IllegalArgumentException("Input is not an XML properties document.");
         }
@@ -207,5 +211,7 @@ public class TestNGController implements TestSuiteController {
             throw new IllegalArgumentException(
                     String.format("Missing argument: '%s' must be present.", TestRunArg.Service_Type));
         }
+        
+        return args;
     }
 }

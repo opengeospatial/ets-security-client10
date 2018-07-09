@@ -15,14 +15,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class TestServer {
 	
 	private static volatile Boolean blockingForRequest;
-	private int port;
+	private int serverPort;
 	private Server server;
 	
 	@SuppressWarnings("serial")
@@ -41,11 +43,17 @@ public class TestServer {
         }
 	}
 
-	public TestServer() throws Exception {
-		port = 10080;
-		server = new Server(port);
+	public TestServer(String host, int port) throws Exception {
+		serverPort = port;
+		server = new Server();
 		server.setStopAtShutdown(true);
 		server.setStopTimeout(1);
+		
+		// Use a ServerConnector so we can force the host address and port 
+		ServerConnector connector = new ServerConnector(server);
+		connector.setPort(port);
+		connector.setHost(host);
+		server.setConnectors(new Connector[] { connector });
 		
 		ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
@@ -56,7 +64,7 @@ public class TestServer {
 	}
 	
 	public int getPort() {
-		return port;
+		return serverPort;
 	}
 	
 	public void shutdown() throws Exception {
