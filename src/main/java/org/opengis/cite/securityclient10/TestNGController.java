@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -174,11 +175,26 @@ public class TestNGController implements TestSuiteController {
     	Map<String, String> args = validateTestRunArgs(testRunArgs);
         
         TestServer server = getServer(args.get("host"), Integer.parseInt(args.get("port")));
-    	System.out.println("Test Server Port: " + server.getPort());
+    	
+        // Generate nonce for this test session, which will be used as the unique servlet address
+        String symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        char[] bytes = new char[16];
+        for (int i = 0; i < bytes.length; i++) {
+			bytes[i] = symbols.charAt(random.nextInt(symbols.length()));
+		}
+        String nonce = String.valueOf(bytes);
+        
+        // Register a servlet handler with the nonce
+        server.registerHandler(nonce);
+        
+        // Print out the servlet test path for the test user
+        System.out.println(String.format("Your test session endpoint is at http://%s:%s/%s", 
+        		args.get("host"), args.get("port"), nonce));
     	
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
-    	server.waitForRequest();
+    	server.waitForRequest(nonce);
     	
         return executor.execute(testRunArgs);
     }

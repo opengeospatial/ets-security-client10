@@ -1,6 +1,7 @@
 package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -18,25 +19,31 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class TestServer {
 	
-	private static volatile Boolean blockingForRequest;
 	private int serverPort;
 	private Server server;
+	private ContextHandlerCollection serverHandlers;
 	
+	// Use a HashMap to track which servlet handlers are waiting for test requests
+	private static volatile HashMap<String, Boolean> handlerBlocks;
+	
+	// Use a servlet class to catch test requests
 	@SuppressWarnings("serial")
 	public static class TestAsyncServlet extends HttpServlet {
 		@Override
 		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             final AsyncContext ctxt = req.startAsync();
+            String path = req.getServletPath().substring(1);
             ctxt.start(new Runnable() {
                 @Override
                 public void run() {
                     System.err.println("Request received.");
-                    blockingForRequest = false;
+                    handlerBlocks.put(path, false);
                     ctxt.complete();
                 }
             });
@@ -44,7 +51,9 @@ public class TestServer {
 	}
 
 	public TestServer(String host, int port) throws Exception {
+		handlerBlocks = new HashMap<String, Boolean>();
 		serverPort = port;
+		
 		server = new Server();
 		server.setStopAtShutdown(true);
 		server.setStopTimeout(1);
@@ -55,16 +64,31 @@ public class TestServer {
 		connector.setHost(host);
 		server.setConnectors(new Connector[] { connector });
 		
-		ServletContextHandler context = new ServletContextHandler();
-        context.setContextPath("/");
-        ServletHolder asyncHolder = context.addServlet(TestAsyncServlet.class, "/test");
-        asyncHolder.setAsyncSupported(true);
-        server.setHandler(context);
+		// Use ContextHandlerCollection to add contexts/handlers *after* the server has been started
+		serverHandlers = new ContextHandlerCollection();
+		server.setHandler(serverHandlers);
+		
 		server.start();
 	}
 	
 	public int getPort() {
 		return serverPort;
+	}
+	
+	public void registerHandler(String path) throws Exception {
+		handlerBlocks.put(path, true);
+
+		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        context.setContextPath("/");
+        ServletHolder asyncHolder = context.addServlet(TestAsyncServlet.class, "/" + path);
+        asyncHolder.setAsyncSupported(true);
+        serverHandlers.addHandler(context);
+        
+        try {
+        	context.start();
+        } catch (Exception e) {
+        	System.err.println("Exception starting servlet context handler.");
+        }
 	}
 	
 	public void shutdown() throws Exception {
@@ -78,11 +102,11 @@ public class TestServer {
 	 * @throws TimeoutException 
 	 * @throws ExecutionException 
 	 */
-	public void waitForRequest() throws InterruptedException, ExecutionException, TimeoutException {
-		blockingForRequest = true;
+	public void waitForRequest(String nonce) throws InterruptedException, ExecutionException, TimeoutException {
+		handlerBlocks.put(nonce, true);
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		Future<String> future = executor.submit(new WaitTask());
+		Future<String> future = executor.submit(new WaitTask(nonce));
 		
 		try {
             System.out.println("Started wait.");
@@ -96,11 +120,19 @@ public class TestServer {
         executor.shutdownNow();
 	}
 	
+	// Thread class for delaying until a servlet request has been made.
+	// TODO: Return the request data to waitForRequest
 	class WaitTask implements Callable<String> {
+		private String nonce;
+		
+		public WaitTask(String nonce) {
+			this.nonce = nonce;
+		}
+
 		@Override
 		public String call() throws Exception {
 			System.err.println("Waiting…");
-			while (blockingForRequest) {
+			while (handlerBlocks.get(nonce)) {
 				Thread.sleep(1000);
 			}
 			return "";
