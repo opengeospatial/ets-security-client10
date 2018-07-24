@@ -32,8 +32,7 @@
              <div style="background:#F0F8FF" bgcolor="#F0F8FF">
                <p>The client implementation under test is checked against the following specification(s):</p>
                <ul>
-                 <li><a href="http://www.opengeospatial.org/standards/requests/164">OGC Web Services Security Standard</a>, 
-         version 0.12</li>
+                 <li>OGC Web Services Security Standard, version 1.0</li>
                </ul>
                <p>The conformance classes tested depends on the OGC Web Service type being emulated.</p>
                <ul>
