@@ -86,6 +86,30 @@ public class TestNGController implements TestSuiteController {
         Source testResults = controller.doTestRun(testRunProps);
         System.out.println("Test results: " + testResults.getSystemId());
         
+        // Print out Client Conformance Test Checklist for human operator
+        System.out.println("\nClient Conformance Test Checklist");
+        System.out.println("=================================");
+        System.out.println("1. Conformance Test \"HTTPS\"");
+        System.out.println("Does the client parse the HTTPS response from the test suite?");
+        System.out.println("YES - Pass");
+        System.out.println("NO  - Failure");
+        System.out.println("");
+        System.out.println("2. Conformance Test \"Working on Capabilities with no Content section\"");
+        System.out.println("Does the test suite Capabilities contain a <Content> section?");
+        System.out.println("YES - Skip Test");
+        System.out.println("NO  - Continue");
+        System.out.println("Does the test suite Capabilities contain an endpoint URL for the GetCapabilities operation?");
+        System.out.println("YES - Continue");
+        System.out.println("NO  - Failure");
+        System.out.println("Does the GetCapabilities operation on that endpoint URL succeed?");
+        System.out.println("YES - Continue");
+        System.out.println("NO  - Failure");
+        System.out.println("Does the Capabilities document contain a <Content> section?");
+        System.out.println("YES - Pass");
+        System.out.println("NO  - Failure");
+        System.out.println("");
+        System.out.println("If either Conformance Test went to a \"Failure\" option, then that Test should be marked as a \"Failure\".");
+        
         // Shut down HTTP server
         TestServer server = getServer();
         server.shutdown();
