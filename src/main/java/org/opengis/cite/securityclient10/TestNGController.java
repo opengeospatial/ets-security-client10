@@ -167,6 +167,8 @@ public class TestNGController implements TestSuiteController {
      * Return a reference to the HTTP Server instance. If it has not been initialized (i.e. null) then
      * a new instance is created.
      * 
+     * @param host String representing the host interface on which to bind the Test Server
+     * @param port Integer representing the port to bind the Test Server
      * @return A TestServer instance that is the embedded Jetty web server.
      */
     public static TestServer getServer(String host, int port) {
@@ -233,7 +235,7 @@ public class TestNGController implements TestSuiteController {
      * @param testRunArgs
      *            A DOM Document containing a set of XML properties (key-value
      *            pairs).
-     * @return 
+     * @return A Map of the test run properties
      * @throws IllegalArgumentException
      *             If any arguments are missing or invalid for some reason.
      */

@@ -80,6 +80,11 @@ public class TestServer {
         }
 	}
 
+	/**
+	 * @param host String of host interface to bind
+	 * @param port Integer of port to bind
+	 * @throws Exception for any errors starting the embedded Jetty server
+	 */
 	public TestServer(String host, int port) throws Exception {
 		handlerBlocks = new HashMap<String, Boolean>();
 		serverPort = port;
@@ -104,7 +109,7 @@ public class TestServer {
 	/**
 	 * Return the port the server is currently using.
 	 * 
-	 * @return int
+	 * @return int Current port being used by the embedded server
 	 */
 	public int getPort() {
 		return serverPort;
@@ -116,9 +121,8 @@ public class TestServer {
 	 * timeout is hit.
 	 * 
 	 * @param path HTTP path to dynamically add to the embedded server
-	 * @throws Exception
 	 */
-	public void registerHandler(String path) throws Exception {
+	public void registerHandler(String path) {
 		handlerBlocks.put(path, true);
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -136,7 +140,7 @@ public class TestServer {
 	
 	/**
 	 * Shut down the embedded server. This will force close any open HTTP connections.
-	 * @throws Exception
+	 * @throws Exception for any errors shutting down the embedded server
 	 */
 	public void shutdown() throws Exception {
 		jettyServer.stop();
@@ -148,7 +152,7 @@ public class TestServer {
 	 * is found then nothing is done.
 	 * 
 	 * @param path HTTP path to dynamically remove from the embedded server
-	 * @throws ServletException
+	 * @throws ServletException For any errors removing a servlet context handler
 	 */
 	public void unregisterHandler(String path) throws ServletException {
 		Handler[] handlers = serverHandlers.getHandlers();
@@ -168,11 +172,11 @@ public class TestServer {
 	/**
 	 * Block the thread until a request is received, or the
 	 * timeout is hit.
-	 * @throws InterruptedException 
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
+	 * @param nonce The unique code associated with the thread created to wait for the servlet activation
+	 * @throws InterruptedException For any errors caused by the waiting thread being interrupted 
+	 * @throws ExecutionException For any errors caused by the waiting thread having an exception
 	 */
-	public void waitForRequest(String nonce) throws InterruptedException, ExecutionException, TimeoutException {
+	public void waitForRequest(String nonce) throws InterruptedException, ExecutionException {
 		handlerBlocks.put(nonce, true);
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -199,6 +203,9 @@ public class TestServer {
 	class WaitTask implements Callable<String> {
 		private String nonce;
 		
+		/**
+		 * @param nonce The unique code associated with this waiting thread task and the servlet
+		 */
 		public WaitTask(String nonce) {
 			this.nonce = nonce;
 		}
