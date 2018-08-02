@@ -199,6 +199,20 @@ public class TestNGController implements TestSuiteController {
     @Override
     public Source doTestRun(Document testRunArgs) throws Exception {
     	Map<String, String> args = validateTestRunArgs(testRunArgs);
+    	
+    	// Print out information on which conformance classes will be tested
+    	System.out.println("ETS Security Client 1.0 Active Conformance Classes");
+    	System.out.println("==================================================");
+    	System.out.println("* Abstract Conformance Class Common Security");
+    	
+    	if (args.get(TestRunArg.Service_Type.toString()) == "wms111") {
+    		System.out.println("* Conformance Class WMS 1.1.1");
+    	} else if (args.get(TestRunArg.Service_Type.toString()) == "wms130") {
+    		System.out.println("* Conformance Class WMS 1.3.0");
+    	} else {
+    		System.out.println("* Conformance Class OWS Common");
+    	}
+    	System.out.println("");
         
         TestServer server = getServer(args.get("host"), Integer.parseInt(args.get("port")));
     	
