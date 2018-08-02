@@ -26,6 +26,14 @@ automatically convert the form into an XML file for the test suite.
 Here is a sample test run properties XML file, typically named
 `test-run-props.xml` although the name is not important.
 
+If a Requirements Class provides different options for OWS Common 1.0 
+versus OWS Common 1.1.0/OWS Common 2.0, the latter will be used in the
+annotated capabilities document.
+
+An `entry` element is mandatory for each test run property. Omitting an
+element may cause the test suite to abort. The order of the `entry`
+elements is not significant.
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
@@ -35,6 +43,10 @@ Here is a sample test run properties XML file, typically named
   <entry key="host">127.0.0.1</entry>
   <entry key="port">10080</entry>
   <entry key="jks_path">security.jks</entry>
+  <entry key="http_methods">true</entry>
+  <entry key="w3c_cors">true</entry>
+  <entry key="http_exception_handling">true</entry>
+  <entry key="http_post_content_type">true</entry>
 </properties>
 ```
 
@@ -61,13 +73,67 @@ Note that on some OSes, ports under 1024 require additional system
 privileges to bind, and the test suite will fail if it attempts to bind
 to such a port without the executing user having those privileges.
 
-##### jks_path
+##### jks\_path
 
 A Java KeyStore containing the X.509 certificates for the `host` address
 must be located at `jks_path` in order for the embedded Jetty server to
 provide HTTPS. Self-signed certificates are permitted, although the test
 client will have to trust that certificate manually.
 
+##### http\_methods (not yet implemented)
+
+As part of the annotated capabilities document presented to the secure
+client, include Requirements Class "HTTP Methods" 
+(https://www.opengis.net/def/security/1.0/rc/http-methods).
+
+Enabling this will include an `ows:Constraint` for listing all supported 
+HTTP methods.
+
+Only a value of `true` will enable this property, any other value will
+be evaluated as `false`.
+
+If the `w3c_cors` property is set to `true`, then this property will be
+overridden to `true` as well.
+
+##### w3c\_cors (not yet implemented)
+
+As part of the annotated capabilities document presented to the secure
+client, include Requirements Class "W3C CORS" 
+(https://www.opengis.net/def/security/1.0/rc/cors).
+
+Enabling this will include an `ows:Constraint` for the W3C recommendation
+"Cross Origin Resource Sharing".
+
+Only a value of `true` will enable this property, any other value will
+be evaluated as `false`.
+
+If set to `true`, then the `http_methods` test run property will also be
+set to `true` regardless of your configuration; "HTTP Methods" is 
+required for this Requirements Class.
+
+##### http\_exception\_handling (not yet implemented)
+
+As part of the annotated capabilities document presented to the secure
+client, include Requirements Class "HTTP Exception Handling" 
+(https://www.opengis.net/def/security/1.0/rc/http-exception-handling).
+
+Enabling this will include an `ows:Constraint` for enabling HTTP error
+code mapping to OWS Common exception codes.
+
+Only a value of `true` will enable this property, any other value will
+be evaluated as `false`.
+
+##### http\_post\_content\_type (not yet implemented)
+
+As part of the annotated capabilities document presented to the secure
+client, include Requirements Class "HTTP POST Content-Type" 
+(https://www.opengis.net/def/security/1.0/rc/content-type).
+
+Enabling this will include an `ows:Constraint` for listing the mime-types
+permitted to be submitted by HTTP POST.
+
+Only a value of `true` will enable this property, any other value will
+be evaluated as `false`.
 
 #### 1. Integrated development environment (IDE)
 
