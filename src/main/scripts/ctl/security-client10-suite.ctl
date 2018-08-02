@@ -53,11 +53,32 @@
                     <option value="wps-10">WPS 1.0.0</option>
                  </select>
                </p>
+               <p>Based on the Service Type selected, the following Conformance Class will apply:</p>
+               <p id="active-conformance-class">Conformance Class WMS 1.1.1</p>
              </fieldset>
              <p>
                <input class="form-button" type="submit" value="Start"/> | 
                <input class="form-button" type="reset" value="Clear"/>
              </p>
+             
+             <script><![CDATA[
+                // This script will update the active conformance class
+                // text based on the service type selected in the
+                // select element.
+                window.onload = function() {
+                  var activeElement = document.getElementById("active-conformance-class");
+                  document.getElementById("service-type").addEventListener("change", function(e) {
+                    var element = e.target;
+                    if (element.value === "wms-111") {
+                      activeElement.innerText = "Conformance Class WMS 1.1.1";
+                    } else if (element.value === "wms-13") {
+                      activeElement.innerText = "Conformance Class WMS 1.3.0";
+                    } else {
+                      activeElement.innerText = "Conformance Class OWS Common";
+                    }               
+                  });
+                }
+             ]]></script>
            </ctl:form>
         </xsl:variable>
         <xsl:variable name="test-run-props">
