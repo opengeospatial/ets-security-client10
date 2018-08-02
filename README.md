@@ -8,20 +8,23 @@ Visit the [project documentation website](http://opengeospatial.github.io/ets-se
 for more information, including the API documentation.
 
 ### How to run the tests
-The test suite is built using [Apache Maven v3](https://maven.apache.org/). The options 
-for running the suite are summarized below.
 
-#### 1. Integrated development environment (IDE)
+The test suite is built using [Apache Maven v3](https://maven.apache.org/). 
+Maven is necessary for self-hosting the test suite in your own test
+environment.
 
-Use a Java IDE such as Eclipse, NetBeans, or IntelliJ. Clone the repository and build the project.
+All of the test suite execution environments use the Test Run Properties
+to customize the parameters of the test session.
 
-Set the main class to run: `org.opengis.cite.security-client10.TestNGController`
+#### Test Run Properties
 
-Arguments: The first argument must refer to an XML properties file containing the 
-required test run arguments. If not specified, the default location at 
-`${user.home}/test-run-props.xml` will be used.
-   
-You can modify the sample file in `src/main/config/test-run-props.xml`
+For IDE and JAR testing, an XML file is used to pass the test run
+properties into the test suite. TEAM Engine users will instead use the
+web form interface to specify these properties, and TEAM Engine will
+automatically convert the form into an XML file for the test suite.
+
+Here is a sample test run properties XML file, typically named
+`test-run-props.xml` although the name is not important.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -35,6 +38,8 @@ You can modify the sample file in `src/main/config/test-run-props.xml`
 </properties>
 ```
 
+##### service_type
+
 Valid values for `service_type` are:
 
 * `wms111` for WMS 1.1.1 Conformance Class
@@ -46,14 +51,33 @@ an additional Conformance Class for one of "WMS 1.1.1", "WMS 1.3.0", or
 "OWS Common" depending on the type of service being emulated. Additional
 OWS Common services may be added to this test suite in the future.
 
+##### host and port
+
 The values for `host` and `port` are for starting the embedded Jetty web
 server. The test suite will fail if the server cannot bind to that address
 or port.
+
+Note that on some OSes, ports under 1024 require additional system
+privileges to bind, and the test suite will fail if it attempts to bind
+to such a port without the executing user having those privileges.
+
+##### jks_path
 
 A Java KeyStore containing the X.509 certificates for the `host` address
 must be located at `jks_path` in order for the embedded Jetty server to
 provide HTTPS. Self-signed certificates are permitted, although the test
 client will have to trust that certificate manually.
+
+
+#### 1. Integrated development environment (IDE)
+
+Use a Java IDE such as Eclipse, NetBeans, or IntelliJ. Clone the repository and build the project.
+
+Set the main class to run: `org.opengis.cite.security-client10.TestNGController`
+
+Arguments: The first argument must refer to an XML properties file containing the 
+required test run arguments. If not specified, the default location at 
+`${user.home}/test-run-props.xml` will be used.
 
 The TestNG results file (`testng-results.xml`) will be written to a subdirectory
 in `${user.home}/testng/` having a UUID value as its name.
