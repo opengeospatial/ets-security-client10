@@ -21,6 +21,9 @@ public class CapabilityCommonSecurityTests extends CommonFixture {
      * {@link org.opengis.cite.securityclient10.SuiteAttribute#TEST_SERVICE_TYPE} should
      * evaluate to a string representing an OGC Web Service type.
      * 
+     * This method can be used to check if this set of tests should apply to the service type
+     * as the service type implies a specific conformance class.
+     * 
      * @param testContext
      *            The test (group) context.
      */
