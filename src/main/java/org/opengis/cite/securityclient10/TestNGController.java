@@ -227,8 +227,8 @@ public class TestNGController implements TestSuiteController {
 		}
         String nonce = String.valueOf(bytes);
         
-        // Register a servlet handler with the nonce
-        server.registerHandler(nonce);
+        // Register a servlet handler with the nonce and service type
+        server.registerHandler(nonce, serviceType);
         
         // Print out the servlet test path for the test user
         System.out.println(String.format("Your test session endpoint is at http://%s:%s/%s", 

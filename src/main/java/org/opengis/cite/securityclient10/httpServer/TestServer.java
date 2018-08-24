@@ -49,7 +49,7 @@ public class TestServer {
 	 * Use a HashMap to track which servlet handlers are waiting for test requests.
 	 * When unfulfilled, the Boolean will be true. It is set to false in the TestAsyncServlet class.
 	 */
-	private static volatile HashMap<String, Boolean> handlerBlocks;
+	private static volatile HashMap<String, HandlerOptions> handlerBlocks;
 	
 	/**
 	 * Use a servlet class to capture requests from the secure client. The path that is requested by the
@@ -65,15 +65,23 @@ public class TestServer {
 		 * Override the reception of GET requests
 		 */
 		@Override
-		protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            final AsyncContext ctxt = req.startAsync();
+		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            final AsyncContext ctxt = request.startAsync();
             // Remove the leading slash from the path to determine the nonce
-            String path = req.getServletPath().substring(1);
+            String path = request.getServletPath().substring(1);
             ctxt.start(new Runnable() {
                 @Override
                 public void run() {
                     System.err.println("Request received.");
-                    handlerBlocks.put(path, false);
+                    HandlerOptions options = handlerBlocks.get(path);
+                    
+                    // Return the proper document to the client
+                    // Will extract this to its own class later
+                    System.err.println("query string: " + request.getQueryString());
+                    
+                    // Mark path handler as no longer waiting for request
+                    options.setReceived(true);
+                    
                     ctxt.complete();
                 }
             });
@@ -86,7 +94,7 @@ public class TestServer {
 	 * @throws Exception for any errors starting the embedded Jetty server
 	 */
 	public TestServer(String host, int port) throws Exception {
-		handlerBlocks = new HashMap<String, Boolean>();
+		handlerBlocks = new HashMap<String, HandlerOptions>();
 		serverPort = port;
 		
 		jettyServer = new Server();
@@ -121,9 +129,12 @@ public class TestServer {
 	 * timeout is hit.
 	 * 
 	 * @param path HTTP path to dynamically add to the embedded server
+	 * @param serviceType String representing the type of OWS to emulate, will determine which capabilities
+	 * 							 document will be presented to the client
 	 */
-	public void registerHandler(String path) {
-		handlerBlocks.put(path, true);
+	public void registerHandler(String path, String serviceType) {
+		HandlerOptions options = new HandlerOptions(serviceType);
+		handlerBlocks.put(path, options);
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
@@ -177,7 +188,8 @@ public class TestServer {
 	 * @throws ExecutionException For any errors caused by the waiting thread having an exception
 	 */
 	public void waitForRequest(String nonce) throws InterruptedException, ExecutionException {
-		handlerBlocks.put(nonce, true);
+		HandlerOptions options = handlerBlocks.get(nonce);
+		options.setReceived(false);
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		Future<String> future = executor.submit(new WaitTask(nonce));
@@ -213,7 +225,8 @@ public class TestServer {
 		@Override
 		public String call() throws Exception {
 			System.err.println("Waiting…");
-			while (handlerBlocks.get(nonce)) {
+			HandlerOptions options = handlerBlocks.get(nonce);
+			while (!options.getReceived()) {
 				Thread.sleep(1000);
 			}
 			return "";
