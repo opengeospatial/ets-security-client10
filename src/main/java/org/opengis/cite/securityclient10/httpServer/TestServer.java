@@ -70,14 +70,24 @@ public class TestServer {
             // Remove the leading slash from the path to determine the nonce
             String path = request.getServletPath().substring(1);
             ctxt.start(new Runnable() {
-                @Override
+                private EmulatedServer emulated;
+
+				@Override
                 public void run() {
                     System.err.println("Request received.");
                     HandlerOptions options = handlerBlocks.get(path);
                     
                     // Return the proper document to the client
-                    // Will extract this to its own class later
-                    System.err.println("query string: " + request.getQueryString());
+                    if (options.getServiceType().equals("wms111")) {
+                    	emulated = new ServerWMS111();
+                    }
+                    
+                    try {
+						emulated.handleRequest(request, response);
+					} catch (IOException e) {
+						// When an IO Exception occurs trying to build a response
+						e.printStackTrace();
+					}
                     
                     // Mark path handler as no longer waiting for request
                     options.setReceived(true);

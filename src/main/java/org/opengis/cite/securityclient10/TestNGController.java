@@ -241,6 +241,7 @@ public class TestNGController implements TestSuiteController {
     	// Release the servlet as the path is not needed anymore
     	server.unregisterHandler(nonce);
     	
+    	// TODO: Capture requests from handler and pass into executor
         return executor.execute(testRunArgs);
     }
 
