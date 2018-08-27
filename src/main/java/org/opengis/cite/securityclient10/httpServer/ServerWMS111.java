@@ -42,8 +42,16 @@ public class ServerWMS111 extends EmulatedServer {
 	private TransformerFactory transformerFactory;
 	private Transformer transformer;
 	
+	/**
+	 * Create an emulated WMS 1.1.1.
+	 * 
+	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
+	 * declaration.
+	 */
 	public ServerWMS111() {
+		// Create factories and builders and re-use them
 		this.documentFactory = DocumentBuilderFactory.newInstance();
+		
 		try {
 			this.documentBuilder = documentFactory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
@@ -56,6 +64,8 @@ public class ServerWMS111 extends EmulatedServer {
 		} catch (TransformerConfigurationException e) {
 			throw new RuntimeException(e);
 		}
+		
+		// Adjust defaults for XML document-to-String output
 		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 		this.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -63,6 +73,7 @@ public class ServerWMS111 extends EmulatedServer {
 	
 	/**
 	 * Build a valid WMS 1.1.1 response for the client request, and automatically complete the response.
+	 * 
 	 * @param request
 	 * @param response
 	 * @throws IOException 
@@ -117,7 +128,10 @@ public class ServerWMS111 extends EmulatedServer {
 	}
 	
 	/**
-	 * Return a Service Exception for `reason`
+	 * Return a Service Exception for `reason`. Response will have content type 
+	 * "application/vnd.ogc.se_xml" and HTTP status code 404.
+	 * 
+	 * Source: Annex A.4
 	 * 
 	 * @param reason
 	 * @param response
@@ -148,7 +162,8 @@ public class ServerWMS111 extends EmulatedServer {
 	}
 	
 	/**
-	 * Use a Transformer to convert the XML Document to a String.
+	 * Use a Transformer to convert the XML Document to a String. Doctype (public and system) argument
+	 * will be inserted into XML Document string.
 	 * 
 	 * @param document XML document to convert
 	 * @param doctype XML document type that will be added to String representation
