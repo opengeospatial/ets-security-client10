@@ -103,21 +103,22 @@ public class ServerWMS111 extends EmulatedServer {
 		} else {
 			
 			// Handle potential other request types
-			
 			switch (requestValue) {
 				case "GetCapabilities":
 				case "capabilities":
 					// Return a GetCapabilities document
+					buildCapabilities(response);
 					break;
 				case "GetMap":
 					// Return a GetMap document
+					buildException("Operation not supported by test server", response);
 					break;
 				case "GetFeatureInfo":
 				case "DescribeLayer":
 				case "GetLegendGraphic":
 				case "GetStyles":
 				case "PutStyles":
-					
+					buildException("Unsupported Operation", response);
 					break;
 				default:
 					buildException("Invalid request parameter", response);
@@ -125,6 +126,128 @@ public class ServerWMS111 extends EmulatedServer {
 			}
 		}
 		
+	}
+	
+	/**
+	 * Return an HTTP response to the client with valid headers and a body containing the  Capabilities 
+	 * XML document.
+	 * 
+	 *  Source: Annex A
+	 *  
+	 * @param response
+	 * @throws IOException 
+	 */
+	public void buildCapabilities(HttpServletResponse response) throws IOException {
+		response.setContentType("application/vnd.ogc.wms_xml");
+		response.setStatus(HttpServletResponse.SC_OK);
+		
+		PrintWriter printWriter = response.getWriter();
+		Document body = this.documentBuilder.newDocument();
+		
+		Element rootElement = body.createElement("WMT_MS_Capabilities");
+		rootElement.setAttribute("version", "1.1.1");
+		body.appendChild(rootElement);
+		
+		// Service Section
+		Element service = body.createElement("Service");
+		rootElement.appendChild(service);
+		
+		Element name = body.createElement("Name");
+		name.setTextContent("ets-security-client-10-wms-111");
+		service.appendChild(name);
+		
+		Element title = body.createElement("Title");
+		title.setTextContent("ETS Security Client 1.0 WMS 1.1.1");
+		service.appendChild(title);
+		
+		Element abstractElement = body.createElement("Abstract");
+		abstractElement.setTextContent("WMS 1.1.1 for validating secure client requests under ETS Security Client 1.0");
+		service.appendChild(abstractElement);
+		
+		Element onlineResource = body.createElement("OnlineResource");
+		onlineResource.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		onlineResource.setAttribute("xlink:type", "simple");
+		onlineResource.setAttribute("xlink:href", ""); // TODO: Add href
+		service.appendChild(onlineResource);
+		
+		// Capability Section
+		Element capability = body.createElement("Capability");
+		rootElement.appendChild(capability);
+		
+		// Capability > Request
+		Element request = body.createElement("Request");
+		capability.appendChild(request);
+		
+		// Capability > Request > GetCapabilities
+		Element getCapabilities = body.createElement("GetCapabilities");
+		request.appendChild(getCapabilities);
+		
+		Element getCapabilitiesFormat = body.createElement("Format");
+		getCapabilitiesFormat.setTextContent("application/vnd.ogc.wms_xml");
+		getCapabilities.appendChild(getCapabilitiesFormat);
+		
+		Element getCapabilitiesDCPType = body.createElement("DCPType");
+		getCapabilities.appendChild(getCapabilitiesDCPType);
+		
+		Element getCapabilitiesDCPTypeHTTP = body.createElement("HTTP");
+		getCapabilitiesDCPType.appendChild(getCapabilitiesDCPTypeHTTP);
+		
+		Element getCapabilitiesDCPTypeHTTPGet = body.createElement("Get");
+		getCapabilitiesDCPTypeHTTP.appendChild(getCapabilitiesDCPTypeHTTPGet);
+		
+		Element getCapabilitiesDCPTypeHTTPGetOR = body.createElement("OnlineResource");
+		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xlink:type", "simple");
+		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xlink:href", ""); // TODO: Add href
+		getCapabilitiesDCPTypeHTTPGet.appendChild(getCapabilitiesDCPTypeHTTPGetOR);
+		
+		Element getCapabilitiesDCPTypeHTTPPost = body.createElement("Post");
+		getCapabilitiesDCPTypeHTTP.appendChild(getCapabilitiesDCPTypeHTTPPost);
+		
+		Element getCapabilitiesDCPTypeHTTPPostOR = body.createElement("OnlineResource");
+		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xlink:type", "simple");
+		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xlink:href", ""); // TODO: Add href
+		getCapabilitiesDCPTypeHTTPPost.appendChild(getCapabilitiesDCPTypeHTTPPostOR);
+		
+		// Capability > Request > GetMap
+		Element getMap = body.createElement("GetMap");
+		request.appendChild(getMap);
+		
+		Element getMapFormat = body.createElement("Format");
+		getMapFormat.setTextContent("image/png");
+		getMap.appendChild(getMapFormat);
+		
+		Element getMapDCPType = body.createElement("DCPType");
+		getMap.appendChild(getMapDCPType);
+		
+		Element getMapDCPTypeHTTP = body.createElement("HTTP");
+		getMapDCPType.appendChild(getMapDCPTypeHTTP);
+		
+		Element getMapDCPTypeHTTPGet = body.createElement("Get");
+		getMapDCPTypeHTTP.appendChild(getMapDCPTypeHTTPGet);
+		
+		Element getMapDCPTypeHTTPGetOR = body.createElement("OnlineResource");
+		getMapDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		getMapDCPTypeHTTPGetOR.setAttribute("xlink:type", "simple");
+		getMapDCPTypeHTTPGetOR.setAttribute("xlink:href", ""); // TODO: Add href
+		getMapDCPTypeHTTPGet.appendChild(getMapDCPTypeHTTPGetOR);
+		
+		// Capability > Exception
+		Element exception = body.createElement("Exception");
+		capability.appendChild(exception);
+		
+		Element exceptionFormat = body.createElement("Format");
+		exceptionFormat.setTextContent("application/vnd.ogc.se_xml");
+		exception.appendChild(exceptionFormat);
+		
+		// Add a doctype
+		DOMImplementation domImplementation = body.getImplementation();
+		DocumentType doctype = domImplementation.createDocumentType("doctype", 
+				null,
+				"http://schemas.opengis.net/wms/1.1.1/capabilities_1_1_1.dtd");
+		
+		printWriter.print(documentToString(body, doctype));
 	}
 	
 	/**
@@ -156,7 +279,7 @@ public class ServerWMS111 extends EmulatedServer {
 		DOMImplementation domImplementation = body.getImplementation();
 		DocumentType doctype = domImplementation.createDocumentType("doctype", 
 				null,
-				"http://www.digitalearth.gov/wmt/xml/exception_1_1_1.dtd");
+				"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd");
 		
 		printWriter.print(documentToString(body, doctype));
 	}
