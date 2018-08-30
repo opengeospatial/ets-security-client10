@@ -1,6 +1,7 @@
 package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -74,7 +75,23 @@ public class TestServer {
 
 				@Override
                 public void run() {
-                    System.err.println("Request received.");
+                    System.out.println("Request received.");
+                    
+                    // Log request details
+                    System.out.printf("HTTP Method: %s\n", request.getMethod());
+                    System.out.printf("Is Secure: %s\n", request.isSecure()? "true" : "false");
+                    System.out.printf("Query String: %s\n", request.getQueryString());
+                    System.out.printf("Auth Type: %s\n", request.getAuthType());
+                    
+                    System.out.println("Request Headers:");
+                    for (Enumeration<String> headers = request.getHeaderNames(); headers.hasMoreElements();) {
+                    	String headerName = headers.nextElement();
+                    	String headerValue = request.getHeader(headerName);
+                    	System.out.printf("%s: %s\n", headerName, headerValue);
+                    }
+                    
+                    System.out.println();
+                    
                     HandlerOptions options = handlerBlocks.get(path);
                     
                     // Return the proper document to the client
@@ -234,7 +251,7 @@ public class TestServer {
 
 		@Override
 		public String call() throws Exception {
-			System.err.println("Waiting…");
+			System.out.println("Waiting…");
 			HandlerOptions options = handlerBlocks.get(nonce);
 			while (!options.getReceived()) {
 				Thread.sleep(1000);
