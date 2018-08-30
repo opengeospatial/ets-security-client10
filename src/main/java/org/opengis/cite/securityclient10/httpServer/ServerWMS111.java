@@ -107,7 +107,7 @@ public class ServerWMS111 extends EmulatedServer {
 				case "GetCapabilities":
 				case "capabilities":
 					// Return a GetCapabilities document
-					buildCapabilities(response);
+					buildCapabilities(request, response);
 					break;
 				case "GetMap":
 					// Return a GetMap document
@@ -133,13 +133,20 @@ public class ServerWMS111 extends EmulatedServer {
 	 * XML document.
 	 * 
 	 *  Source: Annex A
-	 *  
+	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response
 	 * @throws IOException 
 	 */
-	public void buildCapabilities(HttpServletResponse response) throws IOException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("application/vnd.ogc.wms_xml");
 		response.setStatus(HttpServletResponse.SC_OK);
+		
+		// Extract scheme/host/port/path for HREFs
+		String href = String.format("%s://%s:%d%s",
+				request.getScheme(),
+				request.getServerName(),
+				request.getServerPort(),
+				request.getRequestURI());
 		
 		PrintWriter printWriter = response.getWriter();
 		Document body = this.documentBuilder.newDocument();
@@ -167,7 +174,7 @@ public class ServerWMS111 extends EmulatedServer {
 		Element onlineResource = body.createElement("OnlineResource");
 		onlineResource.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 		onlineResource.setAttribute("xlink:type", "simple");
-		onlineResource.setAttribute("xlink:href", ""); // TODO: Add href
+		onlineResource.setAttribute("xlink:href", href);
 		service.appendChild(onlineResource);
 		
 		// Capability Section
@@ -175,12 +182,12 @@ public class ServerWMS111 extends EmulatedServer {
 		rootElement.appendChild(capability);
 		
 		// Capability > Request
-		Element request = body.createElement("Request");
-		capability.appendChild(request);
+		Element requestElement = body.createElement("Request");
+		capability.appendChild(requestElement);
 		
 		// Capability > Request > GetCapabilities
 		Element getCapabilities = body.createElement("GetCapabilities");
-		request.appendChild(getCapabilities);
+		requestElement.appendChild(getCapabilities);
 		
 		Element getCapabilitiesFormat = body.createElement("Format");
 		getCapabilitiesFormat.setTextContent("application/vnd.ogc.wms_xml");
@@ -198,7 +205,7 @@ public class ServerWMS111 extends EmulatedServer {
 		Element getCapabilitiesDCPTypeHTTPGetOR = body.createElement("OnlineResource");
 		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xlink:type", "simple");
-		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xlink:href", ""); // TODO: Add href
+		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xlink:href", href);
 		getCapabilitiesDCPTypeHTTPGet.appendChild(getCapabilitiesDCPTypeHTTPGetOR);
 		
 		Element getCapabilitiesDCPTypeHTTPPost = body.createElement("Post");
@@ -207,12 +214,12 @@ public class ServerWMS111 extends EmulatedServer {
 		Element getCapabilitiesDCPTypeHTTPPostOR = body.createElement("OnlineResource");
 		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xlink:type", "simple");
-		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xlink:href", ""); // TODO: Add href
+		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xlink:href", href);
 		getCapabilitiesDCPTypeHTTPPost.appendChild(getCapabilitiesDCPTypeHTTPPostOR);
 		
 		// Capability > Request > GetMap
 		Element getMap = body.createElement("GetMap");
-		request.appendChild(getMap);
+		requestElement.appendChild(getMap);
 		
 		Element getMapFormat = body.createElement("Format");
 		getMapFormat.setTextContent("image/png");
@@ -230,7 +237,7 @@ public class ServerWMS111 extends EmulatedServer {
 		Element getMapDCPTypeHTTPGetOR = body.createElement("OnlineResource");
 		getMapDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
 		getMapDCPTypeHTTPGetOR.setAttribute("xlink:type", "simple");
-		getMapDCPTypeHTTPGetOR.setAttribute("xlink:href", ""); // TODO: Add href
+		getMapDCPTypeHTTPGetOR.setAttribute("xlink:href", href);
 		getMapDCPTypeHTTPGet.appendChild(getMapDCPTypeHTTPGetOR);
 		
 		// Capability > Exception
