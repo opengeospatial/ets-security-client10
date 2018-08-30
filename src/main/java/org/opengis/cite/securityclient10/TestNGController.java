@@ -96,6 +96,8 @@ public class TestNGController implements TestSuiteController {
         System.out.println("");
         System.out.println("2. Conformance Test \"Working on Capabilities with no Content section\"");
         System.out.println("Does the test suite Capabilities contain a <Content> section?");
+        System.out.println("(Note that the \"Content\" section is represented as \"<Layer>\" in WMS,");
+        System.out.println("see Section 8.2.2 of v1.0 of the specification for other services.)");
         System.out.println("YES - Skip Test");
         System.out.println("NO  - Continue");
         System.out.println("Does the test suite Capabilities contain an endpoint URL for the GetCapabilities operation?");
