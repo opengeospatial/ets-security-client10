@@ -260,7 +260,7 @@ public class TestServer {
 		
 		try {
             System.out.println("Started wait.");
-            System.out.println(future.get(120, TimeUnit.SECONDS));
+            System.out.println(future.get(300, TimeUnit.SECONDS));
             System.out.println("Finished!");
         } catch (TimeoutException e) {
             future.cancel(true);
