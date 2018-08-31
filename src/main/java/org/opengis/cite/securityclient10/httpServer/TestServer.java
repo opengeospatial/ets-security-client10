@@ -101,6 +101,9 @@ public class TestServer {
                     
                     HandlerOptions options = handlerBlocks.get(path);
                     
+                    // Save request
+                    options.saveRequest(request);
+                    
                     // Return the proper document to the client
                     if (options.getServiceType().equals("wms111")) {
                     	emulated = new ServerWMS111();
@@ -185,6 +188,21 @@ public class TestServer {
 	 */
 	public int getPort() {
 		return serverPort;
+	}
+	
+	/**
+	 * Retrieve the HTTP Servlet Request objects for a registered nonce
+	 * 
+	 * @param nonce
+	 * @return Zero or more HttpServletRequests
+	 */
+	public HttpServletRequest[] getRequests(String nonce) {
+		HandlerOptions options = handlerBlocks.get(nonce);
+		if (options == null) {
+			return null;
+		} else {
+			return options.getRequests();
+		}
 	}
 	
 	/**

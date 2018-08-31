@@ -24,7 +24,13 @@ public enum TestRunArg {
 	/**
 	 * A path to a local file containing the Java KeyStore
 	 */
-	JKS_Path;
+	JKS_Path,
+	
+	/**
+	 * The request(s) from the secure client, containing the headers and body,
+	 * that will be verified by the test suite.
+	 */
+	IUT;
 
     @Override
     public String toString() {

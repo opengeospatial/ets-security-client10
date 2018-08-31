@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
@@ -239,6 +240,10 @@ public class TestNGController implements TestSuiteController {
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
     	server.waitForRequest(nonce);
+    	
+    	// Retrieve the request(s) from the secure client
+    	// TODO: save this as the IUT for the test run args
+    	HttpServletRequest[] requests = server.getRequests(nonce);
     	
     	// Release the servlet as the path is not needed anymore
     	server.unregisterHandler(nonce);
