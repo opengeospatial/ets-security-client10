@@ -233,7 +233,7 @@ public class TestNGController implements TestSuiteController {
         server.registerHandler(nonce, serviceType);
         
         // Print out the servlet test path for the test user
-        System.out.println(String.format("Your test session endpoint is at http://%s:%s/%s", 
+        System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s", 
         		args.get("host"), args.get("port"), nonce));
     	
     	// Wait for TestServer to receive a request for this test run,
