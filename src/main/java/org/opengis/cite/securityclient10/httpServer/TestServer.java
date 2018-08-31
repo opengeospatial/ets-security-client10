@@ -28,7 +28,6 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
@@ -87,7 +86,7 @@ public class TestServer {
                     
                     // Log request details
                     System.out.printf("HTTP Method: %s\n", request.getMethod());
-                    System.out.printf("Is Secure: %s\n", request.isSecure()? "true" : "false");
+                    System.out.printf("Is Secure: %s\n", request.isSecure() ? "true" : "false");
                     System.out.printf("Query String: %s\n", request.getQueryString());
                     System.out.printf("Auth Type: %s\n", request.getAuthType());
                     
@@ -166,7 +165,7 @@ public class TestServer {
 		
 		// Use a ServerConnector so we can force the host address and port 
 		ServerConnector connector = new ServerConnector(jettyServer,
-				new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+				new UnifiedSslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
 				new HttpConnectionFactory(httpsConfig));
 		connector.setPort(port);
 		connector.setHost(host);
