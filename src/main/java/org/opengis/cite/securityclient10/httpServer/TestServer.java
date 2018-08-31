@@ -1,5 +1,7 @@
 package org.opengis.cite.securityclient10.httpServer;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -17,15 +19,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http.pathmap.MappedResource;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  * A wrapper class around the Jetty Server class. This adds functionality for the testing suite for
@@ -128,8 +136,38 @@ public class TestServer {
 		jettyServer.setStopAtShutdown(true);
 		jettyServer.setStopTimeout(1);
 		
+		// Set up HTTPS
+		String homePath = System.getProperty("user.home");
+		File homeDir = new File(homePath);
+		
+		// Check for Keystore
+		File keystore = new File(homeDir.getAbsolutePath() + "/keystore");
+		if (!keystore.exists()) {
+			throw new FileNotFoundException("Missing keystore: " + keystore.getAbsolutePath());
+		}
+		
+		SslContextFactory sslContextFactory = new SslContextFactory();
+		sslContextFactory.setKeyStorePath(keystore.getAbsolutePath());
+		sslContextFactory.setKeyStorePassword("ets-security-client");
+		sslContextFactory.setTrustStorePath(keystore.getAbsolutePath());
+		sslContextFactory.setTrustStorePassword("ets-security-client");
+		// TODO: Check to see what cipher suites should be used here
+		sslContextFactory.setExcludeCipherSuites("SSL_RSA_WITH_DES_CBC_SHA",
+	        "SSL_DHE_RSA_WITH_DES_CBC_SHA", "SSL_DHE_DSS_WITH_DES_CBC_SHA",
+	        "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
+	        "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA",
+	        "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA",
+	        "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA");
+		
+		HttpConfiguration httpsConfig = new HttpConfiguration();
+		httpsConfig.setSecureScheme("https");
+		httpsConfig.setSecurePort(port);
+		httpsConfig.addCustomizer(new SecureRequestCustomizer());
+		
 		// Use a ServerConnector so we can force the host address and port 
-		ServerConnector connector = new ServerConnector(jettyServer);
+		ServerConnector connector = new ServerConnector(jettyServer,
+				new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
+				new HttpConnectionFactory(httpsConfig));
 		connector.setPort(port);
 		connector.setHost(host);
 		jettyServer.setConnectors(new Connector[] { connector });
