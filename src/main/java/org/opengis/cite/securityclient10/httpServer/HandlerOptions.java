@@ -22,14 +22,15 @@ public class HandlerOptions {
 	private String serviceType;
 	
 	/**
-	 * Requests associated with this test session that have been received from the secure client.
+	 * Requests associated with this test session that have been received from the secure client are
+	 * stored in this object.
 	 */
-	private HttpServletRequest[] requests;
+	private RequestRepresenter requests;
 	
 	public HandlerOptions(String type) {
 		this.serviceType = type;
 		this.requestReceived = false;
-		this.requests = new HttpServletRequest[0];
+		this.requests = new RequestRepresenter();
 	}
 	
 	/**
@@ -44,7 +45,7 @@ public class HandlerOptions {
 	 * Requests that have been received for this handler. May be empty.
 	 * @return
 	 */
-	public HttpServletRequest[] getRequests() {
+	public RequestRepresenter getRequests() {
 		return this.requests;
 	}
 	
@@ -63,11 +64,7 @@ public class HandlerOptions {
 	 * @param request
 	 */
 	public void saveRequest(HttpServletRequest request) {
-		int newLength = this.requests.length + 1;
-		HttpServletRequest[] oldRequests = this.requests;
-		this.requests = new HttpServletRequest[newLength];
-		System.arraycopy(oldRequests, 0, this.requests, 0, oldRequests.length);
-		this.requests[newLength - 1] = request;
+		requests.serializeRequest(request);
 	}
 	
 	/**

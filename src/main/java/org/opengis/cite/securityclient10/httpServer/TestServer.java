@@ -196,7 +196,7 @@ public class TestServer {
 	 * @param nonce
 	 * @return Zero or more HttpServletRequests
 	 */
-	public HttpServletRequest[] getRequests(String nonce) {
+	public RequestRepresenter getRequests(String nonce) {
 		HandlerOptions options = handlerBlocks.get(nonce);
 		if (options == null) {
 			return null;

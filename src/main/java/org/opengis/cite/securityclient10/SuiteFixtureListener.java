@@ -44,6 +44,8 @@ public class SuiteFixtureListener implements ISuiteListener {
 	void processSuiteParameters(ISuite suite) {
         Map<String, String> params = suite.getXmlSuite().getParameters();
         TestSuiteLogger.log(Level.CONFIG, "Suite parameters\n" + params.toString());
+        
+        // Test Server Emulated Service Type
         String serviceTypeParam = params.get(TestRunArg.Service_Type.toString());
         
         if ((null == serviceTypeParam) || serviceTypeParam.isEmpty()) {
@@ -52,6 +54,7 @@ public class SuiteFixtureListener implements ISuiteListener {
 
         suite.setAttribute(SuiteAttribute.TEST_SERVICE_TYPE.getName(), serviceTypeParam);
         
+        // Test Server Host address
         String hostParam = params.get(TestRunArg.Host.toString());
         
         if ((null == hostParam) || hostParam.isEmpty()) {
@@ -60,9 +63,11 @@ public class SuiteFixtureListener implements ISuiteListener {
         
         suite.setAttribute(SuiteAttribute.TEST_HOST.getName(), hostParam);
         
+        // Test Server Port
         Integer portParam = Integer.parseInt(params.get(TestRunArg.Port.toString()));
         suite.setAttribute(SuiteAttribute.TEST_PORT.getName(), portParam);
         
+        // Java Keystore Path
         String jksParam = params.get(TestRunArg.JKS_Path.toString());
         
         if ((null == jksParam) || jksParam.isEmpty()) {
@@ -70,6 +75,10 @@ public class SuiteFixtureListener implements ISuiteListener {
         }
         
         suite.setAttribute(SuiteAttribute.TEST_JKS_PATH.getName(), jksParam);
+        
+        // Secure Client Requests Document Path
+        String iutParam = params.get(TestRunArg.IUT.toString());
+        suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), iutParam);
     }
 
     /**

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 
+import org.opengis.cite.securityclient10.httpServer.RequestRepresenter;
 import org.opengis.cite.securityclient10.httpServer.TestServer;
 import org.opengis.cite.securityclient10.util.TestSuiteLogger;
 import org.w3c.dom.Document;
@@ -135,7 +138,7 @@ public class TestNGController implements TestSuiteController {
      *            created if it does not exist.
      */
     public TestNGController(String outputDir) {
-        InputStream is = getClass().getResourceAsStream("ets.properties");
+    	InputStream is = getClass().getResourceAsStream("ets.properties");
         try {
             this.etsProperties.load(is);
         } catch (IOException ex) {
@@ -242,17 +245,25 @@ public class TestNGController implements TestSuiteController {
     	server.waitForRequest(nonce);
     	
     	// Retrieve the request(s) from the secure client
-    	// TODO: save this as the IUT for the test run args
-    	HttpServletRequest[] requests = server.getRequests(nonce);
+    	RequestRepresenter requests = server.getRequests(nonce);
+    	
+    	// Save to file
+    	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "requests.xml");
+    	requests.saveToPath(requestsFilePath);
+    	
+    	// Add path to file as a test run property
+    	Element iutEntry = testRunArgs.createElement("entry");
+    	iutEntry.setAttribute("key", "iut");
+    	iutEntry.setTextContent(requestsFilePath.toAbsolutePath().toString());
+    	testRunArgs.getDocumentElement().appendChild(iutEntry);
     	
     	// Release the servlet as the path is not needed anymore
     	server.unregisterHandler(nonce);
     	
-    	// TODO: Capture requests from handler and pass into executor
         return executor.execute(testRunArgs);
     }
 
-    /**
+	/**
      * Validates the test run arguments. The test run is aborted if any of these
      * checks fail.
      *
