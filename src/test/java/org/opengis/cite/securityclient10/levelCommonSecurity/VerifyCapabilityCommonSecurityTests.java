@@ -38,16 +38,4 @@ public class VerifyCapabilityCommonSecurityTests {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-
-    @Test(expected = AssertionError.class)
-    public void testIsEmpty() {
-        CapabilityCommonSecurityTests iut = new CapabilityCommonSecurityTests();
-        iut.isEmpty();
-    }
-
-    @Test
-    public void testTrim() {
-        CapabilityCommonSecurityTests iut = new CapabilityCommonSecurityTests();
-        iut.trim();
-    }
 }
