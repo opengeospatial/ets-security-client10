@@ -192,7 +192,7 @@ public class TestServer {
 	/**
 	 * Retrieve the HTTP Servlet Request objects for a registered nonce
 	 * 
-	 * @param nonce
+	 * @param nonce String of the nonce to retrieve from the stored Handlers
 	 * @return Zero or more HttpServletRequests
 	 */
 	public RequestRepresenter getRequests(String nonce) {

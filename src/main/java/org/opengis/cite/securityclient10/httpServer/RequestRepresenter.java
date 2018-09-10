@@ -66,7 +66,7 @@ public class RequestRepresenter {
 	
 	/**
 	 * Initialize the barebones document.
-	 * The base element is <HttpRequestSet>.
+	 * The base element is {@code <HttpRequestSet> }.
 	 */
 	private void createDocument() {
 		this.requestsDocument = this.documentBuilder.newDocument();
@@ -77,18 +77,23 @@ public class RequestRepresenter {
 	
 	/**
 	 * Add the metadata from the HttpServletRequest to the XML document.
-	 * Each request will serialize to a <Request> element inside the root <HttpRequestSet> as so:
+	 * Each request will serialize to a {@code <Request> } element inside the root {@code <HttpRequestSet> }
+	 * as so:
 	 * 
+	 * <pre>
+	 * {@code
 	 * <Request method="GET" https="true" queryString="?service=WMS&request=GetCapabilities" authentication="">
 	 *   <Header name="Accepts">text/xml</Header>
 	 *   <Header name="User-Agent">curl</Header>
 	 *   <Body contentEncoding="utf-8" contentLength="0"></Body>
 	 * </Request>
+	 * }
+	 * </pre>
 	 * 
 	 * There may be 0 or more Header elements. There is always a single Body element, which may have no
 	 * text content. attributes on the Request element may be empty, but should still be specified.
 	 * 
-	 * @param request
+	 * @param request Request from client to serialize as XML
 	 */
 	public void serializeRequest(HttpServletRequest request) {
 		Element rootElement = this.requestsDocument.getDocumentElement();

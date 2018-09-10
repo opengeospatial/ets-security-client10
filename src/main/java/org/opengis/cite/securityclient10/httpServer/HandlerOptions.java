@@ -35,7 +35,7 @@ public class HandlerOptions {
 	
 	/**
 	 * Value of the current request status
-	 * @return
+	 * @return Boolean if this handler has had a request
 	 */
 	public Boolean getReceived() {
 		return this.requestReceived;
@@ -43,15 +43,15 @@ public class HandlerOptions {
 	
 	/**
 	 * Requests that have been received for this handler. May be empty.
-	 * @return
+	 * @return RequestRepresenter for the zero or more requests in the Handler
 	 */
 	public RequestRepresenter getRequests() {
 		return this.requests;
 	}
 	
 	/**
-	 * Service type that this handler is emulating
-	 * @return
+	 * Service type that this handler is emulating.
+	 * @return String with service type
 	 */
 	public String getServiceType() {
 		return this.serviceType;
@@ -61,7 +61,7 @@ public class HandlerOptions {
 	 * Replace the internal requests list with a new copy that has "request" appended to the end of the
 	 * array.
 	 * 
-	 * @param request
+	 * @param request Request from client to serialize
 	 */
 	public void saveRequest(HttpServletRequest request) {
 		requests.serializeRequest(request);
@@ -69,7 +69,7 @@ public class HandlerOptions {
 	
 	/**
 	 * Update the value of the `requestReceived` property
-	 * @param isReceived
+	 * @param isReceived Boolean with state to set this Handler
 	 */
 	public void setReceived(Boolean isReceived) {
 		this.requestReceived = isReceived;

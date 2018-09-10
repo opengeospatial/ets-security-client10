@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;

@@ -36,7 +36,6 @@ public class SuiteFixtureListener implements ISuiteListener {
      * @param suite
      *            An ISuite object representing a TestNG test suite.
      */
-    @SuppressWarnings("unlikely-arg-type")
 	void processSuiteParameters(ISuite suite) {
         Map<String, String> params = suite.getXmlSuite().getParameters();
         TestSuiteLogger.log(Level.CONFIG, "Suite parameters\n" + params.toString());

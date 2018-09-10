@@ -74,9 +74,9 @@ public class ServerWMS111 extends EmulatedServer {
 	/**
 	 * Build a valid WMS 1.1.1 response for the client request, and automatically complete the response.
 	 * 
-	 * @param request
-	 * @param response
-	 * @throws IOException 
+	 * @param request Request from client
+	 * @param response Response to build to send back to client
+	 * @throws IOException Exception raised when a response writer could not be created
 	 */
 	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		System.out.println("Building WMS 1.1.1 Response");
@@ -134,8 +134,8 @@ public class ServerWMS111 extends EmulatedServer {
 	 * 
 	 *  Source: Annex A
 	 * @param request Source request from client, used to build absolute URLs for HREFs
-	 * @param response
-	 * @throws IOException 
+	 * @param response Response to build to send back to client
+	 * @throws IOException Exception raised when a response writer could not be created
 	 */
 	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		response.setContentType("application/vnd.ogc.wms_xml");
@@ -263,9 +263,9 @@ public class ServerWMS111 extends EmulatedServer {
 	 * 
 	 * Source: Annex A.4
 	 * 
-	 * @param reason
-	 * @param response
-	 * @throws IOException
+	 * @param reason String with reason for Service Exception.
+	 * @param response Response to build to send back to client
+	 * @throws IOException Exception raised when a response writer could not be created
 	 */
 	public void buildException(String reason, HttpServletResponse response) throws IOException {
 		response.setContentType("application/vnd.ogc.se_xml");
