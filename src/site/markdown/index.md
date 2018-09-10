@@ -255,13 +255,14 @@ certificate for testing purposes. The keystore can be created with the
 following command.
 
 ```sh
-$ keytool -keystore security.jks -storepass "ets-security-client" -genkey -alias dummy-key -dname "cn=ETS Test Operator, ou=None, o=None, c=us"
+$ keytool -keystore src/main/resources/security.jks -storepass "ets-security-client" -genkey -alias dummy-key -dname "cn=ETS Test Operator, ou=None, o=None, c=us"
 ```
 
-This creates `security.jks` with a single key (`dummy-key`) and protects the
-file with a password (`ets-security-client`). As this is a self-signed 
-certificate, secure clients must allow insecure server certificates or
-install the certificate to their keystore.
+This creates `src/main/resources/security.jks` with a single key 
+(`dummy-key`) and protects the file with a password 
+(`ets-security-client`). As this is a self-signed certificate, secure 
+clients must allow insecure server certificates or install the 
+certificate to their keystore.
 
 When running the test suite from an IDE, this KeyStore will be used
 as it is specified in `src/main/config/test-run-props.xml`.
