@@ -36,5 +36,13 @@
       <class name="org.opengis.cite.securityclient10.SuitePreconditions" />
     </classes>
   </test>
+  <test name="Conformance Level OWS Common">
+    <packages>
+      <package name="org.opengis.cite.securityclient10.levelOwsCommon" />
+    </packages>
+    <classes>
+      <class name="org.opengis.cite.securityclient10.SuitePreconditions" />
+    </classes>
+  </test>
   <!-- Add test sets for other conformance classes/levels -->
 </suite>
