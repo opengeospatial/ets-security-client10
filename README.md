@@ -24,7 +24,7 @@ web form interface to specify these properties, and TEAM Engine will
 automatically convert the form into an XML file for the test suite.
 
 More details about the mandatory and optional test run properties can
-be located in the [documentation](site/markdown/index.md).
+be located in the [documentation](src/site/markdown/index.md).
 
 #### 1. Integrated development environment (IDE)
 
