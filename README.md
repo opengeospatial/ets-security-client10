@@ -4,8 +4,12 @@
 
 Describe scope of the test suite.
 
-Visit the [project documentation website](http://opengeospatial.github.io/ets-security-client10/) 
-for more information, including the API documentation.
+Visit the [project documentation website][site docs]
+for more information, including the API documentation. **Note**: project
+documentation site will be available when the test suite has been
+published to the OGC TEAM Engine site.
+
+[site docs]: http://opengeospatial.github.io/ets-security-client10/
 
 ### How to run the tests
 
