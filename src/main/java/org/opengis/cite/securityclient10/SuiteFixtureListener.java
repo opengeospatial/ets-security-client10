@@ -3,12 +3,9 @@ package org.opengis.cite.securityclient10;
 import java.util.Map;
 import java.util.logging.Level;
 
-import org.opengis.cite.securityclient10.util.ClientUtils;
 import org.opengis.cite.securityclient10.util.TestSuiteLogger;
 import org.testng.ISuite;
 import org.testng.ISuiteListener;
-
-import com.sun.jersey.api.client.Client;
 
 /**
  * A listener that performs various tasks before and after a test suite is run,
@@ -28,7 +25,6 @@ public class SuiteFixtureListener implements ISuiteListener {
     @Override
     public void onStart(ISuite suite) {
         processSuiteParameters(suite);
-        registerClientComponent(suite);
     }
 
     @Override
@@ -79,20 +75,5 @@ public class SuiteFixtureListener implements ISuiteListener {
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());
         suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), iutParam);
-    }
-
-    /**
-     * A client component is added to the suite fixture as the value of the
-     * {@link SuiteAttribute#CLIENT} attribute; it may be subsequently accessed
-     * via the {@link org.testng.ITestContext#getSuite()} method.
-     *
-     * @param suite
-     *            The test suite instance.
-     */
-    void registerClientComponent(ISuite suite) {
-        Client client = ClientUtils.buildClient();
-        if (null != client) {
-            suite.setAttribute(SuiteAttribute.CLIENT.getName(), client);
-        }
     }
 }
