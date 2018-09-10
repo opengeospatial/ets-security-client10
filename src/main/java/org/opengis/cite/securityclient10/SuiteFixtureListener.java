@@ -72,6 +72,15 @@ public class SuiteFixtureListener implements ISuiteListener {
         
         suite.setAttribute(SuiteAttribute.TEST_JKS_PATH.getName(), jksParam);
         
+     // Java Keystore Password
+        String jksPassParam = params.get(TestRunArg.JKS_Password.toString());
+        
+        if ((null == jksPassParam) || jksPassParam.isEmpty()) {
+            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.JKS_Password.toString());
+        }
+        
+        suite.setAttribute(SuiteAttribute.TEST_JKS_PASSWORD.getName(), jksPassParam);
+        
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());
         suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), iutParam);

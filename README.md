@@ -43,6 +43,7 @@ elements is not significant.
   <entry key="host">127.0.0.1</entry>
   <entry key="port">10080</entry>
   <entry key="jks_path">security.jks</entry>
+  <entry key="jks_password"><![CDATA[ets-security-client]]></entry>
   <entry key="http_methods">true</entry>
   <entry key="w3c_cors">true</entry>
   <entry key="http_exception_handling">true</entry>
@@ -79,6 +80,12 @@ A Java KeyStore containing the X.509 certificates for the `host` address
 must be located at `jks_path` in order for the embedded Jetty server to
 provide HTTPS. Self-signed certificates are permitted, although the test
 client will have to trust that certificate manually.
+
+##### jks\_password
+
+The password required to unlock the Java KeyStore. Using a CDATA section
+is recommended to wrap passwords that have character data that may
+interfere with XML character entities.
 
 ##### http\_methods (not yet implemented)
 

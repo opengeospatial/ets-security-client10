@@ -1,7 +1,6 @@
 package org.opengis.cite.securityclient10;
 
 import com.sun.jersey.api.client.Client;
-import org.w3c.dom.Document;
 
 /**
  * An enumerated type defining ISuite attributes that may be set to constitute a
@@ -27,9 +26,13 @@ public enum SuiteAttribute {
      */
     TEST_PORT("testPort", Integer.class),
     /**
-     * A String for the filesystem path to the java keystore file.
+     * A String for the filesystem path to the Java KeyStore file.
      */
     TEST_JKS_PATH("testJKSPath", String.class),
+    /**
+     * A String to unlock the Java KeyStore file.
+     */
+    TEST_JKS_PASSWORD("testJKSPassword", String.class),
     /**
      * A String for the filesystem path of the serialized client requests document.
      */

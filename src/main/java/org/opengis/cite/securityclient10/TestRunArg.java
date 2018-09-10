@@ -27,6 +27,11 @@ public enum TestRunArg {
 	JKS_Path,
 	
 	/**
+	 * The password to access the Java KeyStore
+	 */
+	JKS_Password,
+	
+	/**
 	 * The request(s) from the secure client, containing the headers and body,
 	 * that will be verified by the test suite.
 	 */
