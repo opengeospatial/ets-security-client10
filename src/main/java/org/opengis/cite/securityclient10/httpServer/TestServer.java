@@ -128,9 +128,11 @@ public class TestServer {
 	/**
 	 * @param host String of host interface to bind
 	 * @param port Integer of port to bind
+	 * @param jks_path Path to the Java KeyStore
+     * @param jks_password Password to unlock the KeyStore 
 	 * @throws Exception for any errors starting the embedded Jetty server
 	 */
-	public TestServer(String host, int port) throws Exception {
+	public TestServer(String host, int port, String jks_path, String jks_password) throws Exception {
 		handlerBlocks = new HashMap<String, HandlerOptions>();
 		serverPort = port;
 		
@@ -138,21 +140,18 @@ public class TestServer {
 		jettyServer.setStopAtShutdown(true);
 		jettyServer.setStopTimeout(1);
 		
-		// Set up HTTPS
-		String homePath = System.getProperty("user.home");
-		File homeDir = new File(homePath);
-		
+		// Set up HTTPS		
 		// Check for Keystore
-		File keystore = new File(homeDir.getAbsolutePath() + "/keystore");
+		File keystore = new File(jks_path);
 		if (!keystore.exists()) {
 			throw new FileNotFoundException("Missing keystore: " + keystore.getAbsolutePath());
 		}
 		
 		SslContextFactory sslContextFactory = new SslContextFactory();
 		sslContextFactory.setKeyStorePath(keystore.getAbsolutePath());
-		sslContextFactory.setKeyStorePassword("ets-security-client");
+		sslContextFactory.setKeyStorePassword(jks_password);
 		sslContextFactory.setTrustStorePath(keystore.getAbsolutePath());
-		sslContextFactory.setTrustStorePassword("ets-security-client");
+		sslContextFactory.setTrustStorePassword(jks_password);
 		// TODO: Check to see what cipher suites should be used here
 		sslContextFactory.setExcludeCipherSuites("SSL_RSA_WITH_DES_CBC_SHA",
 	        "SSL_DHE_RSA_WITH_DES_CBC_SHA", "SSL_DHE_DSS_WITH_DES_CBC_SHA",

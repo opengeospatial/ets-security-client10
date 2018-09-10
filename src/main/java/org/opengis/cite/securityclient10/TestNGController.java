@@ -149,14 +149,16 @@ public class TestNGController implements TestSuiteController {
      * 
      * @param host String representing the host interface on which to bind the Test Server
      * @param port Integer representing the port to bind the Test Server
+     * @param jks_path Path to the Java KeyStore
+     * @param jks_password Password to unlock the KeyStore
      * @return A TestServer instance that is the embedded Jetty web server.
      */
-    public static TestServer getServer(String host, int port) {
+    public static TestServer getServer(String host, int port, String jks_path, String jks_password) {
     	// Use double-checked locking to prevent race condition.
     	if (null == httpServer) {
     		if (httpServer == null) {
     			try {
-					httpServer = new TestServer(host, port);
+					httpServer = new TestServer(host, port, jks_path, jks_password);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -196,7 +198,8 @@ public class TestNGController implements TestSuiteController {
     	}
     	System.out.println("");
         
-        TestServer server = getServer(args.get("host"), Integer.parseInt(args.get("port")));
+        TestServer server = getServer(args.get("host"), Integer.parseInt(args.get("port")),
+        		args.get("jks_path"), args.get("jks_password"));
     	
         // Generate nonce for this test session, which will be used as the unique servlet address
         String symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
