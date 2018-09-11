@@ -16,7 +16,7 @@ concurrent test session.
 
 ## cURL
 
-cURL is a command line client for URL protocols such as HTTP and HTTPS.
+[cURL][] is a command line client for URL protocols such as HTTP and HTTPS.
 It can work as a very simple and barely capable secure test client, as it
 can make HTTP and HTTPS connections to download a capabilities document.
 It cannot interpret that document or make subsequent automatic requests.
@@ -28,6 +28,8 @@ In the following examples I will use these command line parameters:
 * `-k`
 	- Disables certificate verification, necessary to accept a 
 	self-signed certificate
+
+[cURL]: https://curl.haxx.se
 
 ### Making an HTTPS Request
 
@@ -147,3 +149,61 @@ Server: Jetty(9.4.11.v20180605)
 
 As the query parameters are correct, a Capabilities document is
 returned to the secure client.
+
+## QGIS 3
+
+[QGIS][] is a free and open source GIS application. It is available for 
+multiple platforms, making it an accessible GIS tool with a common user
+experience.
+
+QGIS is a part of the [Open Source Geospatial Foundation][OSGeo].
+
+In the following examples I will show how to add the ETS Test Server to
+QGIS as a remote service.
+
+[QGIS]: https://qgis.org/
+[OSGeo]: https://www.osgeo.org
+
+### WMS 1.1.1 and HTTP
+
+With the ETS set up such that it emulates a WMS 1.1.1 service, start a
+test session and it will generate a unique URL. Note that the Test Service
+will wait 5 minutes (300 seconds) for a secure client connection, so you
+do not need to be overly rushed to enter the details and start the test.
+
+In QGIS, go to the "Layer" menu, "Add Layer", and select "Add WMS/WMTS 
+Layer…". Click the "New" button to create a new connection, and fill in
+the following details.
+
+**Name**: CITE Security Client 1.0  
+**URL**: \<URL for your test session, using `http` instead of `https`\>  
+**Authentication Configurations**: No authentication  
+**Referer**: <Leave Blank>  
+**DPI-Mode**: all  
+
+Leave the remaining checkboxes at their defaults, which should be "blank".
+Click "OK" to save the connection.
+
+To start the test session, ensure the "CITE Security Client 1.0" is 
+selected in the drop-down select box, and click "Connect".
+
+QGIS will try to retrieve the Capabilities document from the Test Server, 
+triggering the ETS servlets and capturing the request. QGIS will display
+no layers in the list for the Test Server, as none are advertised.
+
+The ETS should now have finished the test session, and the results can
+be viewed in the TestNG file or TEAM Engine.
+
+For future test sessions, you can edit the "CITE Security Client 1.0"
+connection that is saved in QGIS, and change the URL to your new test
+session endpoint.
+
+### WMS 1.1.1 and HTTPS
+
+The instructions are identical to the HTTP-only instructions, except you 
+will use `https` in the URL scheme instead of `http`.
+
+When you click "Connect", a warning dialog will pop up about potential
+certificate problems, especially if you are using a self-signed 
+certificate. In this case you can ignore them and continue the test, as
+it is your own certificate.
