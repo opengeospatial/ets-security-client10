@@ -152,13 +152,6 @@ public class TestServer {
 		sslContextFactory.setKeyStorePassword(jks_password);
 		sslContextFactory.setTrustStorePath(keystore.getAbsolutePath());
 		sslContextFactory.setTrustStorePassword(jks_password);
-		// TODO: Check to see what cipher suites should be used here
-		sslContextFactory.setExcludeCipherSuites("SSL_RSA_WITH_DES_CBC_SHA",
-	        "SSL_DHE_RSA_WITH_DES_CBC_SHA", "SSL_DHE_DSS_WITH_DES_CBC_SHA",
-	        "SSL_RSA_EXPORT_WITH_RC4_40_MD5",
-	        "SSL_RSA_EXPORT_WITH_DES40_CBC_SHA",
-	        "SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA",
-	        "SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA");
 		
 		HttpConfiguration httpsConfig = new HttpConfiguration();
 		httpsConfig.setSecureScheme("https");
