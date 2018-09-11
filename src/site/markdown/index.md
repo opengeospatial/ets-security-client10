@@ -248,6 +248,18 @@ A possible solution is to use the Tomcat servlet-api when running under
 TEAM Engine, and only use the embedded Jetty server when running with
 IDE or JAR.
 
+## Debugging the ETS
+
+If you need to debug a secure client connection and inspect the HTTP or
+HTTPS details, add these to your Java VM arguments:
+
+```
+-DDEBUG=true -Dorg.eclipse.jetty.LEVEL=DEBUG -Djavax.net.debug=ssl,handshake,data
+```
+
+This will print very detailed information about cipher suites and any
+TLS extensions available from the client.
+
 ## About the included sample Java KeyStore
 
 This repository contains a sample Java KeyStore with a self-signed 
