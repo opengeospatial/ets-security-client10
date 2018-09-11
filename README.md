@@ -2,7 +2,27 @@
 
 ### Scope
 
-Describe scope of the test suite.
+This executable test suite (ETS) verifies the conformance of the secure 
+client behavior as the implementation under test (IUT) with respect to 
+the following specification(s):
+
+* \[OGC-17-007] OGC Web Service Security 1.0
+
+Conformance testing is a kind of "black box" testing that examines the 
+externally visible characteristics or behaviors of the IUT while disregarding 
+any implementation details.
+
+Several conformance classes are defined in the principal specification; 
+the ones listed below are covered by this test suite:
+
+* Conformance Class "Common Security" (abstract)
+    - Validation of secure client HTTPS usage
+* Conformance Class "OWS Common"
+    - Only affects Capabilities document presented to secure client
+* Conformance Class "WMS 1.1.1"
+    - Only affects Capabilities document presented to secure client
+* Conformance Class "WMS 1.3.0"
+    - Only affects Capabilities document presented to secure client
 
 Visit the [project documentation website][site docs]
 for more information, including the API documentation. **Note**: project
