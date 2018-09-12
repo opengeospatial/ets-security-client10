@@ -35,7 +35,7 @@ In the following examples I will use these command line parameters:
 
 Example with IDE Test Server emulating WMS 1.1.1:
 
-```sh
+```
 $ curl -ik https://127.0.0.1:10080/6iwyg0phykqnt7mw
 HTTP/1.1 404 Not Found
 Date: Mon, 10 Sep 2018 05:19:31 GMT
@@ -59,7 +59,7 @@ Exception.
 
 Example with IDE Test Server emulating WMS 1.1.1:
 
-```sh
+```
 $ curl -i http://127.0.0.1:10080/6iwyg0phykqnt7mw
 HTTP/1.1 404 Not Found
 Date: Mon, 10 Sep 2018 05:31:35 GMT
@@ -88,7 +88,7 @@ and can execute custom tests accordingly.
 Example with IDE Test Server emulating WMS 1.1.1. Note that some URL
 characters have been escaped for the Bash shell.
 
-```sh
+```
 $ curl -ik https://127.0.0.1:10080/o1zd1z39oemgxpv8\?request\=GetCapabilities\&service\=WMS
 HTTP/1.1 200 OK
 Date: Mon, 10 Sep 2018 05:34:50 GMT
@@ -115,7 +115,7 @@ Server: Jetty(9.4.11.v20180605)
             <DCPType>
                <HTTP>
                   <Get>
-                     <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"          
+                     <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
                                      xlink:href="https://127.0.0.1:10080/o1zd1z39oemgxpv8"
                                      xlink:type="simple"/>
                   </Get>
@@ -132,7 +132,7 @@ Server: Jetty(9.4.11.v20180605)
             <DCPType>
                <HTTP>
                   <Get>
-                     <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"          
+                     <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
                                      xlink:href="https://127.0.0.1:10080/o1zd1z39oemgxpv8"
                                      xlink:type="simple"/>
                   </Get>
@@ -178,7 +178,7 @@ the following details.
 **Name**: CITE Security Client 1.0  
 **URL**: \<URL for your test session, using `http` instead of `https`\>  
 **Authentication Configurations**: No authentication  
-**Referer**: <Leave Blank>  
+**Referer**: \<Leave Blank\>  
 **DPI-Mode**: all  
 
 Leave the remaining checkboxes at their defaults, which should be "blank".
