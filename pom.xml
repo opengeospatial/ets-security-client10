@@ -152,6 +152,12 @@
         <artifactId>buildnumber-maven-plugin</artifactId>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
   </build>
   
   <reporting>
