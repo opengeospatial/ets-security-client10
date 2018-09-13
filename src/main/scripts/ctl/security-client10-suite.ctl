@@ -88,7 +88,8 @@
           </entry>
           <entry key="host">127.0.0.1</entry>
           <entry key="port">10080</entry>
-          <entry key="jks_path">security.jks</entry>
+          <entry key="jks_path">/tmp/ets-security-client10.jks</entry>
+          <entry key="jks_password"><![CDATA[ets-security-client]]></entry>
         </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">
