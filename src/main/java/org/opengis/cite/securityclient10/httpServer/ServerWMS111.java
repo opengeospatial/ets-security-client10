@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Enumeration;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.opengis.cite.servlet.http.HttpServletRequest;
+import org.opengis.cite.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;

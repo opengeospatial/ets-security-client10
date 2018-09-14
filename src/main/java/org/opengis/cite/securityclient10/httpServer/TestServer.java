@@ -13,26 +13,26 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.opengis.cite.servlet.AsyncContext;
+import org.opengis.cite.servlet.ServletException;
+import org.opengis.cite.servlet.http.HttpServlet;
+import org.opengis.cite.servlet.http.HttpServletRequest;
+import org.opengis.cite.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.http.HttpVersion;
-import org.eclipse.jetty.http.pathmap.MappedResource;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.opengis.cite.jetty.http.HttpVersion;
+import org.opengis.cite.jetty.http.pathmap.MappedResource;
+import org.opengis.cite.jetty.server.Connector;
+import org.opengis.cite.jetty.server.Handler;
+import org.opengis.cite.jetty.server.HttpConfiguration;
+import org.opengis.cite.jetty.server.HttpConnectionFactory;
+import org.opengis.cite.jetty.server.SecureRequestCustomizer;
+import org.opengis.cite.jetty.server.Server;
+import org.opengis.cite.jetty.server.ServerConnector;
+import org.opengis.cite.jetty.server.handler.ContextHandlerCollection;
+import org.opengis.cite.jetty.servlet.ServletContextHandler;
+import org.opengis.cite.jetty.servlet.ServletHandler;
+import org.opengis.cite.jetty.servlet.ServletHolder;
+import org.opengis.cite.jetty.util.ssl.SslContextFactory;
 
 /**
  * A wrapper class around the Jetty Server class. This adds functionality for the testing suite for

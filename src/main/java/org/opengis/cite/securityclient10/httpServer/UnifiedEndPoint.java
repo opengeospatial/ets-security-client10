@@ -6,9 +6,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ReadPendingException;
 import java.nio.channels.WritePendingException;
 
-import org.eclipse.jetty.io.Connection;
-import org.eclipse.jetty.io.EndPoint;
-import org.eclipse.jetty.util.Callback;
+import org.opengis.cite.jetty.io.Connection;
+import org.opengis.cite.jetty.io.EndPoint;
+import org.opengis.cite.jetty.util.Callback;
 
 /**
  * Subclass of EndPoint for reading the first few bytes of a client connection to determine if it is

@@ -3,15 +3,15 @@ package org.opengis.cite.securityclient10.httpServer;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSession;
 
-import org.eclipse.jetty.http.HttpVersion;
-import org.eclipse.jetty.io.Connection;
-import org.eclipse.jetty.io.EndPoint;
-import org.eclipse.jetty.io.ssl.SslConnection;
-import org.eclipse.jetty.server.AbstractConnectionFactory;
-import org.eclipse.jetty.server.ConnectionFactory;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.util.annotation.Name;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.opengis.cite.jetty.http.HttpVersion;
+import org.opengis.cite.jetty.io.Connection;
+import org.opengis.cite.jetty.io.EndPoint;
+import org.opengis.cite.jetty.io.ssl.SslConnection;
+import org.opengis.cite.jetty.server.AbstractConnectionFactory;
+import org.opengis.cite.jetty.server.ConnectionFactory;
+import org.opengis.cite.jetty.server.Connector;
+import org.opengis.cite.jetty.util.annotation.Name;
+import org.opengis.cite.jetty.util.ssl.SslContextFactory;
 
 /**
  * Wrapper class for SslConnectionFactory to implement a read ahead (peek) on a client connection, to

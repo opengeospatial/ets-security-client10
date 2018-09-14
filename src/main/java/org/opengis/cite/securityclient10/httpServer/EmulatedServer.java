@@ -2,8 +2,8 @@ package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.opengis.cite.servlet.http.HttpServletRequest;
+import org.opengis.cite.servlet.http.HttpServletResponse;
 
 public class EmulatedServer {
 

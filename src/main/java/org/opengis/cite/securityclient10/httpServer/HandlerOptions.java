@@ -1,6 +1,6 @@
 package org.opengis.cite.securityclient10.httpServer;
 
-import javax.servlet.http.HttpServletRequest;
+import org.opengis.cite.servlet.http.HttpServletRequest;
 
 /**
  * A class that encapsulates the options from the test runner, which are used to determine the type and
