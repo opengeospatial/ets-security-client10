@@ -86,7 +86,7 @@
           <entry key="service_type">
             <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
           </entry>
-          <entry key="host">127.0.0.1</entry>
+          <entry key="host">0.0.0.0</entry>
           <entry key="port">10080</entry>
           <entry key="jks_path">/tmp/ets-security-client10.jks</entry>
           <entry key="jks_password"><![CDATA[ets-security-client]]></entry>
