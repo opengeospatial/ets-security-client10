@@ -263,18 +263,8 @@ public class TestNGController implements TestSuiteController {
             Element entry = (Element) entries.item(i);
             args.put(entry.getAttribute("key"), entry.getTextContent());
         }
-        if (!args.containsKey(TestRunArg.Service_Type.toString())) {
-            throw new IllegalArgumentException(
-                    String.format("Missing argument: '%s' must be present.", TestRunArg.Service_Type));
-        }
-        if (!args.containsKey(TestRunArg.JKS_Path.toString())) {
-            throw new IllegalArgumentException(
-                    String.format("Missing argument: '%s' must be present.", TestRunArg.JKS_Path));
-        }
-        if (!args.containsKey(TestRunArg.JKS_Password.toString())) {
-            throw new IllegalArgumentException(
-                    String.format("Missing argument: '%s' must be present.", TestRunArg.JKS_Password));
-        }
+        
+        TestRunArgValidator.validateMap(args);
         
         return args;
     }

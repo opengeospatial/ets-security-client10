@@ -40,48 +40,24 @@ public class SuiteFixtureListener implements ISuiteListener {
         Map<String, String> params = suite.getXmlSuite().getParameters();
         TestSuiteLogger.log(Level.CONFIG, "Suite parameters\n" + params.toString());
         
-        // Test Server Emulated Service Type
-        String serviceTypeParam = params.get(TestRunArg.Service_Type.toString());
+        TestRunArgValidator.validateMap(params);
         
-        if ((null == serviceTypeParam) || serviceTypeParam.isEmpty()) {
-            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.Service_Type.toString());
-        }
-
-        suite.setAttribute(SuiteAttribute.TEST_SERVICE_TYPE.getName(), serviceTypeParam);
+        suite.setAttribute(SuiteAttribute.TEST_SERVICE_TYPE.getName(), 
+        		params.get(TestRunArg.Service_Type.toString()));
         
-        // Test Server Host address
-        String hostParam = params.get(TestRunArg.Host.toString());
+        suite.setAttribute(SuiteAttribute.TEST_HOST.getName(), 
+        		params.get(TestRunArg.Host.toString()));
         
-        if ((null == hostParam) || hostParam.isEmpty()) {
-            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.Host.toString());
-        }
+        suite.setAttribute(SuiteAttribute.TEST_PORT.getName(), 
+        		Integer.parseInt(params.get(TestRunArg.Port.toString())));
         
-        suite.setAttribute(SuiteAttribute.TEST_HOST.getName(), hostParam);
+        suite.setAttribute(SuiteAttribute.TEST_JKS_PATH.getName(), 
+        		params.get(TestRunArg.JKS_Path.toString()));
         
-        // Test Server Port
-        Integer portParam = Integer.parseInt(params.get(TestRunArg.Port.toString()));
-        suite.setAttribute(SuiteAttribute.TEST_PORT.getName(), portParam);
+        suite.setAttribute(SuiteAttribute.TEST_JKS_PASSWORD.getName(), 
+        		params.get(TestRunArg.JKS_Password.toString()));
         
-        // Java Keystore Path
-        String jksParam = params.get(TestRunArg.JKS_Path.toString());
-        
-        if ((null == jksParam) || jksParam.isEmpty()) {
-            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.JKS_Path.toString());
-        }
-        
-        suite.setAttribute(SuiteAttribute.TEST_JKS_PATH.getName(), jksParam);
-        
-     // Java Keystore Password
-        String jksPassParam = params.get(TestRunArg.JKS_Password.toString());
-        
-        if ((null == jksPassParam) || jksPassParam.isEmpty()) {
-            throw new IllegalArgumentException("Required test run parameter not found: " + TestRunArg.JKS_Password.toString());
-        }
-        
-        suite.setAttribute(SuiteAttribute.TEST_JKS_PASSWORD.getName(), jksPassParam);
-        
-        // Secure Client Requests Document Path
-        String iutParam = params.get(TestRunArg.IUT.toString());
-        suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), iutParam);
+        suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), 
+        		params.get(TestRunArg.IUT.toString()));
     }
 }
