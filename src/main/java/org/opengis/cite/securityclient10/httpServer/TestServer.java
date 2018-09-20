@@ -105,16 +105,21 @@ public class TestServer {
                     options.saveRequest(request);
                     
                     // Return the proper document to the client
+                    // TODO: Support other conformance classes and OGC Web Service types
                     if (options.getServiceType().equals("wms111")) {
                     	emulated = new ServerWMS111();
+                    } else {
+                    	System.err.println("Unknown service type for emulation: " + options.getServiceType());
                     }
                     
-                    try {
-						emulated.handleRequest(request, response);
-					} catch (IOException e) {
-						// When an IO Exception occurs trying to build a response
-						e.printStackTrace();
-					}
+                    if (emulated != null) {
+                    	try {
+    						emulated.handleRequest(request, response);
+    					} catch (IOException e) {
+    						// When an IO Exception occurs trying to build a response
+    						e.printStackTrace();
+    					}
+                    }
                     
                     // Mark path handler as no longer waiting for request
                     options.setReceived(true);
@@ -140,7 +145,7 @@ public class TestServer {
 		jettyServer.setStopAtShutdown(true);
 		jettyServer.setStopTimeout(1);
 		
-		// Set up HTTPS		
+		// Set up HTTPS
 		// Check for Keystore
 		File keystore = new File(jks_path);
 		if (!keystore.exists()) {
