@@ -48,9 +48,9 @@
                    <h4 style="margin-bottom: 0.5em">Service Type to Emulate</h4>
                  </label>
                  <select id="service-type" name="service-type">
-                    <option value="wms-111">WMS 1.1.1</option>
-                    <option value="wms-13">WMS 1.3.0</option>
-                    <option value="wps-10">WPS 1.0.0</option>
+                    <option value="wms111">WMS 1.1.1</option>
+                    <option value="wms13">WMS 1.3.0</option>
+                    <option value="wps10">WPS 1.0.0</option>
                  </select>
                </p>
                <p>Based on the Service Type selected, the following Conformance Class will apply:</p>
@@ -69,9 +69,9 @@
                   var activeElement = document.getElementById("active-conformance-class");
                   document.getElementById("service-type").addEventListener("change", function(e) {
                     var element = e.target;
-                    if (element.value === "wms-111") {
+                    if (element.value === "wms111") {
                       activeElement.innerText = "Conformance Class WMS 1.1.1";
-                    } else if (element.value === "wms-13") {
+                    } else if (element.value === "wms13") {
                       activeElement.innerText = "Conformance Class WMS 1.3.0";
                     } else {
                       activeElement.innerText = "Conformance Class OWS Common";
