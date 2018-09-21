@@ -81,14 +81,8 @@ The latest test suite release are usually available at the [beta testing facilit
 You can also [build and deploy](https://github.com/opengeospatial/teamengine) the test 
 harness yourself and use a local installation.
 
-**Please Note**: In the current version of this repository there is a 
-conflict in the Java servlet-api used by Tomcat (the host application
-server for TEAM Engine) and the servlet-api used by Jetty (embedded in
-this repository to capture HTTP requests). 
-
-A possible solution is to use the Tomcat servlet-api when running under
-TEAM Engine, and only use the embedded Jetty server when running with
-IDE or JAR.
+A detailed [guide on setting up TEAM Engine](src/site/markdown/team_setup.md) 
+is included in the site docs.
 
 ### How to contribute
 
