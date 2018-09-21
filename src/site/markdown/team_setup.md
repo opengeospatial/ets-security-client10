@@ -181,7 +181,7 @@ A base directory must be set up for TEAM Engine to contain the setup
 scripts for the test suites.
 
 ```sh
-$ apt install unzip
+$ sudo apt install unzip
 $ sudo mkdir /opt/te_base
 $ sudo unzip teamengine-console/target/teamengine-console-5.3-base.zip -d /opt/te_base
 $ sudo chown -R tomcat:tomcat /opt/te_base
@@ -198,7 +198,7 @@ $ sudo unzip teamengine-web/target/teamengine-common-libs.zip -d /opt/tomcat7/li
 Then we install the WAR file to Tomcat's webapps:
 
 ```sh
-$ cp teamengine-web/target/teamengine.war /opt/tomcat7/webapps/.
+$ sudo cp teamengine-web/target/teamengine.war /opt/tomcat7/webapps/.
 ```
 
 Tomcat, if running, will automatically extract the WAR file. If Tomcat is
