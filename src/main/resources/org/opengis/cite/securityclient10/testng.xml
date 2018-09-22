@@ -5,6 +5,7 @@
   <parameter name="host" value=""/>
   <parameter name="port" value=""/>
   <parameter name="jks_path" value=""/>
+  <parameter name="jks_password" value=""/>
 
   <listeners>
     <listener class-name="org.opengis.cite.securityclient10.TestRunListener" />
