@@ -126,7 +126,7 @@ installed, we must customize the CTL script for Security Client 1.0 to
 support our keystore.
 
 Edit the file `/opt/te_base/scripts/security-client10/1.0/ctl/security-client10-suite.ctl`,
-and change the text contents of the following `<Entry>` elements:
+and change the text contents of the following `<xsl:variable>` elements:
 
 * `host` should stay as `0.0.0.0`
 * `port` can stay as `10080`

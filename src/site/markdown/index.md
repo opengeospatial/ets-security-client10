@@ -113,6 +113,21 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       determined).</td>
     </tr>
     <tr>
+      <td>path</td>
+      <td>String</td>
+      <td>O</td>
+      <td>
+        <p>URL Path at which the Test Server will listen. For example,
+      <code>test-session</code> would result in the Test Server creating 
+      a servlet for <code>https://host:port/test-session</code>.</p>
+      <p>If left blank, a random string will be generated.</p>
+      <p>When used with TEAM Engine, the CTL script will automatically
+        fill in a path such that the test session web page can inform
+        the tester of the URL <em>before</em> starting the test session.
+      </p>
+      </td>
+    </tr>
+    <tr>
       <td>JKS_path</td>
       <td>String</td>
       <td>M</td>

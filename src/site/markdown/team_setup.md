@@ -253,7 +253,7 @@ $ sudo chown -R tomcat:tomcat /opt/tomcat7/webapps/teamengine/WEB-INF/lib
 Finally, the system administrator **must** customize the CTL script for
 their installation. It is located at 
 `/opt/te_base/scripts/security-client10/1.0/ctl/security-client10-suite.ctl`.
-In this file, you will have to scroll down to the `<properties>` element,
+In this file, you will have to scroll down to the `<xsl:variable>` elements,
 and edit the `host`, `port`, `jks_path`, and `jks_password` parameters.
 
 You will probably want the `host` parameter to be `0.0.0.0` or a specific

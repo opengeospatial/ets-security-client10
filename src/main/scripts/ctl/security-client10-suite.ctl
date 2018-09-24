@@ -6,28 +6,34 @@
   xmlns:tec="java:com.occamlab.te.TECore"
   xmlns:tng="java:org.opengis.cite.securityclient10.TestNGController">
 
-  <ctl:function name="tns:run-ets-security-client10">
+<ctl:function name="tns:run-ets-security-client10">
     <ctl:param name="testRunArgs">A Document node containing test run arguments (as XML properties).</ctl:param>
     <ctl:param name="outputDir">The directory in which the test results will be written.</ctl:param>
     <ctl:return>The test results as a Source object (root node).</ctl:return>
     <ctl:description>Runs the security-client10 ${version} test suite.</ctl:description>
     <ctl:code>
-      <xsl:variable name="controller" select="tng:new($outputDir)" />
-      <xsl:copy-of select="tng:doTestRun($controller, $testRunArgs)" />
+        <xsl:variable name="controller" select="tng:new($outputDir)" />
+        <xsl:copy-of select="tng:doTestRun($controller, $testRunArgs)" />
     </ctl:code>
-  </ctl:function>
+ </ctl:function>
 
-   <ctl:suite name="tns:ets-security-client10-${version}">
-     <ctl:title>Test suite: ets-security-client10</ctl:title>
-     <ctl:description>Describe scope of testing.</ctl:description>
-     <ctl:starting-test>tns:Main</ctl:starting-test>
-   </ctl:suite>
+<ctl:suite name="tns:ets-security-client10-${version}">
+    <ctl:title>Test suite: ets-security-client10</ctl:title>
+    <ctl:description>Describe scope of testing.</ctl:description>
+    <ctl:starting-test>tns:Main</ctl:starting-test>
+</ctl:suite>
  
-   <ctl:test name="tns:Main">
-      <ctl:assertion>The test subject satisfies all applicable constraints.</ctl:assertion>
-    <ctl:code>
-        <xsl:variable name="form-data">
-           <ctl:form method="POST" width="800" height="600" xmlns="http://www.w3.org/1999/xhtml">
+<ctl:test name="tns:Main">
+    <ctl:assertion>The test subject satisfies all applicable constraints.</ctl:assertion>
+        <ctl:code>
+            <!--  TEAM Engine Administrator: Edit these variables -->
+            <xsl:variable name="host">0.0.0.0</xsl:variable>
+            <xsl:variable name="port">10080</xsl:variable>
+            <xsl:variable name="jks_path">/root/ets-security-client10.jks</xsl:variable>
+            <xsl:variable name="jks_password"><![CDATA[ets-security-client]]></xsl:variable>
+    
+            <xsl:variable name="form-data">
+            <ctl:form method="POST" width="800" height="600" xmlns="http://www.w3.org/1999/xhtml">
              <h2>Test suite: ets-security-client10</h2>
              <div style="background:#F0F8FF" bgcolor="#F0F8FF">
                <p>The client implementation under test is checked against the following specification(s):</p>
@@ -52,16 +58,22 @@
                     <option value="wms13">WMS 1.3.0</option>
                     <option value="wps10">WPS 1.0.0</option>
                  </select>
+                 <input type="hidden" id="path" name="path" value="" />
                </p>
                <p>Based on the Service Type selected, the following Conformance Class will apply:</p>
                <p id="active-conformance-class">Conformance Class WMS 1.1.1</p>
+               <p>When the test starts, your session URL will be as follows.</p>
+               <h4 id="test-endpoint"></h4>
              </fieldset>
              <p>
                <input class="form-button" type="submit" value="Start"/> | 
                <input class="form-button" type="reset" value="Clear"/>
              </p>
              
-             <script><![CDATA[
+             <script>
+             var host = "<xsl:value-of select="$host" />";
+             var port = "<xsl:value-of select="$port" />";
+             <![CDATA[
                 // This script will update the active conformance class
                 // text based on the service type selected in the
                 // select element.
@@ -77,6 +89,13 @@
                       activeElement.innerText = "Conformance Class OWS Common";
                     }               
                   });
+                  
+                  // Generate nonce for test server path
+                  var nonce = btoa(Math.random()).substr(5,16);
+                  document.getElementById("path").value = nonce;
+                  
+                  // Display test endpoint URL
+                  document.getElementById("test-endpoint").innerText = "https://" + host + ":" + port + "/" + nonce;
                 }
              ]]></script>
            </ctl:form>
@@ -86,10 +105,13 @@
           <entry key="service_type">
             <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
           </entry>
-          <entry key="host">0.0.0.0</entry>
-          <entry key="port">10080</entry>
-          <entry key="jks_path">/root/ets-security-client10.jks</entry>
-          <entry key="jks_password"><![CDATA[ets-security-client]]></entry>
+          <entry key="host"><xsl:value-of select="$host" /></entry>
+          <entry key="port"><xsl:value-of select="$port" /></entry>
+          <entry key="path">
+            <xsl:value-of select="$form-data/values/value[@key='path']"/>
+          </entry>
+          <entry key="jks_path"><xsl:value-of select="$jks_path" /></entry>
+          <entry key="jks_password"><xsl:value-of select="$jks_password" /></entry>
         </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">
@@ -129,18 +151,18 @@ Test method <xsl:value-of select="./@name"/>: <xsl:value-of select=".//message"/
         <ctl:skipped />
       </xsl:if>
     </ctl:code>
-   </ctl:test>
+</ctl:test>
 
-  <xsl:template name="tns:testng-report">
+ <xsl:template name="tns:testng-report">
     <xsl:param name="results" />
     <xsl:param name="outputDir" />
     <xsl:variable name="stylesheet" select="tec:findXMLResource($te:core, '/testng-report.xsl')" />
     <xsl:variable name="reporter" select="saxon:compile-stylesheet($stylesheet)" />
     <xsl:variable name="report-params" as="node()*">
-      <xsl:element name="testNgXslt.outputDir">
-        <xsl:value-of select="concat($outputDir, '/html')" />
-      </xsl:element>
+        <xsl:element name="testNgXslt.outputDir">
+            <xsl:value-of select="concat($outputDir, '/html')" />
+        </xsl:element>
     </xsl:variable>
     <xsl:copy-of select="saxon:transform($reporter, $results, $report-params)" />
-  </xsl:template>
+</xsl:template>
 </ctl:package>

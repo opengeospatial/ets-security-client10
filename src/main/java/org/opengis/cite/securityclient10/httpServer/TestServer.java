@@ -75,7 +75,7 @@ public class TestServer {
 		@Override
 		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             final AsyncContext ctxt = request.startAsync();
-            // Remove the leading slash from the path to determine the nonce
+            // Remove the leading slash from the path to determine the registered path
             String path = request.getServletPath().substring(1);
             ctxt.start(new Runnable() {
                 private EmulatedServer emulated;
@@ -188,13 +188,13 @@ public class TestServer {
 	}
 	
 	/**
-	 * Retrieve the HTTP Servlet Request objects for a registered nonce
+	 * Retrieve the HTTP Servlet Request objects for a registered path
 	 * 
-	 * @param nonce String of the nonce to retrieve from the stored Handlers
+	 * @param path String of the path to retrieve from the stored Handlers
 	 * @return Zero or more HttpServletRequests
 	 */
-	public RequestRepresenter getRequests(String nonce) {
-		HandlerOptions options = handlerBlocks.get(nonce);
+	public RequestRepresenter getRequests(String path) {
+		HandlerOptions options = handlerBlocks.get(path);
 		if (options == null) {
 			return null;
 		} else {
@@ -262,16 +262,16 @@ public class TestServer {
 	/**
 	 * Block the thread until a request is received, or the
 	 * timeout is hit.
-	 * @param nonce The unique code associated with the thread created to wait for the servlet activation
+	 * @param path The unique code associated with the thread created to wait for the servlet activation
 	 * @throws InterruptedException For any errors caused by the waiting thread being interrupted 
 	 * @throws ExecutionException For any errors caused by the waiting thread having an exception
 	 */
-	public void waitForRequest(String nonce) throws InterruptedException, ExecutionException {
-		HandlerOptions options = handlerBlocks.get(nonce);
+	public void waitForRequest(String path) throws InterruptedException, ExecutionException {
+		HandlerOptions options = handlerBlocks.get(path);
 		options.setReceived(false);
 		
 		ExecutorService executor = Executors.newSingleThreadExecutor();
-		Future<String> future = executor.submit(new WaitTask(nonce));
+		Future<String> future = executor.submit(new WaitTask(path));
 		
 		try {
             System.out.println("Started wait.");
@@ -292,19 +292,19 @@ public class TestServer {
 	 * TODO: Return the request data to waitForRequest
 	 */
 	class WaitTask implements Callable<String> {
-		private String nonce;
+		private String path;
 		
 		/**
-		 * @param nonce The unique code associated with this waiting thread task and the servlet
+		 * @param path The unique path associated with this waiting thread task and the servlet
 		 */
-		public WaitTask(String nonce) {
-			this.nonce = nonce;
+		public WaitTask(String path) {
+			this.path = path;
 		}
 
 		@Override
 		public String call() throws Exception {
 			System.out.println("Waiting…");
-			HandlerOptions options = handlerBlocks.get(nonce);
+			HandlerOptions options = handlerBlocks.get(path);
 			while (!options.getReceived()) {
 				Thread.sleep(1000);
 			}

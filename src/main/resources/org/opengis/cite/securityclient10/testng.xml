@@ -4,6 +4,7 @@
   <parameter name="service_type" value=""/>
   <parameter name="host" value=""/>
   <parameter name="port" value=""/>
+  <parameter name="path" value=""/>
   <parameter name="jks_path" value=""/>
   <parameter name="jks_password" value=""/>
 

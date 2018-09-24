@@ -22,6 +22,11 @@ public enum TestRunArg {
 	Port,
 	
 	/**
+	 * A string for the URL path fragment that will be the test endpoint 
+	 */
+	Path,
+	
+	/**
 	 * A path to a local file containing the Java KeyStore
 	 */
 	JKS_Path,

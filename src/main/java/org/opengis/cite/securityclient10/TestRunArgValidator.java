@@ -44,6 +44,9 @@ public class TestRunArgValidator {
         // Test Server Port
         Integer portParam = Integer.parseInt(params.get(TestRunArg.Port.toString()));
         
+        // Test Server Path
+        String pathParam = params.get(TestRunArg.Path.toString());
+        
         // Java Keystore Path
         String jksParam = params.get(TestRunArg.JKS_Path.toString());
         

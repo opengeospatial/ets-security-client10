@@ -136,10 +136,19 @@ public class TestNGController implements TestSuiteController {
     public String getCode() {
         return etsProperties.getProperty("ets-code");
     }
-
-    @Override
-    public String getVersion() {
-        return etsProperties.getProperty("ets-version");
+    
+    /**
+     * Generate a random 16 character string
+     * @return String, 16 characters
+     */
+    public String getNonce() {
+        String symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        char[] bytes = new char[16];
+        for (int i = 0; i < bytes.length; i++) {
+			bytes[i] = symbols.charAt(random.nextInt(symbols.length()));
+		}
+        return String.valueOf(bytes);
     }
     
     /**
@@ -176,6 +185,11 @@ public class TestNGController implements TestSuiteController {
     public String getTitle() {
         return etsProperties.getProperty("ets-title");
     }
+    
+    @Override
+    public String getVersion() {
+        return etsProperties.getProperty("ets-version");
+    }
 
     @Override
     public Source doTestRun(Document testRunArgs) throws Exception {
@@ -200,28 +214,27 @@ public class TestNGController implements TestSuiteController {
         TestServer server = getServer(args.get("host"), Integer.parseInt(args.get("port")),
         		args.get("jks_path"), args.get("jks_password"));
     	
-        // Generate nonce for this test session, which will be used as the unique servlet address
-        String symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
-        SecureRandom random = new SecureRandom();
-        char[] bytes = new char[16];
-        for (int i = 0; i < bytes.length; i++) {
-			bytes[i] = symbols.charAt(random.nextInt(symbols.length()));
-		}
-        String nonce = String.valueOf(bytes);
+        String path;
+        if (args.get("path") == "") {
+        	// Generate nonce for this test session, which will be used as the unique servlet address
+            path = this.getNonce();
+        } else {
+        	path = args.get("path");
+        }
         
-        // Register a servlet handler with the nonce and service type
-        server.registerHandler(nonce, serviceType);
+        // Register a servlet handler with the path and service type
+        server.registerHandler(path, serviceType);
         
         // Print out the servlet test path for the test user
         System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s", 
-        		args.get("host"), args.get("port"), nonce));
+        		args.get("host"), args.get("port"), path));
     	
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
-    	server.waitForRequest(nonce);
+    	server.waitForRequest(path);
     	
     	// Retrieve the request(s) from the secure client
-    	RequestRepresenter requests = server.getRequests(nonce);
+    	RequestRepresenter requests = server.getRequests(path);
     	
     	// Save to file
     	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "requests.xml");
@@ -234,7 +247,7 @@ public class TestNGController implements TestSuiteController {
     	testRunArgs.getDocumentElement().appendChild(iutEntry);
     	
     	// Release the servlet as the path is not needed anymore
-    	server.unregisterHandler(nonce);
+    	server.unregisterHandler(path);
     	
         return executor.execute(testRunArgs);
     }
