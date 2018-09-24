@@ -237,7 +237,8 @@ public class TestNGController implements TestSuiteController {
     	RequestRepresenter requests = server.getRequests(path);
     	
     	// Save to file
-    	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "requests.xml");
+    	String nonce = this.getNonce();
+    	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "requests-" + nonce + ".xml");
     	requests.saveToPath(requestsFilePath);
     	
     	// Add path to file as a test run property
