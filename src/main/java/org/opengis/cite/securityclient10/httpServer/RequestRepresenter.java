@@ -39,22 +39,18 @@ public class RequestRepresenter {
 	private TransformerFactory transformerFactory;
 	private Transformer transformer;
 	
-	public RequestRepresenter() {
+	/**
+	 * Create a new RequestRepresenter
+	 * @throws TransformerConfigurationException Exception if a new transformer could not be created
+	 * @throws ParserConfigurationException Exception if new document builder could not be created
+	 */
+	public RequestRepresenter() throws TransformerConfigurationException, ParserConfigurationException {
 		// Create factories and builders and re-use them
 		this.documentFactory = DocumentBuilderFactory.newInstance();
-		
-		try {
-			this.documentBuilder = documentFactory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			throw new RuntimeException(e);
-		}
+		this.documentBuilder = documentFactory.newDocumentBuilder();
 		
 		this.transformerFactory = TransformerFactory.newInstance();
-		try {
-			this.transformer = transformerFactory.newTransformer();
-		} catch (TransformerConfigurationException e) {
-			throw new RuntimeException(e);
-		}
+		this.transformer = transformerFactory.newTransformer();
 		
 		// Adjust defaults for XML document-to-String output
 		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -94,8 +90,9 @@ public class RequestRepresenter {
 	 * text content. attributes on the Request element may be empty, but should still be specified.
 	 * 
 	 * @param request Request from client to serialize as XML
+	 * @throws IOException Request Reader exception
 	 */
-	public void serializeRequest(HttpServletRequest request) {
+	public void serializeRequest(HttpServletRequest request) throws IOException {
 		Element rootElement = this.requestsDocument.getDocumentElement();
 		
 		Element requestElement = this.requestsDocument.createElement("Request");
@@ -119,38 +116,31 @@ public class RequestRepresenter {
 		body.setAttribute("contentEncoding", request.getCharacterEncoding());
 		body.setAttribute("contentLength", String.valueOf(request.getContentLength()));
 		String bodyContent = "";
-		try {
-			bodyContent = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		bodyContent = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
 		body.setTextContent(bodyContent);
 		requestElement.appendChild(body);
 	}
 	
-	public void saveToPath(Path path) {		
+	/**
+	 * Save requests to a document at a path
+	 * @param path Filesystem path to save requests document
+	 * @throws TransformerException Exception transforming requestsDocument to Stream
+	 * @throws FileNotFoundException Exception if destination could not be opened for writing
+	 */
+	public void saveToPath(Path path) throws TransformerException, FileNotFoundException {		
 		// Convert to String
 		StringWriter stringWriter = new StringWriter();
 		
-		try {
-			this.transformer.transform(new DOMSource(this.requestsDocument), new StreamResult(stringWriter));
-		} catch (TransformerException e) {
-			throw new RuntimeException(e);
-		}
+		this.transformer.transform(new DOMSource(this.requestsDocument), new StreamResult(stringWriter));
 		
 		String xmlDoc = stringWriter.toString();
 		
 		System.out.println("Writing to file: " + path.toString());
 		
 		// Open file and write string
-		try {
-			PrintWriter outputFile = new PrintWriter(path.toAbsolutePath().toString());
-			outputFile.print(xmlDoc);
-			outputFile.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		PrintWriter outputFile = new PrintWriter(path.toAbsolutePath().toString());
+		outputFile.print(xmlDoc);
+		outputFile.close();
 		
 	}
 }

@@ -47,23 +47,16 @@ public class ServerWMS111 extends EmulatedServer {
 	 * 
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
 	 * declaration.
+	 * @throws ParserConfigurationException Exception if new document builder could not be created
+	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWMS111() {
+	public ServerWMS111() throws ParserConfigurationException, TransformerConfigurationException {
 		// Create factories and builders and re-use them
 		this.documentFactory = DocumentBuilderFactory.newInstance();
-		
-		try {
-			this.documentBuilder = documentFactory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			throw new RuntimeException(e);
-		}
+		this.documentBuilder = documentFactory.newDocumentBuilder();
 		
 		this.transformerFactory = TransformerFactory.newInstance();
-		try {
-			this.transformer = transformerFactory.newTransformer();
-		} catch (TransformerConfigurationException e) {
-			throw new RuntimeException(e);
-		}
+		this.transformer = transformerFactory.newTransformer();
 		
 		// Adjust defaults for XML document-to-String output
 		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -77,8 +70,9 @@ public class ServerWMS111 extends EmulatedServer {
 	 * @param request Request from client
 	 * @param response Response to build to send back to client
 	 * @throws IOException Exception raised when a response writer could not be created
+	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
 		System.out.println("Building WMS 1.1.1 Response");
 		System.out.println("Query Params: " + request.getQueryString());
 		
@@ -136,8 +130,9 @@ public class ServerWMS111 extends EmulatedServer {
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
 	 * @throws IOException Exception raised when a response writer could not be created
+	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
 		response.setContentType("application/vnd.ogc.wms_xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
@@ -266,8 +261,9 @@ public class ServerWMS111 extends EmulatedServer {
 	 * @param reason String with reason for Service Exception.
 	 * @param response Response to build to send back to client
 	 * @throws IOException Exception raised when a response writer could not be created
+	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildException(String reason, HttpServletResponse response) throws IOException {
+	public void buildException(String reason, HttpServletResponse response) throws IOException, TransformerException {
 		response.setContentType("application/vnd.ogc.se_xml");
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		
@@ -298,8 +294,9 @@ public class ServerWMS111 extends EmulatedServer {
 	 * @param document XML document to convert
 	 * @param doctype XML document type that will be added to String representation
 	 * @return String containing the XML document
+	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	private String documentToString(Document document, DocumentType doctype) {
+	private String documentToString(Document document, DocumentType doctype) throws TransformerException {
 		StringWriter stringWriter = new StringWriter();
 		
 		// Add the DOCTYPE parameters, as long as they are not null
@@ -311,11 +308,7 @@ public class ServerWMS111 extends EmulatedServer {
 			this.transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
 		}
 		
-		try {
-			this.transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
-		} catch (TransformerException e) {
-			throw new RuntimeException(e);
-		}
+		this.transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
 		return stringWriter.toString();
 	}
 }

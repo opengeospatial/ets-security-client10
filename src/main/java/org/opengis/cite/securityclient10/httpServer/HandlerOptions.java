@@ -1,5 +1,10 @@
 package org.opengis.cite.securityclient10.httpServer;
 
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+
 import org.opengis.cite.servlet.http.HttpServletRequest;
 
 /**
@@ -27,7 +32,7 @@ public class HandlerOptions {
 	 */
 	private RequestRepresenter requests;
 	
-	public HandlerOptions(String type) {
+	public HandlerOptions(String type) throws TransformerConfigurationException, ParserConfigurationException {
 		this.serviceType = type;
 		this.requestReceived = false;
 		this.requests = new RequestRepresenter();
@@ -62,8 +67,9 @@ public class HandlerOptions {
 	 * array.
 	 * 
 	 * @param request Request from client to serialize
+	 * @throws IOException Exception serializing a request to a representer
 	 */
-	public void saveRequest(HttpServletRequest request) {
+	public void saveRequest(HttpServletRequest request) throws IOException {
 		requests.serializeRequest(request);
 	}
 	

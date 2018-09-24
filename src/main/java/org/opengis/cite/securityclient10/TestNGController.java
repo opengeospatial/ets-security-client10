@@ -1,6 +1,7 @@
 package org.opengis.cite.securityclient10;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -11,15 +12,18 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 
 import org.opengis.cite.securityclient10.httpServer.RequestRepresenter;
 import org.opengis.cite.securityclient10.httpServer.TestServer;
 import org.opengis.cite.securityclient10.util.TestSuiteLogger;
+import org.opengis.cite.servlet.ServletException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -160,17 +164,13 @@ public class TestNGController implements TestSuiteController {
      * @param jks_path Path to the Java KeyStore
      * @param jks_password Password to unlock the KeyStore
      * @return A TestServer instance that is the embedded Jetty web server.
+     * @throws Exception Exception if Test Server could not be initialized and started
      */
-    public static TestServer getServer(String address, int port, String jks_path, String jks_password) {
+    public static TestServer getServer(String address, int port, String jks_path, String jks_password) throws Exception {
     	// Use double-checked locking to prevent race condition.
     	if (null == httpServer) {
     		if (httpServer == null) {
-    			try {
-					httpServer = new TestServer(address, port, jks_path, jks_password);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+    			httpServer = new TestServer(address, port, jks_path, jks_password);
     		}
     	}
     	
@@ -192,7 +192,7 @@ public class TestNGController implements TestSuiteController {
     }
 
     @Override
-    public Source doTestRun(Document testRunArgs) throws Exception {
+    public Source doTestRun(Document testRunArgs) {
     	Map<String, String> args = validateTestRunArgs(testRunArgs);
     	
     	// Print out information on which conformance classes will be tested
@@ -211,8 +211,15 @@ public class TestNGController implements TestSuiteController {
     	}
     	System.out.println("");
         
-        TestServer server = getServer(args.get("address"), Integer.parseInt(args.get("port")),
-        		args.get("jks_path"), args.get("jks_password"));
+        TestServer server;
+		try {
+			server = getServer(args.get("address"), Integer.parseInt(args.get("port")),
+					args.get("jks_path"), args.get("jks_password"));
+		} catch (Exception e) {
+			// If Test Server could not be started, skip to tests
+			e.printStackTrace();
+			return executor.execute(testRunArgs);
+		}
     	
         String path;
         if (args.get("path") == "") {
@@ -223,7 +230,13 @@ public class TestNGController implements TestSuiteController {
         }
         
         // Register a servlet handler with the path and service type
-        server.registerHandler(path, serviceType);
+        try {
+			server.registerHandler(path, serviceType);
+		} catch (Exception e) {
+			// If handler could not be created, skip to tests
+			e.printStackTrace();
+			return executor.execute(testRunArgs);
+		}
         
         // Print out the servlet test path for the test user
         System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s", 
@@ -231,7 +244,13 @@ public class TestNGController implements TestSuiteController {
     	
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
-    	server.waitForRequest(path);
+    	try {
+			server.waitForRequest(path);
+		} catch (InterruptedException | ExecutionException e) {
+			// If the waiting thread has any errors, skip to tests
+			e.printStackTrace();
+			return executor.execute(testRunArgs);
+		}
     	
     	// Retrieve the request(s) from the secure client
     	RequestRepresenter requests = server.getRequests(path);
@@ -239,7 +258,13 @@ public class TestNGController implements TestSuiteController {
     	// Save to file
     	String nonce = this.getNonce();
     	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "requests-" + nonce + ".xml");
-    	requests.saveToPath(requestsFilePath);
+    	try {
+			requests.saveToPath(requestsFilePath);
+		} catch (FileNotFoundException | TransformerException e) {
+			// If the requests could not be saved to the temporary file, skip to tests
+			e.printStackTrace();
+			return executor.execute(testRunArgs);
+		}
     	
     	// Add path to file as a test run property
     	Element iutEntry = testRunArgs.createElement("entry");
@@ -248,7 +273,13 @@ public class TestNGController implements TestSuiteController {
     	testRunArgs.getDocumentElement().appendChild(iutEntry);
     	
     	// Release the servlet as the path is not needed anymore
-    	server.unregisterHandler(path);
+    	try {
+			server.unregisterHandler(path);
+		} catch (ServletException e) {
+			// If the handler could not be unregistered, skip to tests
+			e.printStackTrace();
+			return executor.execute(testRunArgs);
+		}
     	
         return executor.execute(testRunArgs);
     }

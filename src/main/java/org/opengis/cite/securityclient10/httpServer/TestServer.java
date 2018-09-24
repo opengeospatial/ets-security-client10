@@ -13,6 +13,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.opengis.cite.servlet.AsyncContext;
 import org.opengis.cite.servlet.ServletException;
 import org.opengis.cite.servlet.http.HttpServlet;
@@ -102,12 +106,22 @@ public class TestServer {
                     HandlerOptions options = handlerBlocks.get(path);
                     
                     // Save request
-                    options.saveRequest(request);
+                    try {
+						options.saveRequest(request);
+					} catch (IOException e1) {
+						// When the request could not be serialized, ignore it and leave the 
+						// document empty.
+						e1.printStackTrace();
+					}
                     
                     // Return the proper document to the client
                     // TODO: Support other conformance classes and OGC Web Service types
                     if (options.getServiceType().equals("wms111")) {
-                    	emulated = new ServerWMS111();
+                    	try {
+							emulated = new ServerWMS111();
+						} catch (TransformerConfigurationException | ParserConfigurationException e) {
+							emulated = null;
+						}
                     } else {
                     	System.err.println("Unknown service type for emulation: " + options.getServiceType());
                     }
@@ -115,7 +129,7 @@ public class TestServer {
                     if (emulated != null) {
                     	try {
     						emulated.handleRequest(request, response);
-    					} catch (IOException e) {
+    					} catch (IOException | TransformerException e) {
     						// When an IO Exception occurs trying to build a response
     						e.printStackTrace();
     					}
@@ -210,8 +224,9 @@ public class TestServer {
 	 * @param path HTTP path to dynamically add to the embedded server
 	 * @param serviceType String representing the type of OWS to emulate, will determine which capabilities
 	 * 							 document will be presented to the client
+	 * @throws Exception Exception if context could not be started
 	 */
-	public void registerHandler(String path, String serviceType) {
+	public void registerHandler(String path, String serviceType) throws Exception {
 		HandlerOptions options = new HandlerOptions(serviceType);
 		handlerBlocks.put(path, options);
 
@@ -221,11 +236,7 @@ public class TestServer {
         asyncHolder.setAsyncSupported(true);
         serverHandlers.addHandler(context);
         
-        try {
-        	context.start();
-        } catch (Exception e) {
-        	System.err.println("Exception starting servlet context handler.");
-        }
+        context.start();
 	}
 	
 	/**
