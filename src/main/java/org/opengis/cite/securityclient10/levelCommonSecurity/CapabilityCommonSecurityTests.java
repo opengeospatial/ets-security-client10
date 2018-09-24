@@ -20,6 +20,8 @@ public class CapabilityCommonSecurityTests extends CommonFixture {
     public void isHTTPS() {
         NodeList requests = this.testRequestSet.getElementsByTagName("Request");
         
+        Assert.assertNotNull(requests, "No secure client requests were collected by the test suite.");
+        
         for (int i = 0; i < requests.getLength(); i++) {
         	Node request = requests.item(i);
         	

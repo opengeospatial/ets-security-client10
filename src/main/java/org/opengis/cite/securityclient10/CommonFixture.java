@@ -56,19 +56,23 @@ public class CommonFixture {
      * {@link org.opengis.cite.securityclient10.httpServer.RequestRepresenter} for XML structure details.
      * 
      * @param testContext The test (group) context.
-     * @throws ParserConfigurationException Exception for failure to create a DocumentBuilder.
-     * @throws IOException Exception when reading the IUT file from disk.
-     * @throws SAXException Exception when parsing the IUT file.
+     * @throws ParserConfigurationException Could not create new document builder
      */
     @BeforeClass
-    public void obtainIUT(ITestContext testContext) throws ParserConfigurationException, SAXException, IOException {
+    public void obtainIUT(ITestContext testContext) throws ParserConfigurationException {
         Object obj = testContext.getSuite().getAttribute(SuiteAttribute.TEST_IUT.getName());
         if (null != obj) {
             String iutPath = String.class.cast(obj);
             File iutFile = new File(iutPath);
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            this.testRequestSet = db.parse(iutFile);
+            try {
+				this.testRequestSet = db.parse(iutFile);
+			} catch (SAXException | IOException e) {
+				// If input file could not be parsed
+				e.printStackTrace();
+				this.testRequestSet = db.newDocument();
+			}
         }
     }
     
