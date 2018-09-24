@@ -40,8 +40,6 @@ public class SuiteFixtureListener implements ISuiteListener {
         Map<String, String> params = suite.getXmlSuite().getParameters();
         TestSuiteLogger.log(Level.CONFIG, "Suite parameters\n" + params.toString());
         
-        TestRunArgValidator.validateMap(params);
-        
         suite.setAttribute(SuiteAttribute.TEST_SERVICE_TYPE.getName(), 
         		params.get(TestRunArg.Service_Type.toString()));
         
@@ -56,12 +54,6 @@ public class SuiteFixtureListener implements ISuiteListener {
         
         suite.setAttribute(SuiteAttribute.TEST_PATH.getName(), 
         		params.get(TestRunArg.Path.toString()));
-        
-        suite.setAttribute(SuiteAttribute.TEST_JKS_PATH.getName(), 
-        		params.get(TestRunArg.JKS_Path.toString()));
-        
-        suite.setAttribute(SuiteAttribute.TEST_JKS_PASSWORD.getName(), 
-        		params.get(TestRunArg.JKS_Password.toString()));
         
         suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), 
         		params.get(TestRunArg.IUT.toString()));

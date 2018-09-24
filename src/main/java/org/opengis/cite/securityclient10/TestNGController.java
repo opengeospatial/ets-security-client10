@@ -282,10 +282,14 @@ public class TestNGController implements TestSuiteController {
         testRunProps.appendChild(rootElement);
         
         for (String key : args.keySet()) {
-			Element entry = testRunProps.createElement("entry");
-			entry.setAttribute("key", key);
-			entry.setTextContent(args.get(key));
-			rootElement.appendChild(entry);
+        	// Omit jks_path and jks_password from output properties, to prevent
+        	// them from leaking to test users
+        	if (!key.equals("jks_path") && !key.equals("jks_password")) {
+				Element entry = testRunProps.createElement("entry");
+				entry.setAttribute("key", key);
+				entry.setTextContent(args.get(key));
+				rootElement.appendChild(entry);
+        	}
 		}
     	
     	// Release the servlet as the path is not needed anymore
