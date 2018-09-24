@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -17,9 +19,11 @@ import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
+import org.apache.xerces.dom.DeferredDocumentImpl;
 import org.opengis.cite.securityclient10.httpServer.RequestRepresenter;
 import org.opengis.cite.securityclient10.httpServer.TestServer;
 import org.opengis.cite.securityclient10.util.TestSuiteLogger;
@@ -192,7 +196,7 @@ public class TestNGController implements TestSuiteController {
     }
 
     @Override
-    public Source doTestRun(Document testRunArgs) {
+    public Source doTestRun(Document testRunArgs) throws ParserConfigurationException {
     	Map<String, String> args = validateTestRunArgs(testRunArgs);
     	
     	// Print out information on which conformance classes will be tested
@@ -266,11 +270,23 @@ public class TestNGController implements TestSuiteController {
 			return executor.execute(testRunArgs);
 		}
     	
-    	// Add path to file as a test run property
-    	Element iutEntry = testRunArgs.createElement("entry");
-    	iutEntry.setAttribute("key", "iut");
-    	iutEntry.setTextContent(requestsFilePath.toAbsolutePath().toString());
-    	testRunArgs.getDocumentElement().appendChild(iutEntry);
+    	// Add argument for requests document path as IUT
+    	args.put("iut", requestsFilePath.toAbsolutePath().toString());
+    	
+    	// Create new test run arguments document, as input document *may* be read only
+    	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document testRunProps = db.newDocument();
+        
+        Element rootElement = testRunProps.createElement("properties");
+        testRunProps.appendChild(rootElement);
+        
+        for (String key : args.keySet()) {
+			Element entry = testRunProps.createElement("entry");
+			entry.setAttribute("key", key);
+			entry.setTextContent(args.get(key));
+			rootElement.appendChild(entry);
+		}
     	
     	// Release the servlet as the path is not needed anymore
     	try {
@@ -278,10 +294,10 @@ public class TestNGController implements TestSuiteController {
 		} catch (ServletException e) {
 			// If the handler could not be unregistered, skip to tests
 			e.printStackTrace();
-			return executor.execute(testRunArgs);
+			return executor.execute(testRunProps);
 		}
     	
-        return executor.execute(testRunArgs);
+        return executor.execute(testRunProps);
     }
 
 	/**

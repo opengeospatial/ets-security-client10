@@ -102,19 +102,19 @@
            </ctl:form>
         </xsl:variable>
         <xsl:variable name="test-run-props">
-        <properties version="1.0">
-          <entry key="service_type">
-            <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
-          </entry>
-          <entry key="address"><xsl:value-of select="$address" /></entry>
-          <entry key="port"><xsl:value-of select="$port" /></entry>
-          <entry key="host"><xsl:value-of select="$host" /></entry>
-          <entry key="path">
-            <xsl:value-of select="$form-data/values/value[@key='path']"/>
-          </entry>
-          <entry key="jks_path"><xsl:value-of select="$jks_path" /></entry>
-          <entry key="jks_password"><xsl:value-of select="$jks_password" /></entry>
-        </properties>
+          <properties version="1.0">
+            <entry key="service_type">
+              <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
+            </entry>
+            <entry key="address"><xsl:value-of select="$address" /></entry>
+            <entry key="port"><xsl:value-of select="$port" /></entry>
+            <entry key="host"><xsl:value-of select="$host" /></entry>
+            <entry key="path">
+              <xsl:value-of select="$form-data/values/value[@key='path']"/>
+            </entry>
+            <entry key="jks_path"><xsl:value-of select="$jks_path" /></entry>
+            <entry key="jks_password"><xsl:value-of select="$jks_password" /></entry>
+          </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">
          <xsl:value-of select="tec:getTestRunDirectory($te:core)"/>
