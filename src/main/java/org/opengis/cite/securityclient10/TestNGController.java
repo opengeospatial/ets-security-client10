@@ -4,15 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -22,15 +18,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.xerces.dom.DeferredDocumentImpl;
 import org.opengis.cite.securityclient10.httpServer.RequestRepresenter;
 import org.opengis.cite.securityclient10.httpServer.TestServer;
+import org.opengis.cite.securityclient10.util.PropertiesDocument;
 import org.opengis.cite.securityclient10.util.TestSuiteLogger;
 import org.opengis.cite.servlet.ServletException;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
@@ -99,7 +94,9 @@ public class TestNGController implements TestSuiteController {
                 
         // Shut down HTTP server
         TestServer server = getServer();
-        server.shutdown();
+        if (server != null) {
+        	server.shutdown();
+        }
     }
 
     /**
@@ -197,14 +194,25 @@ public class TestNGController implements TestSuiteController {
 
     @Override
     public Source doTestRun(Document testRunArgs) throws ParserConfigurationException {
-    	Map<String, String> args = validateTestRunArgs(testRunArgs);
+    	// Convert testRunArgs Document to PropertiesDocument
+    	PropertiesDocument testRunProperties;
+    	try {
+			testRunProperties = new PropertiesDocument(testRunArgs);
+		} catch (TransformerException | TransformerFactoryConfigurationError | IOException e1) {
+			// If test run arguments could not be converted to a Properties Document, then
+			// skip to tests with an exception.
+			e1.printStackTrace();
+			return executeWithException(e1);
+		}
+    	
+    	validateTestRunArgs(testRunProperties);
     	
     	// Print out information on which conformance classes will be tested
     	System.out.println("ETS Security Client 1.0 Active Conformance Classes");
     	System.out.println("==================================================");
     	System.out.println("* Abstract Conformance Class Common Security");
     	
-    	String serviceType = args.get(TestRunArg.Service_Type.toString());
+    	String serviceType = testRunProperties.getProperty(TestRunArg.Service_Type.toString());
     	
     	if (serviceType.equals("wms111")) {
     		System.out.println("* Conformance Class WMS 1.1.1");
@@ -217,20 +225,22 @@ public class TestNGController implements TestSuiteController {
         
         TestServer server;
 		try {
-			server = getServer(args.get("address"), Integer.parseInt(args.get("port")),
-					args.get("jks_path"), args.get("jks_password"));
+			server = getServer(testRunProperties.getProperty("address"), 
+					Integer.parseInt(testRunProperties.getProperty("port")),
+					testRunProperties.getProperty("jks_path"), 
+					testRunProperties.getProperty("jks_password"));
 		} catch (Exception e) {
 			// If Test Server could not be started, skip to tests
 			e.printStackTrace();
-			return executor.execute(testRunArgs);
+			return executeWithException(e);
 		}
     	
         String path;
-        if (args.get("path") == "") {
+        if (testRunProperties.getProperty("path") == "") {
         	// Generate nonce for this test session, which will be used as the unique servlet address
             path = this.getNonce();
         } else {
-        	path = args.get("path");
+        	path = testRunProperties.getProperty("path");
         }
         
         // Register a servlet handler with the path and service type
@@ -239,12 +249,12 @@ public class TestNGController implements TestSuiteController {
 		} catch (Exception e) {
 			// If handler could not be created, skip to tests
 			e.printStackTrace();
-			return executor.execute(testRunArgs);
+			return executeWithException(e);
 		}
         
         // Print out the servlet test path for the test user
         System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s", 
-        		args.get("host"), args.get("port"), path));
+        		testRunProperties.getProperty("host"), testRunProperties.getProperty("port"), path));
     	
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
@@ -253,7 +263,7 @@ public class TestNGController implements TestSuiteController {
 		} catch (InterruptedException | ExecutionException e) {
 			// If the waiting thread has any errors, skip to tests
 			e.printStackTrace();
-			return executor.execute(testRunArgs);
+			return executeWithException(e);
 		}
     	
     	// Retrieve the request(s) from the secure client
@@ -267,30 +277,11 @@ public class TestNGController implements TestSuiteController {
 		} catch (FileNotFoundException | TransformerException e) {
 			// If the requests could not be saved to the temporary file, skip to tests
 			e.printStackTrace();
-			return executor.execute(testRunArgs);
+			return executeWithException(e);
 		}
     	
     	// Add argument for requests document path as IUT
-    	args.put("iut", requestsFilePath.toAbsolutePath().toString());
-    	
-    	// Create new test run arguments document, as input document *may* be read only
-    	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document testRunProps = db.newDocument();
-        
-        Element rootElement = testRunProps.createElement("properties");
-        testRunProps.appendChild(rootElement);
-        
-        for (String key : args.keySet()) {
-        	// Omit jks_path and jks_password from output properties, to prevent
-        	// them from leaking to test users
-        	if (!key.equals("jks_path") && !key.equals("jks_password")) {
-				Element entry = testRunProps.createElement("entry");
-				entry.setAttribute("key", key);
-				entry.setTextContent(args.get(key));
-				rootElement.appendChild(entry);
-        	}
-		}
+    	testRunProperties.setProperty("iut", requestsFilePath.toAbsolutePath().toString());
     	
     	// Release the servlet as the path is not needed anymore
     	try {
@@ -298,39 +289,37 @@ public class TestNGController implements TestSuiteController {
 		} catch (ServletException e) {
 			// If the handler could not be unregistered, skip to tests
 			e.printStackTrace();
-			return executor.execute(testRunProps);
+			return executeWithException(e);
 		}
     	
-        return executor.execute(testRunProps);
+        return executor.execute(testRunProperties.getDocument());
     }
+
+    /**
+     * Run the Test Suite even though an exception stopped full test preparation.
+     * @param e Exception raised
+     * @return Source object with XML results of test run
+     */
+	private Source executeWithException(Throwable e) {
+		PropertiesDocument testRunProperties;
+		try {
+			testRunProperties = new PropertiesDocument();
+			testRunProperties.setProperty(e.getClass().toString(), e.getMessage());
+			return executor.execute(testRunProperties.getDocument());
+		} catch (ParserConfigurationException e1) {
+			return executor.execute(null);
+		}
+	}
 
 	/**
      * Validates the test run arguments. The test run is aborted if any of these
      * checks fail.
      *
-     * @param testRunArgs
-     *            A DOM Document containing a set of XML properties (key-value
-     *            pairs).
-     * @return A Map of the test run properties
+     * @param testRunProperties PropertiesDocument with the test run properties
      * @throws IllegalArgumentException
      *             If any arguments are missing or invalid for some reason.
      */
-    Map<String, String> validateTestRunArgs(Document testRunArgs) {
-        if (null == testRunArgs || !testRunArgs.getDocumentElement().getNodeName().equals("properties")) {
-            throw new IllegalArgumentException("Input is not an XML properties document.");
-        }
-        NodeList entries = testRunArgs.getDocumentElement().getElementsByTagName("entry");
-        if (entries.getLength() == 0) {
-            throw new IllegalArgumentException("No test run arguments found.");
-        }
-        Map<String, String> args = new HashMap<String, String>();
-        for (int i = 0; i < entries.getLength(); i++) {
-            Element entry = (Element) entries.item(i);
-            args.put(entry.getAttribute("key"), entry.getTextContent());
-        }
-        
-        TestRunArgValidator.validateMap(args);
-        
-        return args;
+    private void validateTestRunArgs(PropertiesDocument testRunProperties) {
+    	TestRunArgValidator.validateProperties(testRunProperties.getProperties());
     }
 }

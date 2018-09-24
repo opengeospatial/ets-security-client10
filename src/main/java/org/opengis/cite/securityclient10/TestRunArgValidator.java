@@ -1,8 +1,11 @@
 package org.opengis.cite.securityclient10;
 
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Validate test run arguments from a Document or a HashMap.
@@ -74,4 +77,21 @@ public class TestRunArgValidator {
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());
     }
+
+	/**
+	 * Validate a Properties document of Test Run Properties. Raises an exception on invalid data.
+	 * @param properties Properties document
+	 */
+	@SuppressWarnings("unchecked")
+	public static void validateProperties(Properties properties) {
+		Map<String, String> args = new HashMap<String, String>();
+		Enumeration<String> keys = (Enumeration<String>) properties.propertyNames();
+		
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			args.put(key, properties.getProperty(key));
+		}
+		
+		validateMap(args);
+	}
 }

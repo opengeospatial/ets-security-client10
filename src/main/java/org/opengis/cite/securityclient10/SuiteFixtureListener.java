@@ -47,7 +47,7 @@ public class SuiteFixtureListener implements ISuiteListener {
         		params.get(TestRunArg.Address.toString()));
         
         suite.setAttribute(SuiteAttribute.TEST_PORT.getName(), 
-        		Integer.parseInt(params.get(TestRunArg.Port.toString())));
+        		params.get(TestRunArg.Port.toString()));
         
         suite.setAttribute(SuiteAttribute.TEST_HOST.getName(), 
         		params.get(TestRunArg.Host.toString()));

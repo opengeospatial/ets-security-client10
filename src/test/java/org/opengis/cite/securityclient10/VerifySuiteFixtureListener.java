@@ -42,14 +42,6 @@ public class VerifySuiteFixtureListener {
     @After
     public void tearDown() {
     }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void noSuiteParameters() {
-        Map<String, String> params = new HashMap<String, String>();
-        when(xmlSuite.getParameters()).thenReturn(params);
-        SuiteFixtureListener iut = new SuiteFixtureListener();
-        iut.onStart(suite);
-    }
     
     @Test
     public void processServiceTypeParameter() {
