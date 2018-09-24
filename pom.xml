@@ -7,7 +7,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ets-security-client10</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.2</version>
   <packaging>jar</packaging>
 
   <name>Test suite: ets-security-client10</name>
@@ -28,7 +28,7 @@
     <connection>scm:git:https://github.com/opengeospatial/ets-security-client10.git</connection>
     <developerConnection>scm:git:git@github.com:opengeospatial/ets-security-client10.git</developerConnection>
     <url>https://github.com/opengeospatial/ets-security-client10</url>
-    <tag>HEAD</tag>
+    <tag>0.2</tag>
   </scm>
   <issueManagement>
     <system>GitHub Issue Tracker</system>
