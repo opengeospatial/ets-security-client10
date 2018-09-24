@@ -20,8 +20,9 @@ public class CapabilityCommonSecurityTests extends CommonFixture {
     @Test(description = "Connection(s) made using HTTPS.\n"
     		+ "Requirements Class: urn:ogc:def:security:1.0:rc:https")
     public void isHTTPS() {
-        NodeList requests = this.testRequestSet.getElementsByTagName("Request");
+    	Assert.assertNotNull(this.testRequestSet, "No secure client requests were collected by the test suite.");
         
+    	NodeList requests = this.testRequestSet.getElementsByTagName("Request");
         Assert.assertNotNull(requests, "No secure client requests were collected by the test suite.");
         
         for (int i = 0; i < requests.getLength(); i++) {
