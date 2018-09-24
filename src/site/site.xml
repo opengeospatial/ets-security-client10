@@ -29,6 +29,7 @@
     <menu name="Getting Started">
       <item name="Overview" href="index.html" />
       <item name="Client Setup" href="client_setup.html" />
+      <item name="Test Suite" href="test_suite.html" />
       <item name="TEAM Engine Setup" href="team_setup.html" />
       <item name="CA Cert Setup" href="ca_cert_setup.html" />
       <item name="Release Notes" href="changelog.html" />
