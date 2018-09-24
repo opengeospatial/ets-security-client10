@@ -33,16 +33,24 @@ public class TestRunArgValidator {
         			+ serviceTypeParam);
         }
         
-        // Test Server Host address
+        // Test Server address
+        String addressParam = params.get(TestRunArg.Address.toString());
+        
+        if ((null == addressParam) || addressParam.isEmpty()) {
+            throw new IllegalArgumentException("Required test run parameter not found: " 
+            		+ TestRunArg.Address.toString());
+        }
+        
+        // Test Server Port
+        Integer portParam = Integer.parseInt(params.get(TestRunArg.Port.toString()));
+        
+        // Test Server Hostname
         String hostParam = params.get(TestRunArg.Host.toString());
         
         if ((null == hostParam) || hostParam.isEmpty()) {
             throw new IllegalArgumentException("Required test run parameter not found: " 
             		+ TestRunArg.Host.toString());
         }
-        
-        // Test Server Port
-        Integer portParam = Integer.parseInt(params.get(TestRunArg.Port.toString()));
         
         // Test Server Path
         String pathParam = params.get(TestRunArg.Path.toString());

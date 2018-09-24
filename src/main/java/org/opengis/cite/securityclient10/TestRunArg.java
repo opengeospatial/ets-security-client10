@@ -14,12 +14,17 @@ public enum TestRunArg {
 	/**
 	 * A string for the ip interface to bind the embedded web server
 	 */
-	Host, 
+	Address, 
 	
 	/**
 	 * An integer for the port to bind the embedded web server
 	 */
 	Port,
+	
+	/**
+	 * A string of the domain hostname or ip address to advertise to clients
+	 */
+	Host,
 	
 	/**
 	 * A string for the URL path fragment that will be the test endpoint 

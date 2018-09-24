@@ -97,20 +97,26 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       </td>
     </tr>
 	  <tr>
-      <td>host</td>
+      <td>address</td>
       <td>String</td>
-      <td>C</td>
-      <td>Host interface on which to bind test server. Mandatory for IDE 
-      and JAR usage, although TEAM Engine may disregard this (to be
-      determined).</td>
+      <td>M</td>
+      <td>Host interface on which to bind test server.</td>
     </tr>
     <tr>
       <td>port</td>
       <td>Integer</td>
-      <td>C</td>
-      <td>Port on which to bind test server. Mandatory for IDE 
-      and JAR usage, although TEAM Engine may disregard this (to be
-      determined).</td>
+      <td>M</td>
+      <td>Port on which to bind test server.</td>
+    </tr>
+    <tr>
+      <td>host</td>
+      <td>String</td>
+      <td>M</td>
+      <td>Host name that will be advertised to clients. May be an IP
+      address or domain name. Clients must be able to resolve this IP or
+      name to the machine running the test server. If you are using a
+      certificate from a Certificate Authority, this parameter must match
+      the common name on that certificate.</td>
     </tr>
     <tr>
       <td>path</td>

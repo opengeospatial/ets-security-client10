@@ -128,8 +128,9 @@ support our keystore.
 Edit the file `/opt/te_base/scripts/security-client10/1.0/ctl/security-client10-suite.ctl`,
 and change the text contents of the following `<xsl:variable>` elements:
 
-* `host` should stay as `0.0.0.0`
+* `address` should stay as `0.0.0.0`
 * `port` can stay as `10080`
+* `host` should be the same as the domain used in the certificate
 * `jks_path` should be changed to `/opt/keystore.jks`
 * `jks_password` should be changed to `<!CDATA[key-pass]]`
 

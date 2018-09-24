@@ -18,13 +18,21 @@ public enum SuiteAttribute {
      */
     TEST_SERVICE_TYPE("testServiceType", String.class),
 	/**
-     * A String for the host address to bind the embedded server.
+     * A String for the ip address to bind the embedded server.
      */
-    TEST_HOST("testHost", String.class),
+    TEST_ADDRESS("testAddress", String.class),
     /**
      * An Integer for the port to bind the embedded server.
      */
     TEST_PORT("testPort", Integer.class),
+    /**
+     * A String for the host address to advertise to secure clients.
+     */
+    TEST_HOST("testHost", String.class),
+    /**
+     * A String for the path fragment for test server endpoints.
+     */
+    TEST_PATH("testPath", String.class),
     /**
      * A String for the filesystem path to the Java KeyStore file.
      */

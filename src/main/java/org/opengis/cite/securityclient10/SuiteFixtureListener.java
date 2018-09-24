@@ -45,11 +45,17 @@ public class SuiteFixtureListener implements ISuiteListener {
         suite.setAttribute(SuiteAttribute.TEST_SERVICE_TYPE.getName(), 
         		params.get(TestRunArg.Service_Type.toString()));
         
-        suite.setAttribute(SuiteAttribute.TEST_HOST.getName(), 
-        		params.get(TestRunArg.Host.toString()));
+        suite.setAttribute(SuiteAttribute.TEST_ADDRESS.getName(), 
+        		params.get(TestRunArg.Address.toString()));
         
         suite.setAttribute(SuiteAttribute.TEST_PORT.getName(), 
         		Integer.parseInt(params.get(TestRunArg.Port.toString())));
+        
+        suite.setAttribute(SuiteAttribute.TEST_HOST.getName(), 
+        		params.get(TestRunArg.Host.toString()));
+        
+        suite.setAttribute(SuiteAttribute.TEST_PATH.getName(), 
+        		params.get(TestRunArg.Path.toString()));
         
         suite.setAttribute(SuiteAttribute.TEST_JKS_PATH.getName(), 
         		params.get(TestRunArg.JKS_Path.toString()));

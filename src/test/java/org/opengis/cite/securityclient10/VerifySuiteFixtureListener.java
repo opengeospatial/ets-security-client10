@@ -56,8 +56,9 @@ public class VerifySuiteFixtureListener {
     	String serviceType = "wms111";
     	Map<String, String> params = new HashMap<String, String>();
     	params.put(TestRunArg.Service_Type.toString(), serviceType);
-    	params.put(TestRunArg.Host.toString(), "127.0.0.1");
+    	params.put(TestRunArg.Address.toString(), "127.0.0.1");
     	params.put(TestRunArg.Port.toString(), "10080");
+    	params.put(TestRunArg.Host.toString(), "localhost");
     	params.put(TestRunArg.JKS_Path.toString(), "src/main/resources/security.jks");
     	params.put(TestRunArg.JKS_Password.toString(), "ets-security-client");
     	when(xmlSuite.getParameters()).thenReturn(params);

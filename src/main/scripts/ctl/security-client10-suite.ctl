@@ -27,8 +27,9 @@
     <ctl:assertion>The test subject satisfies all applicable constraints.</ctl:assertion>
         <ctl:code>
             <!--  TEAM Engine Administrator: Edit these variables -->
-            <xsl:variable name="host">0.0.0.0</xsl:variable>
+            <xsl:variable name="address">0.0.0.0</xsl:variable>
             <xsl:variable name="port">10080</xsl:variable>
+            <xsl:variable name="host">localhost</xsl:variable>
             <xsl:variable name="jks_path">/root/ets-security-client10.jks</xsl:variable>
             <xsl:variable name="jks_password"><![CDATA[ets-security-client]]></xsl:variable>
     
@@ -105,8 +106,9 @@
           <entry key="service_type">
             <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
           </entry>
-          <entry key="host"><xsl:value-of select="$host" /></entry>
+          <entry key="address"><xsl:value-of select="$address" /></entry>
           <entry key="port"><xsl:value-of select="$port" /></entry>
+          <entry key="host"><xsl:value-of select="$host" /></entry>
           <entry key="path">
             <xsl:value-of select="$form-data/values/value[@key='path']"/>
           </entry>

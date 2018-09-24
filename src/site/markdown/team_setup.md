@@ -254,14 +254,16 @@ Finally, the system administrator **must** customize the CTL script for
 their installation. It is located at 
 `/opt/te_base/scripts/security-client10/1.0/ctl/security-client10-suite.ctl`.
 In this file, you will have to scroll down to the `<xsl:variable>` elements,
-and edit the `host`, `port`, `jks_path`, and `jks_password` parameters.
+and edit the `address`, `port`, `host`, `jks_path`, and `jks_password` parameters.
 
-You will probably want the `host` parameter to be `0.0.0.0` or a specific
+You will probably want the `address` parameter to be `0.0.0.0` or a specific
 IP if you want this test server to be accessible outside of the current
 machine.
 
 The `port` should not conflict with any other services running on the 
 machine.
+
+The `host` should be resolvable by the secure clients.
 
 The `jks_path` should point to either your own Java Keystore, or the 
 sample keystore from this ETS.
