@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
  * @author jpbadger
  *
  */
-public class ServerWMS111 extends EmulatedServer {
+public class ServerWms111 extends EmulatedServer {
 	
 	private DocumentBuilderFactory documentFactory;
 	private DocumentBuilder documentBuilder;
@@ -50,7 +50,7 @@ public class ServerWMS111 extends EmulatedServer {
 	 * @throws ParserConfigurationException Exception if new document builder could not be created
 	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWMS111() throws ParserConfigurationException, TransformerConfigurationException {
+	public ServerWms111() throws ParserConfigurationException, TransformerConfigurationException {
 		// Create factories and builders and re-use them
 		this.documentFactory = DocumentBuilderFactory.newInstance();
 		this.documentBuilder = documentFactory.newDocumentBuilder();

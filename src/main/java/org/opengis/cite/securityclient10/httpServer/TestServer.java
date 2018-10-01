@@ -118,7 +118,7 @@ public class TestServer {
                     // TODO: Support other conformance classes and OGC Web Service types
                     if (options.getServiceType().equals("wms111")) {
                     	try {
-							emulated = new ServerWMS111();
+							emulated = new ServerWms111();
 						} catch (TransformerConfigurationException | ParserConfigurationException e) {
 							emulated = null;
 						}
