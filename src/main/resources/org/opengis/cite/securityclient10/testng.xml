@@ -32,7 +32,7 @@
   </test>
   <test name="Conformance Level WMS 1.3.0">
     <packages>
-      <package name="org.opengis.cite.securityclient10.levelWms130" />
+      <package name="org.opengis.cite.securityclient10.levelWms13" />
     </packages>
     <classes>
       <class name="org.opengis.cite.securityclient10.SuitePreconditions" />

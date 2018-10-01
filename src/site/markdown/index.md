@@ -56,7 +56,7 @@ is shown in Table 1.
     </tr>
     <tr>
       <td>Conformance Level WMS 1.3.0</td>
-      <td>org.opengis.cite.securityclient10.levelWms130.*</td>
+      <td>org.opengis.cite.securityclient10.levelWms13.*</td>
     </tr>
   </tbody>
 </table>

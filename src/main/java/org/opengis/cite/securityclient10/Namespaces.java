@@ -27,9 +27,9 @@ public class Namespaces {
     /** OpenGIS WMS */
     public static final String WMS = "http://www.opengis.net/wms";
     /** WMS 1.3.0 */
-    public static final String WMS_130 = "http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd";
+    public static final String WMS_13 = "http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd";
     /** WMS 1.3.0 Service Exception */
-    public static final String WMS_EXC_130 = "http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd";
+    public static final String WMS_EXC_13 = "http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd";
     /** W3C XLink */
     public static final String XLINK = "http://www.w3.org/1999/xlink";
     /** W3C XMLNS */

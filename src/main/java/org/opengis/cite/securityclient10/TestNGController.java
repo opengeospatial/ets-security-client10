@@ -216,7 +216,7 @@ public class TestNGController implements TestSuiteController {
     	
     	if (serviceType.equals("wms111")) {
     		System.out.println("* Conformance Class WMS 1.1.1");
-    	} else if (serviceType.equals("wms130")) {
+    	} else if (serviceType.equals("wms13")) {
     		System.out.println("* Conformance Class WMS 1.3.0");
     	} else {
     		System.out.println("* Conformance Class OWS Common");

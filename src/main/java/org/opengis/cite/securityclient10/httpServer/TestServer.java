@@ -122,9 +122,9 @@ public class TestServer {
 						} catch (TransformerConfigurationException | ParserConfigurationException e) {
 							emulated = null;
 						}
-                    } else if (options.getServiceType().equals("wms130")) {
+                    } else if (options.getServiceType().equals("wms13")) {
                     	try {
-							emulated = new ServerWms130();
+							emulated = new ServerWms13();
 						} catch (TransformerConfigurationException | ParserConfigurationException e) {
 							emulated = null;
 						}

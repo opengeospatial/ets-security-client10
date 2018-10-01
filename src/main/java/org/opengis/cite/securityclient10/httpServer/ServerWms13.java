@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
  * (OGC 06-042).
  *
  */
-public class ServerWms130 extends EmulatedServer {
+public class ServerWms13 extends EmulatedServer {
 	
 	private DocumentBuilderFactory documentFactory;
 	private DocumentBuilder documentBuilder;
@@ -51,7 +51,7 @@ public class ServerWms130 extends EmulatedServer {
 	 * @throws ParserConfigurationException Exception if new document builder could not be created
 	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWms130() throws ParserConfigurationException, TransformerConfigurationException {
+	public ServerWms13() throws ParserConfigurationException, TransformerConfigurationException {
 		// Create factories and builders and re-use them
 		this.documentFactory = DocumentBuilderFactory.newInstance();
 		this.documentFactory.setNamespaceAware(true);
@@ -148,7 +148,7 @@ public class ServerWms130 extends EmulatedServer {
 		rootElement.setAttribute("version", "1.3.0");
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xlink", Namespaces.XLINK);
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xsi", Namespaces.XSI);
-		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.WMS + " " + Namespaces.WMS_130);
+		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.WMS + " " + Namespaces.WMS_13);
 
 		// Service Section
 		Element service = doc.createElementNS(Namespaces.WMS, "Service");
@@ -268,7 +268,7 @@ public class ServerWms130 extends EmulatedServer {
 		Element rootElement = doc.getDocumentElement();
 		rootElement.setAttribute("version", "1.3.0");
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xsi", Namespaces.XSI);
-		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.OGC + " " + Namespaces.WMS_EXC_130);
+		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.OGC + " " + Namespaces.WMS_EXC_13);
 		
 		Element serviceException = doc.createElementNS(Namespaces.OGC, "ServiceException");
 		serviceException.setTextContent(reason);
