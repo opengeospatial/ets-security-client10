@@ -122,6 +122,12 @@ public class TestServer {
 						} catch (TransformerConfigurationException | ParserConfigurationException e) {
 							emulated = null;
 						}
+                    } else if (options.getServiceType().equals("wms130")) {
+                    	try {
+							emulated = new ServerWms130();
+						} catch (TransformerConfigurationException | ParserConfigurationException e) {
+							emulated = null;
+						}
                     } else {
                     	System.err.println("Unknown service type for emulation: " + options.getServiceType());
                     }

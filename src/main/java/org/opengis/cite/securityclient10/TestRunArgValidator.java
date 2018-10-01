@@ -16,7 +16,7 @@ public class TestRunArgValidator {
 	 * List of service type test run properties currently supported by this ETS. Should match emulated
 	 * service types in org.opengis.cite.securityclient10.httpServer package.
 	 */
-	private static final List<String> allowedServiceTypes = Arrays.asList("wms111");
+	private static final List<String> allowedServiceTypes = Arrays.asList("wms111", "wms130");
 	
 	/**
 	 * Validate a String, String HashMap of Test Run Arguments. Raise an exception on invalid data.
