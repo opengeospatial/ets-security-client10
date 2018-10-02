@@ -7,16 +7,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 
 import org.opengis.cite.securityclient10.Namespaces;
+import org.opengis.cite.securityclient10.Schemas;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 import org.opengis.cite.servlet.http.HttpServletResponse;
 import org.w3c.dom.DOMImplementation;
@@ -34,12 +30,6 @@ import org.w3c.dom.Element;
  *
  */
 public class ServerWms13 extends EmulatedServer {
-	
-	private DocumentBuilderFactory documentFactory;
-	private DocumentBuilder documentBuilder;
-	private TransformerFactory transformerFactory;
-	private Transformer transformer;
-
 	/**
 	 * Create an emulated WMS 1.3.0.
 	 * 
@@ -49,18 +39,7 @@ public class ServerWms13 extends EmulatedServer {
 	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
 	public ServerWms13() throws ParserConfigurationException, TransformerConfigurationException {
-		// Create factories and builders and re-use them
-		this.documentFactory = DocumentBuilderFactory.newInstance();
 		this.documentFactory.setNamespaceAware(true);
-		this.documentBuilder = documentFactory.newDocumentBuilder();
-		
-		this.transformerFactory = TransformerFactory.newInstance();
-		this.transformer = transformerFactory.newTransformer();
-		
-		// Adjust defaults for XML document-to-String output
-		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-		this.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 	}
 	
 	/**
@@ -145,7 +124,7 @@ public class ServerWms13 extends EmulatedServer {
 		rootElement.setAttribute("version", "1.3.0");
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xlink", Namespaces.XLINK);
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xsi", Namespaces.XSI);
-		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.WMS + " " + Namespaces.WMS_13);
+		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.WMS + " " + Schemas.WMS_13);
 
 		// Service Section
 		Element service = doc.createElementNS(Namespaces.WMS, "Service");
@@ -265,7 +244,7 @@ public class ServerWms13 extends EmulatedServer {
 		Element rootElement = doc.getDocumentElement();
 		rootElement.setAttribute("version", "1.3.0");
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xsi", Namespaces.XSI);
-		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.OGC + " " + Namespaces.WMS_EXC_13);
+		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.OGC + " " + Schemas.WMS_13_SE);
 		
 		Element serviceException = doc.createElementNS(Namespaces.OGC, "ServiceException");
 		serviceException.setTextContent(reason);

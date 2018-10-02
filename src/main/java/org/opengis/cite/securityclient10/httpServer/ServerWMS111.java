@@ -2,21 +2,15 @@ package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Enumeration;
 
+import org.opengis.cite.securityclient10.Namespaces;
+import org.opengis.cite.securityclient10.Schemas;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 import org.opengis.cite.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -37,11 +31,6 @@ import org.w3c.dom.Element;
  */
 public class ServerWms111 extends EmulatedServer {
 	
-	private DocumentBuilderFactory documentFactory;
-	private DocumentBuilder documentBuilder;
-	private TransformerFactory transformerFactory;
-	private Transformer transformer;
-	
 	/**
 	 * Create an emulated WMS 1.1.1.
 	 * 
@@ -50,19 +39,7 @@ public class ServerWms111 extends EmulatedServer {
 	 * @throws ParserConfigurationException Exception if new document builder could not be created
 	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWms111() throws ParserConfigurationException, TransformerConfigurationException {
-		// Create factories and builders and re-use them
-		this.documentFactory = DocumentBuilderFactory.newInstance();
-		this.documentBuilder = documentFactory.newDocumentBuilder();
-		
-		this.transformerFactory = TransformerFactory.newInstance();
-		this.transformer = transformerFactory.newTransformer();
-		
-		// Adjust defaults for XML document-to-String output
-		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-		this.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-	}
+	public ServerWms111() throws ParserConfigurationException, TransformerConfigurationException {}
 	
 	/**
 	 * Build a valid WMS 1.1.1 response for the client request, and automatically complete the response.
@@ -144,112 +121,108 @@ public class ServerWms111 extends EmulatedServer {
 				request.getRequestURI());
 		
 		PrintWriter printWriter = response.getWriter();
-		Document body = this.documentBuilder.newDocument();
+		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
+		DocumentType doctype = domImplementation.createDocumentType("doctype", null,
+				Schemas.WMS_111);
+		Document doc = domImplementation.createDocument(null, "WMT_MS_Capabilities", doctype);
 		
-		Element rootElement = body.createElement("WMT_MS_Capabilities");
+		Element rootElement = doc.getDocumentElement();
 		rootElement.setAttribute("version", "1.1.1");
-		body.appendChild(rootElement);
 		
 		// Service Section
-		Element service = body.createElement("Service");
+		Element service = doc.createElement("Service");
 		rootElement.appendChild(service);
 		
-		Element name = body.createElement("Name");
+		Element name = doc.createElement("Name");
 		name.setTextContent("ets-security-client-10-wms-111");
 		service.appendChild(name);
 		
-		Element title = body.createElement("Title");
+		Element title = doc.createElement("Title");
 		title.setTextContent("ETS Security Client 1.0 WMS 1.1.1");
 		service.appendChild(title);
 		
-		Element abstractElement = body.createElement("Abstract");
+		Element abstractElement = doc.createElement("Abstract");
 		abstractElement.setTextContent("WMS 1.1.1 for validating secure client requests under ETS Security Client 1.0");
 		service.appendChild(abstractElement);
 		
-		Element onlineResource = body.createElement("OnlineResource");
-		onlineResource.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		Element onlineResource = doc.createElement("OnlineResource");
+		onlineResource.setAttribute("xmlns:xlink", Namespaces.XLINK);
 		onlineResource.setAttribute("xlink:type", "simple");
 		onlineResource.setAttribute("xlink:href", href);
 		service.appendChild(onlineResource);
 		
 		// Capability Section
-		Element capability = body.createElement("Capability");
+		Element capability = doc.createElement("Capability");
 		rootElement.appendChild(capability);
 		
 		// Capability > Request
-		Element requestElement = body.createElement("Request");
+		Element requestElement = doc.createElement("Request");
 		capability.appendChild(requestElement);
 		
 		// Capability > Request > GetCapabilities
-		Element getCapabilities = body.createElement("GetCapabilities");
+		Element getCapabilities = doc.createElement("GetCapabilities");
 		requestElement.appendChild(getCapabilities);
 		
-		Element getCapabilitiesFormat = body.createElement("Format");
+		Element getCapabilitiesFormat = doc.createElement("Format");
 		getCapabilitiesFormat.setTextContent("application/vnd.ogc.wms_xml");
 		getCapabilities.appendChild(getCapabilitiesFormat);
 		
-		Element getCapabilitiesDCPType = body.createElement("DCPType");
+		Element getCapabilitiesDCPType = doc.createElement("DCPType");
 		getCapabilities.appendChild(getCapabilitiesDCPType);
 		
-		Element getCapabilitiesDCPTypeHTTP = body.createElement("HTTP");
+		Element getCapabilitiesDCPTypeHTTP = doc.createElement("HTTP");
 		getCapabilitiesDCPType.appendChild(getCapabilitiesDCPTypeHTTP);
 		
-		Element getCapabilitiesDCPTypeHTTPGet = body.createElement("Get");
+		Element getCapabilitiesDCPTypeHTTPGet = doc.createElement("Get");
 		getCapabilitiesDCPTypeHTTP.appendChild(getCapabilitiesDCPTypeHTTPGet);
 		
-		Element getCapabilitiesDCPTypeHTTPGetOR = body.createElement("OnlineResource");
-		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		Element getCapabilitiesDCPTypeHTTPGetOR = doc.createElement("OnlineResource");
+		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", Namespaces.XLINK);
 		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xlink:type", "simple");
 		getCapabilitiesDCPTypeHTTPGetOR.setAttribute("xlink:href", href);
 		getCapabilitiesDCPTypeHTTPGet.appendChild(getCapabilitiesDCPTypeHTTPGetOR);
 		
-		Element getCapabilitiesDCPTypeHTTPPost = body.createElement("Post");
+		Element getCapabilitiesDCPTypeHTTPPost = doc.createElement("Post");
 		getCapabilitiesDCPTypeHTTP.appendChild(getCapabilitiesDCPTypeHTTPPost);
 		
-		Element getCapabilitiesDCPTypeHTTPPostOR = body.createElement("OnlineResource");
-		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		Element getCapabilitiesDCPTypeHTTPPostOR = doc.createElement("OnlineResource");
+		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xmlns:xlink", Namespaces.XLINK);
 		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xlink:type", "simple");
 		getCapabilitiesDCPTypeHTTPPostOR.setAttribute("xlink:href", href);
 		getCapabilitiesDCPTypeHTTPPost.appendChild(getCapabilitiesDCPTypeHTTPPostOR);
 		
 		// Capability > Request > GetMap
-		Element getMap = body.createElement("GetMap");
+		Element getMap = doc.createElement("GetMap");
 		requestElement.appendChild(getMap);
 		
-		Element getMapFormat = body.createElement("Format");
+		Element getMapFormat = doc.createElement("Format");
 		getMapFormat.setTextContent("image/png");
 		getMap.appendChild(getMapFormat);
 		
-		Element getMapDCPType = body.createElement("DCPType");
+		Element getMapDCPType = doc.createElement("DCPType");
 		getMap.appendChild(getMapDCPType);
 		
-		Element getMapDCPTypeHTTP = body.createElement("HTTP");
+		Element getMapDCPTypeHTTP = doc.createElement("HTTP");
 		getMapDCPType.appendChild(getMapDCPTypeHTTP);
 		
-		Element getMapDCPTypeHTTPGet = body.createElement("Get");
+		Element getMapDCPTypeHTTPGet = doc.createElement("Get");
 		getMapDCPTypeHTTP.appendChild(getMapDCPTypeHTTPGet);
 		
-		Element getMapDCPTypeHTTPGetOR = body.createElement("OnlineResource");
-		getMapDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+		Element getMapDCPTypeHTTPGetOR = doc.createElement("OnlineResource");
+		getMapDCPTypeHTTPGetOR.setAttribute("xmlns:xlink", Namespaces.XLINK);
 		getMapDCPTypeHTTPGetOR.setAttribute("xlink:type", "simple");
 		getMapDCPTypeHTTPGetOR.setAttribute("xlink:href", href);
 		getMapDCPTypeHTTPGet.appendChild(getMapDCPTypeHTTPGetOR);
 		
 		// Capability > Exception
-		Element exception = body.createElement("Exception");
+		Element exception = doc.createElement("Exception");
 		capability.appendChild(exception);
 		
-		Element exceptionFormat = body.createElement("Format");
+		Element exceptionFormat = doc.createElement("Format");
 		exceptionFormat.setTextContent("application/vnd.ogc.se_xml");
 		exception.appendChild(exceptionFormat);
 		
-		// Add a doctype
-		DOMImplementation domImplementation = body.getImplementation();
-		DocumentType doctype = domImplementation.createDocumentType("doctype", 
-				null,
-				"http://schemas.opengis.net/wms/1.1.1/capabilities_1_1_1.dtd");
-		
-		printWriter.print(documentToString(body, doctype));
+		printWriter.print(documentToString(doc));
 	}
 	
 	/**
@@ -268,47 +241,18 @@ public class ServerWms111 extends EmulatedServer {
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		
 		PrintWriter printWriter = response.getWriter();
-		Document body = this.documentBuilder.newDocument();
+		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
+		DocumentType doctype = domImplementation.createDocumentType("doctype", null,
+				Schemas.WMS_111_SE);
+		Document doc = domImplementation.createDocument(null, "ServiceExceptionReport", doctype);
 		
-		Element rootElement = body.createElement("ServiceExceptionReport");
+		Element rootElement = doc.getDocumentElement();
 		rootElement.setAttribute("version", "1.1.1");
-		body.appendChild(rootElement);
 		
-		Element serviceException = body.createElement("ServiceException");
+		Element serviceException = doc.createElement("ServiceException");
 		serviceException.setTextContent(reason);
 		rootElement.appendChild(serviceException);
 		
-		// Add a doctype
-		DOMImplementation domImplementation = body.getImplementation();
-		DocumentType doctype = domImplementation.createDocumentType("doctype", 
-				null,
-				"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd");
-		
-		printWriter.print(documentToString(body, doctype));
-	}
-	
-	/**
-	 * Use a Transformer to convert the XML Document to a String. Doctype (public and system) argument
-	 * will be inserted into XML Document string.
-	 * 
-	 * @param document XML document to convert
-	 * @param doctype XML document type that will be added to String representation
-	 * @return String containing the XML document
-	 * @throws TransformerException Exception if transformer could not convert document to stream
-	 */
-	private String documentToString(Document document, DocumentType doctype) throws TransformerException {
-		StringWriter stringWriter = new StringWriter();
-		
-		// Add the DOCTYPE parameters, as long as they are not null
-		if (doctype.getPublicId() != null) {
-			this.transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
-		}
-		
-		if (doctype.getSystemId() != null) {
-			this.transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
-		}
-		
-		this.transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
-		return stringWriter.toString();
+		printWriter.print(documentToString(doc));
 	}
 }

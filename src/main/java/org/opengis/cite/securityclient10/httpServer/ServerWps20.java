@@ -7,16 +7,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 
 import org.opengis.cite.securityclient10.Namespaces;
+import org.opengis.cite.securityclient10.Schemas;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 import org.opengis.cite.servlet.http.HttpServletResponse;
 import org.w3c.dom.DOMImplementation;
@@ -34,12 +30,6 @@ import org.w3c.dom.Element;
  *
  */
 public class ServerWps20 extends EmulatedServer {
-	
-	private DocumentBuilderFactory documentFactory;
-	private DocumentBuilder documentBuilder;
-	private TransformerFactory transformerFactory;
-	private Transformer transformer;
-
 	/**
 	 * Create an emulated WPS 2.0.
 	 * 
@@ -49,18 +39,7 @@ public class ServerWps20 extends EmulatedServer {
 	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
 	public ServerWps20() throws ParserConfigurationException, TransformerConfigurationException {
-		// Create factories and builders and re-use them
-		this.documentFactory = DocumentBuilderFactory.newInstance();
 		this.documentFactory.setNamespaceAware(true);
-		this.documentBuilder = documentFactory.newDocumentBuilder();
-		
-		this.transformerFactory = TransformerFactory.newInstance();
-		this.transformer = transformerFactory.newTransformer();
-		
-		// Adjust defaults for XML document-to-String output
-		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-		this.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 	}
 	
 	/**
@@ -146,7 +125,7 @@ public class ServerWps20 extends EmulatedServer {
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xlink", Namespaces.XLINK);
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xml", Namespaces.XML);
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xsi", Namespaces.XSI);
-		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.WPS_20 + " " + Namespaces.WPS_20_SCHEMA);
+		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.WPS_20 + " " + Schemas.WPS_20);
 
 		// Service Identification Section
 		Element serviceIdentification = doc.createElementNS(Namespaces.OWS_2, "ows:ServiceIdentification");
@@ -258,7 +237,7 @@ public class ServerWps20 extends EmulatedServer {
 		rootElement.setAttribute("version", "1.0.0");
 		rootElement.setAttributeNS(Namespaces.XML, "xml:lang", "en");
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xsi", Namespaces.XSI);
-		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.OWS_2 + " " + Namespaces.OWS_EXCEPTION);
+		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.OWS_2 + " " + Schemas.OWS_2_ER);
 		
 		Element exceptionElement = doc.createElementNS(Namespaces.OWS_2, "Exception");
 		exceptionElement.setAttribute("exceptionCode", reason);

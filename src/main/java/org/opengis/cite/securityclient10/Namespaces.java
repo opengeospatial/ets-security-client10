@@ -13,8 +13,6 @@ public class Namespaces {
     private Namespaces() {
     }
 
-    /** OGC 06-121r9 (OWS 2.0) */
-    public static final String OWS_EXCEPTION = "http://schemas.opengis.net/ows/2.0/owsExceptionReport.xsd";
     /** ISO 19136 (GML 3.2) */
     public static final String GML = "http://www.opengis.net/gml/3.2";
     /** OpenGIS OGC */
@@ -30,14 +28,8 @@ public class Namespaces {
     public static final String SOAP_ENV = "http://www.w3.org/2003/05/soap-envelope";
     /** OpenGIS WMS */
     public static final String WMS = "http://www.opengis.net/wms";
-    /** WMS 1.3.0 */
-    public static final String WMS_13 = "http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd";
-    /** WMS 1.3.0 Service Exception */
-    public static final String WMS_EXC_13 = "http://schemas.opengis.net/wms/1.3.0/exceptions_1_3_0.xsd";
     /** OpenGIS WPS 2.0 */
     public static final String WPS_20 = "http://www.opengis.net/wps/2.0";
-    /** OpenGIS WPS 2.0 */
-    public static final String WPS_20_SCHEMA = "http://schemas.opengis.net/wps/2.0/wps.xsd";
     /** W3C XLink */
     public static final String XLINK = "http://www.w3.org/1999/xlink";
     /** W3C XML */
