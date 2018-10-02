@@ -134,7 +134,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       </td>
     </tr>
     <tr>
-      <td>JKS_path</td>
+      <td>jks_path</td>
       <td>String</td>
       <td>M</td>
       <td>A Java KeyStore containing the X.509 certificates for the host address
@@ -143,7 +143,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       client will have to trust that certificate manually.</td>
     </tr>
     <tr>
-      <td>JKS_password</td>
+      <td>jks_password</td>
       <td>String</td>
       <td>M</td>
       <td>The password required to unlock the Java KeyStore. Using a CDATA section
