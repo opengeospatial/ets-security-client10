@@ -1,6 +1,19 @@
 
 # Release Notes
 
+## 0.3 (2018-10-02)
+
+This release adds support for other emulated server types, WMS 1.3.0 and
+WPS 2.0.
+
+- Add WMS 1.3.0 emulated server, responds to `GetCapabilities`
+- Rename WMS 1.1.1 emulated server Java class
+- Standardize on using "wms13" instead of "wms130"
+- Add WPS 2.0 emulated server, responds to `GetCapabilities`
+- Extract common emulated server code to superclass
+- Support secure clients that may use CORS
+- Remove references to supporting WPS 1.0.0
+
 ## 0.2 (2018-09-24)
 
 This release makes it usable with TEAM Engine.
