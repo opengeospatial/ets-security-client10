@@ -116,21 +116,20 @@ public class TestServer {
                     
                     // Return the proper document to the client
                     // TODO: Support other conformance classes and OGC Web Service types
-                    if (options.getServiceType().equals("wms111")) {
-                    	try {
-							emulated = new ServerWms111();
-						} catch (TransformerConfigurationException | ParserConfigurationException e) {
-							emulated = null;
-						}
-                    } else if (options.getServiceType().equals("wms13")) {
-                    	try {
-							emulated = new ServerWms13();
-						} catch (TransformerConfigurationException | ParserConfigurationException e) {
-							emulated = null;
-						}
-                    } else {
-                    	System.err.println("Unknown service type for emulation: " + options.getServiceType());
-                    }
+                    String serviceType = options.getServiceType();
+                    try {
+						if (serviceType.equals("wms111")) {
+                    		emulated = new ServerWms111();
+                        } else if (serviceType.equals("wms13")) {
+                        	emulated = new ServerWms13();
+                        } else if (serviceType.equals("wps20")) {
+                        	emulated = new ServerWps20();
+                        } else {
+                        	System.err.println("Unknown service type for emulation: " + serviceType);
+                        }
+                    } catch (TransformerConfigurationException | ParserConfigurationException e) {
+						emulated = null;
+					}
                     
                     if (emulated != null) {
                     	try {
