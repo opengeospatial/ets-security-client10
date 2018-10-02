@@ -40,17 +40,6 @@ public class EmulatedServer {
 		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 		this.transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 	}
-
-	/**
-	 * Subclasses must override this
-	 * @param request Request from client
-	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
-	 * @throws TransformerException Exception if transformer could not convert document to stream
-	 */
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
-		// TODO Auto-generated method stub
-	}
 	
 	/**
 	 * Use a Transformer to convert the XML Document to a String.
@@ -76,6 +65,28 @@ public class EmulatedServer {
 		
 		this.transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
 		return stringWriter.toString();
+	}
+	
+	/**
+	 * Enable Cross Origin Resource Sharing (CORS). This allows web-based
+	 * clients to connect to this test server from their web browser
+	 * security environment.
+	 * @param response Reponse on which to enable CORS headers
+	 */
+	protected void enableCors(HttpServletResponse response) {
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+	}
+	
+	/**
+	 * Subclasses must override this
+	 * @param request Request from client
+	 * @param response Response to build to send back to client
+	 * @throws IOException Exception raised when a response writer could not be created
+	 * @throws TransformerException Exception if transformer could not convert document to stream
+	 */
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+		// TODO Auto-generated method stub
 	}
 
 }

@@ -54,6 +54,8 @@ public class ServerWms13 extends EmulatedServer {
 		System.out.println("Building WMS 1.3.0 Response");
 		System.out.println("Query Params: " + request.getQueryString());
 		
+		enableCors(response);
+		
 		// If mandatory query parameters are missing, return an exception
 		// Required: "SERVICE", "REQUEST"
 		String serviceValue = null;

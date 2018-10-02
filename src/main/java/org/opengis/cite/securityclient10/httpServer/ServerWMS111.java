@@ -53,6 +53,8 @@ public class ServerWms111 extends EmulatedServer {
 		System.out.println("Building WMS 1.1.1 Response");
 		System.out.println("Query Params: " + request.getQueryString());
 		
+		enableCors(response);
+		
 		// If mandatory query parameters are missing, return an exception
 		// Required: "SERVICE", "REQUEST"
 		String serviceValue = null;
@@ -224,7 +226,7 @@ public class ServerWms111 extends EmulatedServer {
 		
 		printWriter.print(documentToString(doc));
 	}
-	
+
 	/**
 	 * Return a Service Exception for `reason`. Response will have content type 
 	 * "application/vnd.ogc.se_xml" and HTTP status code 404.

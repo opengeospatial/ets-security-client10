@@ -54,6 +54,8 @@ public class ServerWps20 extends EmulatedServer {
 		System.out.println("Building WPS 2.0 Response");
 		System.out.println("Query Params: " + request.getQueryString());
 		
+		enableCors(response);
+		
 		// If mandatory query parameters are missing, return an exception
 		// Required: "SERVICE", "REQUEST"
 		String serviceValue = null;
