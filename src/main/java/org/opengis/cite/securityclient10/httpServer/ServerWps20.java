@@ -5,7 +5,6 @@ package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Enumeration;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -16,8 +15,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.opengis.cite.securityclient10.Namespaces;
 import org.opengis.cite.servlet.http.HttpServletRequest;
@@ -297,19 +294,4 @@ public class ServerWps20 extends EmulatedServer {
 	public void buildNotSupportedException(HttpServletResponse response) throws IOException, TransformerException {
 		buildException("OperationNotSupported", HttpServletResponse.SC_NOT_IMPLEMENTED, response);
 	}
-	
-	/**
-	 * Use a Transformer to convert the XML Document to a String.
-	 * 
-	 * @param document XML document to convert
-	 * @return String containing the XML document
-	 * @throws TransformerException Exception if transformer could not convert document to stream
-	 */
-	private String documentToString(Document document) throws TransformerException {
-		StringWriter stringWriter = new StringWriter();
-		
-		this.transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
-		return stringWriter.toString();
-	}
-
 }
