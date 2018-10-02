@@ -92,7 +92,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
         <ul>
           <li><code>wms111</code> for WMS 1.1.1 Conformance Class</li>
           <li><code>wms13</code> for WMS 1.3.0 Conformance Class</li>
-          <li><code>wps10</code> for WPS 1.0.0 on the OWS Common Conformance Class</li>
+          <li><code>wps20</code> for WPS 2.0.0 on the OWS Common Conformance Class</li>
         </ul>
       </td>
     </tr>

@@ -45,7 +45,7 @@
                <ul>
                  <li>WMS 1.1.1: Conformance Class "WMS 1.1.1"</li>
                  <li>WMS 1.3.0: Conformance Class "WMS 1.3.0"</li>
-                 <li>WPS 1.0.0: Conformance Class "OGC Common"</li>
+                 <li>WPS 2.0.0: Conformance Class "OGC Common"</li>
                </ul>
                <p>The base "Common Security" Conformance Class will always apply before the service-specific conformance class is ran.</p>
              </div>
@@ -57,7 +57,7 @@
                  <select id="service-type" name="service-type">
                     <option value="wms111">WMS 1.1.1</option>
                     <option value="wms13">WMS 1.3.0</option>
-                    <option value="wps10">WPS 1.0.0</option>
+                    <option value="wps20">WPS 2.0.0</option>
                  </select>
                  <input type="hidden" id="path" name="path" value="" />
                </p>
