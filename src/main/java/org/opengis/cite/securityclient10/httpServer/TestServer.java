@@ -81,6 +81,7 @@ public class TestServer {
             final AsyncContext ctxt = request.startAsync();
             // Remove the leading slash from the path to determine the registered path
             String path = request.getServletPath().substring(1);
+            
             ctxt.start(new Runnable() {
                 private EmulatedServer emulated;
 
@@ -140,9 +141,11 @@ public class TestServer {
     					}
                     }
                     
-                    // Mark path handler as no longer waiting for request
-                    options.setReceived(true);
-                    
+                    // TODO: number of requests to receive depends on type of test
+                    if (options.getRequestCount() > 0) {
+	                    // Mark path handler as no longer waiting for request
+	                    options.setReceived(true);	                    
+                    }
                     ctxt.complete();
                 }
             });

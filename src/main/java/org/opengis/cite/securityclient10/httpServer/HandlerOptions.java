@@ -30,10 +30,17 @@ public class HandlerOptions {
 	 */
 	private RequestRepresenter requests;
 	
+	/**
+	 * The number of requests saved for this handler. The type of test will affect how many are saved,
+	 * e.g. SAML2 will have 5 requests.
+	 */
+	private int requestCount;
+	
 	public HandlerOptions(ServerOptions options) throws TransformerConfigurationException, ParserConfigurationException {
 		this.serverOptions = options;
 		this.requestReceived = false;
 		this.requests = new RequestRepresenter();
+		this.requestCount = 0;
 	}
 	
 	/**
@@ -42,6 +49,14 @@ public class HandlerOptions {
 	 */
 	public Boolean getReceived() {
 		return this.requestReceived;
+	}
+	
+	/**
+	 * The number of requests saved for this handler.
+	 * @return int
+	 */
+	public int getRequestCount() {
+		return this.requestCount;
 	}
 	
 	/**
@@ -62,13 +77,14 @@ public class HandlerOptions {
 	
 	/**
 	 * Replace the internal requests list with a new copy that has "request" appended to the end of the
-	 * array.
+	 * array. The internal request counter will be incremented by one.
 	 * 
 	 * @param request Request from client to serialize
 	 * @throws IOException Exception serializing a request to a representer
 	 */
 	public void saveRequest(HttpServletRequest request) throws IOException {
 		requests.serializeRequest(request);
+		this.requestCount += 1;
 	}
 	
 	/**
