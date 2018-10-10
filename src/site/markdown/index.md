@@ -151,10 +151,23 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       interfere with XML character entities.</td>
     </tr>
     <tr>
+      <td>authentication_saml2</td>
+      <td>String</td>
+      <td>O</td>
+      <td><p>As part of the annotated capabilities document presented to the secure
+        client, include Requirements Class "SAML2" 
+        (https://www.opengis.net/def/security/1.0/rc/authentication/saml2).</p>
+        <p>Enabling this will include an <code>ows:Constraint</code> for requiring SAML2 authentication from the secure client.</p>
+        <p>The value must be a URL that resolves to a SAML2 metadata file for the federation. This value will then be passed to the secure client in the <code>ows:Constraint</code>. Note that it is up to the test user to validate the URL and the service at that URL, the ETS will do no verification and pass the URL "as-is" to the secure client in the capabilities document.</p>
+        <p>If this element is omitted or is empty, then SAML2 authentication will not be enabled.</p>
+        <p>If any other authentication method is set as a test run property, then SAML2 will be added <em>in addition to</em> any other constrants.</p>
+      </td>
+    </tr>
+    <tr>
       <td>http_methods</td>
       <td>String</td>
       <td>O</td>
-      <td><p>(not yet implemented)</p>
+      <td><p><strong>(not yet implemented)</strong></p>
         <p>As part of the annotated capabilities document presented to the secure
         client, include Requirements Class "HTTP Methods" 
         (https://www.opengis.net/def/security/1.0/rc/http-methods).</p>
@@ -170,7 +183,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>w3c_cors</td>
       <td>String</td>
       <td>O</td>
-      <td><p>(not yet implemented)</p>
+      <td><p><strong>(not yet implemented)</strong></p>
         <p>As part of the annotated capabilities document presented to the secure
         client, include Requirements Class "W3C CORS" 
         (https://www.opengis.net/def/security/1.0/rc/cors).</p>
@@ -187,7 +200,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>http_exception_handling</td>
       <td>String</td>
       <td>O</td>
-      <td><p>(not yet implemented)</p>
+      <td><p><strong>(not yet implemented)</strong></p>
         <p>As part of the annotated capabilities document presented to the secure
         client, include Requirements Class "HTTP Exception Handling" 
         (https://www.opengis.net/def/security/1.0/rc/http-exception-handling).</p>
@@ -201,7 +214,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>http_post_content_type</td>
       <td>String</td>
       <td>O</td>
-      <td><p>(not yet implemented)</p>
+      <td><p><strong>(not yet implemented)</strong></p>
         <p>As part of the annotated capabilities document presented to the secure
         client, include Requirements Class "HTTP POST Content-Type" 
         (https://www.opengis.net/def/security/1.0/rc/content-type).</p>
