@@ -8,10 +8,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 
 /**
- * A class that encapsulates the options from the test runner, which are used to determine the type and
+ * A class that encapsulates the options from the test runner, which are used to determine the options and
  * state of the servlet handler created for capturing the secure client requests
- * 
- * @author jpbadger
  *
  */
 public class HandlerOptions {
@@ -22,9 +20,9 @@ public class HandlerOptions {
 	private Boolean requestReceived;
 	
 	/**
-	 * The type of OGC Web Service being emulated. Also see SuiteAttribute#TEST_SERVICE_TYPE.
+	 * The options for configuring the service type to emulate.
 	 */
-	private String serviceType;
+	private ServerOptions serverOptions;
 	
 	/**
 	 * Requests associated with this test session that have been received from the secure client are
@@ -32,8 +30,8 @@ public class HandlerOptions {
 	 */
 	private RequestRepresenter requests;
 	
-	public HandlerOptions(String type) throws TransformerConfigurationException, ParserConfigurationException {
-		this.serviceType = type;
+	public HandlerOptions(ServerOptions options) throws TransformerConfigurationException, ParserConfigurationException {
+		this.serverOptions = options;
 		this.requestReceived = false;
 		this.requests = new RequestRepresenter();
 	}
@@ -55,11 +53,11 @@ public class HandlerOptions {
 	}
 	
 	/**
-	 * Service type that this handler is emulating.
-	 * @return String with service type
+	 * Options for the service type being emulated.
+	 * @return ServerOptions object.
 	 */
-	public String getServiceType() {
-		return this.serviceType;
+	public ServerOptions getServerOptions() {
+		return this.serverOptions;
 	}
 	
 	/**

@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.opengis.cite.securityclient10.httpServer.RequestRepresenter;
+import org.opengis.cite.securityclient10.httpServer.ServerOptions;
 import org.opengis.cite.securityclient10.httpServer.TestServer;
 import org.opengis.cite.securityclient10.util.PropertiesDocument;
 import org.opengis.cite.securityclient10.util.TestSuiteLogger;
@@ -243,9 +244,12 @@ public class TestNGController implements TestSuiteController {
         	path = testRunProperties.getProperty("path");
         }
         
-        // Register a servlet handler with the path and service type
+        // Register a servlet handler with the path, service type, and requirement class options
+        ServerOptions serverOptions = new ServerOptions(serviceType);
+        serverOptions.setSaml2Url(testRunProperties.getProperty("authentication_saml2"));
+        
         try {
-			server.registerHandler(path, serviceType);
+			server.registerHandler(path, serverOptions);
 		} catch (Exception e) {
 			// If handler could not be created, skip to tests
 			e.printStackTrace();

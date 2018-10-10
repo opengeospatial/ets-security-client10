@@ -66,13 +66,16 @@ public class TestRunArgValidator {
             		+ TestRunArg.JKS_Path.toString());
         }
         
-     // Java Keystore Password
+        // Java Keystore Password
         String jksPassParam = params.get(TestRunArg.JKS_Password.toString());
         
         if ((null == jksPassParam) || jksPassParam.isEmpty()) {
             throw new IllegalArgumentException("Required test run parameter not found: " 
             		+ TestRunArg.JKS_Password.toString());
         }
+        
+        // Authentication: SAML2 URL
+        String saml2Url = params.get(TestRunArg.Authentication_SAML2.toString());
         
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());

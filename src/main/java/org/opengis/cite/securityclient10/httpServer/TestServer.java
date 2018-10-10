@@ -115,8 +115,8 @@ public class TestServer {
 					}
                     
                     // Return the proper document to the client
-                    // TODO: Support other conformance classes and OGC Web Service types
-                    String serviceType = options.getServiceType();
+                    ServerOptions serverOptions = options.getServerOptions();
+                    String serviceType = serverOptions.getServiceType();
                     try {
 						if (serviceType.equals("wms111")) {
                     		emulated = new ServerWms111();
@@ -227,12 +227,12 @@ public class TestServer {
 	 * timeout is hit.
 	 * 
 	 * @param path HTTP path to dynamically add to the embedded server
-	 * @param serviceType String representing the type of OWS to emulate, will determine which capabilities
-	 * 							 document will be presented to the client
+	 * @param serverOptions ServerOptions Object with options for the type of OWS to emulate, will 
+	 * determine which capabilities document will be presented to the client
 	 * @throws Exception Exception if context could not be started
 	 */
-	public void registerHandler(String path, String serviceType) throws Exception {
-		HandlerOptions options = new HandlerOptions(serviceType);
+	public void registerHandler(String path, ServerOptions serverOptions) throws Exception {
+		HandlerOptions options = new HandlerOptions(serverOptions);
 		handlerBlocks.put(path, options);
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
