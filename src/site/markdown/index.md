@@ -161,6 +161,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
         <p>The value must be a URL that resolves to a SAML2 metadata file for the federation. This value will then be passed to the secure client in the <code>ows:Constraint</code>. Note that it is up to the test user to validate the URL and the service at that URL, the ETS will do no verification and pass the URL "as-is" to the secure client in the capabilities document.</p>
         <p>If this element is omitted or is empty, then SAML2 authentication will not be enabled.</p>
         <p>If any other authentication method is set as a test run property, then SAML2 will be added <em>in addition to</em> any other constrants.</p>
+        <p><a href="saml2.html">A guide has been included for running SAML2 tests</a>.</p>
       </td>
     </tr>
     <tr>
