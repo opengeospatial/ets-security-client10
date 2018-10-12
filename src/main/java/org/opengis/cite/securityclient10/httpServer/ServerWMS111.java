@@ -25,21 +25,26 @@ import org.w3c.dom.Element;
  * 
  * Details of how this fake WMS 1.1.1 works are based on Web Map Service Implementation Specification 
  * (OGC 01-068r3).
- * 
- * @author jpbadger
  *
  */
 public class ServerWms111 extends EmulatedServer {
+	/**
+	 * Test Run Properties for this emulated server
+	 */
+	ServerOptions options;
 	
 	/**
 	 * Create an emulated WMS 1.1.1.
 	 * 
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
 	 * declaration.
+	 * @param options ServerOptions object with emulated server configuration
 	 * @throws ParserConfigurationException Exception if new document builder could not be created
 	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWms111() throws ParserConfigurationException, TransformerConfigurationException {}
+	public ServerWms111(ServerOptions options) throws ParserConfigurationException, TransformerConfigurationException {
+		this.options = options;
+	}
 	
 	/**
 	 * Build a valid WMS 1.1.1 response for the client request, and automatically complete the response.

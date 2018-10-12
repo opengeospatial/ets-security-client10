@@ -120,11 +120,11 @@ public class TestServer {
                     String serviceType = serverOptions.getServiceType();
                     try {
 						if (serviceType.equals("wms111")) {
-                    		emulated = new ServerWms111();
+                    		emulated = new ServerWms111(serverOptions);
                         } else if (serviceType.equals("wms13")) {
-                        	emulated = new ServerWms13();
+                        	emulated = new ServerWms13(serverOptions);
                         } else if (serviceType.equals("wps20")) {
-                        	emulated = new ServerWps20();
+                        	emulated = new ServerWps20(serverOptions);
                         } else {
                         	System.err.println("Unknown service type for emulation: " + serviceType);
                         }

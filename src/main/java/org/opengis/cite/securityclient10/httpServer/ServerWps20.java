@@ -31,15 +31,21 @@ import org.w3c.dom.Element;
  */
 public class ServerWps20 extends EmulatedServer {
 	/**
+	 * Test Run Properties for this emulated server
+	 */
+	ServerOptions options;
+	/**
 	 * Create an emulated WPS 2.0.
 	 * 
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
 	 * declaration.
+	 * @param options ServerOptions object with emulated server configuration
 	 * @throws ParserConfigurationException Exception if new document builder could not be created
 	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWps20() throws ParserConfigurationException, TransformerConfigurationException {
+	public ServerWps20(ServerOptions options) throws ParserConfigurationException, TransformerConfigurationException {
 		this.documentFactory.setNamespaceAware(true);
+		this.options = options;
 	}
 	
 	/**
