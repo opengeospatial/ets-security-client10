@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+SERVICE=$(echo "$1" | tr a-z A-Z)
+curl -ik "$2?request=GetCapabilities&service=$SERVICE"
