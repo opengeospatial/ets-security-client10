@@ -151,17 +151,47 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       interfere with XML character entities.</td>
     </tr>
     <tr>
-      <td>authentication_saml2</td>
+      <td>authentication</td>
       <td>String</td>
       <td>O</td>
-      <td><p>As part of the annotated capabilities document presented to the secure
-        client, include Requirements Class "SAML2" 
+      <td>
+        <p>Specify the authentication method that will be presented to
+        Secure Clients via the capabilities document. Only one authentication
+        method may be specified. Values are <strong>not</strong> case
+        sensitive.</p>
+        <p>Enabling this will include an <code>ows:Constraint</code> for 
+        requiring an authentication from the secure client. For some
+        authentication methods, additional test run properties may be
+        mandatory.</p>
+        <p>If this element is omitted or is empty, then authentication 
+        will not be enabled.</p>
+        <p>For SAML2 authentication, specify <code>saml2</code> and specify
+          the <code>saml2_url</code> test run property:</p>
+          <pre>&lt;entry name=&quot;authentication&quot;&gt;saml2&lt;/entry&gt;</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>saml2_url</td>
+      <td>String</td>
+      <td>O</td>
+      <td>
+        <p>As part of the annotated capabilities document presented to 
+        the secure client, include Requirements Class "SAML2" 
         (https://www.opengis.net/def/security/1.0/rc/authentication/saml2).</p>
-        <p>Enabling this will include an <code>ows:Constraint</code> for requiring SAML2 authentication from the secure client.</p>
-        <p>The value must be a URL that resolves to a SAML2 metadata file for the federation. This value will then be passed to the secure client in the <code>ows:Constraint</code>. Note that it is up to the test user to validate the URL and the service at that URL, the ETS will do no verification and pass the URL "as-is" to the secure client in the capabilities document.</p>
-        <p>If this element is omitted or is empty, then SAML2 authentication will not be enabled.</p>
-        <p>If any other authentication method is set as a test run property, then SAML2 will be added <em>in addition to</em> any other constrants.</p>
-        <p><a href="saml2.html">A guide has been included for running SAML2 tests</a>.</p>
+        <p>Enabling this will include an <code>ows:Constraint</code> for 
+        requiring SAML2 authentication from the secure client. The
+        <code>authentication</code> test run property must be set to
+        <code>saml2</code>, otherwise this test run property is ignored.</p>
+        <p>The value must be a URL that resolves to a SAML2 metadata file 
+        for the federation. This value will then be passed to the 
+        secure client in the <code>ows:Constraint</code>. Note that it 
+        is up to the test user to validate the URL and the service at 
+        that URL, the ETS will do no verification and pass the URL 
+        "as-is" to the secure client in the capabilities document.</p>
+        <p>If this element is omitted or is empty, then SAML2 
+        authentication will not be enabled.</p>
+        <p><a href="saml2.html">A guide has been included for running 
+        SAML2 tests</a>.</p>
       </td>
     </tr>
     <tr>
