@@ -9,5 +9,6 @@
   <entry key="path"></entry>
   <entry key="jks_path">src/main/resources/security.jks</entry>
   <entry key="jks_password"><![CDATA[ets-security-client]]></entry>
-  <entry key="authentication_saml2"></entry>
+  <entry key="authentication"></entry>
+  <entry key="saml2_url"></entry>
 </properties>

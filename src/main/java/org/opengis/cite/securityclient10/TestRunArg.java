@@ -42,9 +42,14 @@ public enum TestRunArg {
 	JKS_Password,
 	
 	/**
+	 * The authentication method presented to secure clients
+	 */
+	Authentication,
+	
+	/**
 	 * The URL for the SAML2 metadata file, if SAML2 authentication is enabled
 	 */
-	Authentication_SAML2,
+	SAML2_URL,
 	
 	/**
 	 * The request(s) from the secure client, containing the headers and body,

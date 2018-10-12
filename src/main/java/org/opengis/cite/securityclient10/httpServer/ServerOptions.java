@@ -14,12 +14,26 @@ public class ServerOptions {
 	 */
 	private String serviceType;
 	/**
+	 * The authentication method to apply. Currently supported are
+	 * "none" and "saml2".
+	 */
+	private String authentication;
+	/**
 	 * The URL to the SAML2 metadata file. Optional.
 	 */
 	private String saml2Url;
 
 	public ServerOptions(String serviceType) {
 		this.serviceType = serviceType;
+		this.authentication = "none";
+	}
+	
+	/**
+	 * Get the authentication type for the secure annotations.
+	 * @return String
+	 */
+	public String getAuthentication() {
+		return this.authentication;
 	}
 	
 	/**
@@ -36,6 +50,18 @@ public class ServerOptions {
 	 */
 	public String getServiceType() {
 		return this.serviceType;
+	}
+	
+	/**
+	 * Set the authentication method. If a blank string or null,
+	 * then no authentication method will be applied. Currently
+	 * valid values are "none" and "saml2".
+	 * @param auth A string with a valid authentication code
+	 */
+	public void setAuthentication(String auth) {
+		if (auth != null && !auth.isEmpty()) {
+			this.authentication = auth;
+		}
 	}
 	
 	/**

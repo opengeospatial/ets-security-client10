@@ -42,6 +42,10 @@ public enum SuiteAttribute {
      */
     TEST_JKS_PASSWORD("testJKSPassword", String.class),
     /**
+     * A String specifying which authentication method to present in the capabilities.
+     */
+    TEST_AUTHENTICATION("testAuthentication", String.class),
+    /**
      * A String for the SAML2 metadata file, if SAML2 is enabled.
      */
     TEST_SAML2_URL("testSAML2Url", String.class),

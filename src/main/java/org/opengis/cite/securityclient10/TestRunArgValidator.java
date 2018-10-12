@@ -74,8 +74,11 @@ public class TestRunArgValidator {
             		+ TestRunArg.JKS_Password.toString());
         }
         
+        // Authentication method
+        String authentication = params.get(TestRunArg.Authentication.toString());
+        
         // Authentication: SAML2 URL
-        String saml2Url = params.get(TestRunArg.Authentication_SAML2.toString());
+        String saml2Url = params.get(TestRunArg.SAML2_URL.toString());
         
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());
