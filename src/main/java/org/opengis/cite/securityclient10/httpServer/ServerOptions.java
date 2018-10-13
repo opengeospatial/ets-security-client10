@@ -37,6 +37,26 @@ public class ServerOptions {
 	}
 	
 	/**
+	 * Determine the number of client requests to expect for a
+	 * given type of authentication scheme. For SAML2, the SAML2 URL
+	 * must also be defined.
+	 * 
+	 * None  - 1 request
+	 * Saml2 - 4 requests
+	 * 
+	 * @return int number of requests
+	 */
+	public int getExpectedRequestCount() {
+		if (this.authentication.equals("none")) {
+			return 1;
+		} else if (this.authentication.equals("saml2") && this.saml2Url != null) {
+			return 4;
+		}
+		
+		return 1;
+	}
+	
+	/**
 	 * Get the URL for the SAML2 metadata file.
 	 * @return String
 	 */

@@ -141,8 +141,8 @@ public class TestServer {
     					}
                     }
                     
-                    // TODO: number of requests to receive depends on type of test
-                    if (options.getRequestCount() > 0) {
+                    // Ask ServerOptions for the number of expected requests for the authentication type
+                    if (options.getRequestCount() == serverOptions.getExpectedRequestCount()) {
 	                    // Mark path handler as no longer waiting for request
 	                    options.setReceived(true);	                    
                     }
