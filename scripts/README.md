@@ -27,3 +27,7 @@ $ ./client wps "https://localhost:10080/aabbccddee"
 ```
 
 The headers and body from the response will be send to STDOUT.
+
+## `saml-idp`
+
+A script to start up a Node.js testing SAML Identity Provider server, using [saml-idp](https://github.com/mcguinness/saml-idp). I am not sure what values I am supposed to be using for `acs` and `aud`.
