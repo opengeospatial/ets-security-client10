@@ -21,6 +21,8 @@ public class Namespaces {
     public static final String OWS = "http://www.opengis.net/ows/1.1";
     /** OWS 2.0 */
     public static final String OWS_2 = "http://www.opengis.net/ows/2.0";
+    /** OWS Security 1.0 **/
+    public static final String OWS_SECURITY = "http://www.opengis.net/security/1.0";
     /** Schematron (ISO 19757-3) namespace */
     public static final URI SCH = URI
             .create("http://purl.oclc.org/dsdl/schematron");

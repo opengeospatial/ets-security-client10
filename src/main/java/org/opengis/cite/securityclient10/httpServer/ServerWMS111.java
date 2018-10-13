@@ -229,7 +229,73 @@ public class ServerWms111 extends EmulatedServer {
 		exceptionFormat.setTextContent("application/vnd.ogc.se_xml");
 		exception.appendChild(exceptionFormat);
 		
+		// Capability > VendorSpecificCapabilities
+		Element vendorSpecificCapabilities = buildVendorSpecificCapabilities(doc, href);
+		capability.appendChild(vendorSpecificCapabilities);
+		
 		printWriter.print(documentToString(doc));
+	}
+	
+	/**
+	 * Create the VendorSpecificCapabilities element and populate it with security annotations based on
+	 * the test run properties for the ETS.
+	 */
+	private Element buildVendorSpecificCapabilities(Document doc, String href) {
+		Element vendorSpecificCapabilities = doc.createElement("VendorSpecificCapabilities");
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null) {
+			Element extendedSecurityCapabilities = doc.createElement("ows_security:ExtendedSecurityCapabilities");
+			extendedSecurityCapabilities.setAttribute("xmlns:ows_security", Namespaces.OWS_SECURITY);
+			vendorSpecificCapabilities.appendChild(extendedSecurityCapabilities);
+			
+			Element operationsMetadata = doc.createElement("ows:OperationsMetadata");
+			operationsMetadata.setAttribute("xmlns:ows", Namespaces.OWS);
+			extendedSecurityCapabilities.appendChild(operationsMetadata);
+			
+			// GetCapabilities
+			Element getCapabilities = doc.createElement("ows:Operation");
+			getCapabilities.setAttribute("name", "GetCapabilities");
+			operationsMetadata.appendChild(getCapabilities);
+			
+			Element getCapabilitiesDcp = doc.createElement("ows:DCP");
+			getCapabilities.appendChild(getCapabilitiesDcp);
+			
+			Element getCapabilitiesDcpHttp = doc.createElement("ows:HTTP");
+			getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
+			
+			// GetCapabilities GET
+			Element getCapabilitiesDcpHttpGet = doc.createElement("ows:Get");
+			getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
+			getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
+			getCapabilitiesDcpHttpGet.setAttribute("xlink:href", href);
+			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
+			
+			Element getCapabilitiesDcpHttpGetConstraint = doc.createElement("ows:Constraint");
+			getCapabilitiesDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			getCapabilitiesDcpHttpGet.appendChild(getCapabilitiesDcpHttpGetConstraint);
+			
+			Element getCapabilitiesDcpHttpGetConstraintValues = doc.createElement("ows:ValuesReference");
+			getCapabilitiesDcpHttpGetConstraintValues.setAttribute("ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
+			
+			// GetCapabilities POST
+			Element getCapabilitiesDcpHttpPost = doc.createElement("ows:Post");
+			getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
+			getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
+			getCapabilitiesDcpHttpPost.setAttribute("xlink:href", href);
+			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
+			
+			Element getCapabilitiesDcpHttpPostConstraint = doc.createElement("ows:Constraint");
+			getCapabilitiesDcpHttpPostConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			getCapabilitiesDcpHttpPost.appendChild(getCapabilitiesDcpHttpPostConstraint);
+			
+			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElement("ows:ValuesReference");
+			getCapabilitiesDcpHttpPostConstraintValues.setAttribute("ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
+		}
+		
+		return vendorSpecificCapabilities;
 	}
 
 	/**
