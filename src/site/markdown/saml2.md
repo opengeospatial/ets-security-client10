@@ -1,27 +1,32 @@
 
 # Testing with SAML2
 
-For secure clients that want to test integration with SAML2 authentication, the test suite supports specifying a SAML2 metadata file URL that will use the SAML2 Browser SSO process. The testing process is as follows:
+For secure clients that want to test integration with SAML2 authentication, the test suite supports specifying a SAML2 metadata file URL that will use the SAML2 Browser SSO process. Authentication for the Identity Provider is assumed to be HTTP Basic Authentication; other authentication methods (such as X.509, HTTP form, Kerberos, etc) are beyond the scope of this guide.
+
+The testing process is as follows:
 
 1. The Secure Client connects to the Test Suite server, and issues a GET request for the public capabilities
 2. The Test Suite server responds with its basic capabilities document, that contains SAML2 metadata in its security annotations
 3. The Secure Client issues a GET request for the secure capabilities document from the Test Suite server
 4. The Test Suite server responds with a SAML Authentication redirect to the Identity Provider; the redirect URL contains additional parameters from the Test Suite server
-5. The Secure Client loads the Identity Provider URL, and authenticates to the Identity Provider
-6. The Identity Provider identifies the Secure Client test user, and returns a SAMLResponse XML Document
-7. The Secure Client sends a POST request to the Test Suite server with the SAMLResponse XML Document
-8. The Test Suite server validates the POST request, creates a security context for the test user, and redirects to the secure capabilities document
-9. The Secure Client makes a GET request to the secure capabilties document with the security context (cookies) defined
-10. The Test Suite server responds with the secure capabilities document, and ends the test session
-11. The Test Suite then evaluates the requests from the Secure Client against the TestNG test methods
+5. The Secure Client loads the Identity Provider URL
+6. The Identity Provider requires HTTP Basic authentication from the Secure Client, and responds with a `401 Unauthorized` response with the `WWW-Authenticate` header set to require HTTP Basic.
+7. The Secure Client re-issues the GET request to the Identity Provider with the `Authorization` header set with valid HTTP Basic crendentials.
+8. The Identity Provider identifies the Secure Client test user, and returns a SAMLResponse XML Document
+9. The Secure Client sends a POST request to the Test Suite server with the SAMLResponse XML Document
+10. The Test Suite server validates the POST request, creates a security context for the test user, and redirects to the secure capabilities document
+11. The Secure Client makes a GET request to the secure capabilties document with the security context (cookies) defined
+12. The Test Suite server responds with the secure capabilities document, and ends the test session
+13. The Test Suite then evaluates the requests from the Secure Client against the TestNG test methods
 
-This requires 5 requests from the Secure Client:
+This requires 6 requests from the Secure Client:
 
 1. GET request for Service Provider public capabilities
 2. GET request for Service Provider secure capabilities
 3. GET request for Identity Provider SSO
-4. POST request to Service Provider SSO URL with SAML Response
-5. GET request for Service Provider secure capabilities with cookies set
+4. GET request for Identity Provider SSO with HTTP Basic credentials
+5. POST request to Service Provider SSO URL with SAML Response
+6. GET request for Service Provider secure capabilities with cookies set
 
 In this case, the "Service Provider" is the executable test suite's embedded test server.
 
@@ -60,12 +65,12 @@ Content-Type: application/vnd.ogc.wms_xml
           <ows:HTTP>
             <ows:Get xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://localhost:10080/aabbccddee/full">
               <ows:Constraint name="urn:ogc:def:security:1.0:rc:authentication:saml2">
-                  <ows:ValuesReference ows:reference="http://localhost:7000/saml/sso"/>
+                  <ows:ValuesReference ows:reference="https://idp.example.org/saml/sso"/>
               </ows:Constraint>
             </ows:Get>
             <ows:Post xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="https://localhost:10080/aabbccddee/full">
               <ows:Constraint name="urn:ogc:def:security:1.0:rc:authentication:saml2">
-                  <ows:ValuesReference ows:reference="http://localhost:7000/saml/sso"/>
+                  <ows:ValuesReference ows:reference="https://idp.example.org/saml/sso"/>
               </ows:Constraint>
             </ows:Post>
           </ows:HTTP>
@@ -92,22 +97,105 @@ As the request for the full capabilities does not include a security context (e.
 
 ```
 HTTP/1.1 302 Found
-Location: http://localhost:7000/saml/sso/redirect?SAMLRequest=<DATA>&RelayState=<TOKEN>
+Location: https://idp.example.org/saml/sso/redirect?SAMLRequest=<DATA>&RelayState=<TOKEN>
 ```
 
 #### Secure Client: Issue GET request for SSO URL
 
-The Secure Client will load the URL from the test suite, and the test user will fill out the SSO credentials. Setting up valid credentials is outside of the scope of the test suite, and it is up to the test user to set this up before testing.
+The Secure Client will load the URL from the test suite, connecting to the Identity Provider.
 
 ```
 GET /saml/sso/redirect?SAMLRequest=<DATA>&RelayState=<TOKEN> HTTP/1.1
 Accept: */*
-Host: localhost:7000
+Host: idp.example.org
+```
+
+#### Identity Provider: Respond with Authorization request
+
+The Identity Provider, configured for HTTP Basic, requests that type of authentication from the Secure Client by using the `WWW-Authenticate` header.
+
+```
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Basic realm="SAML 2 Identity Provider"
+```
+
+#### Secure Client: Issue GET request for SSO URL with credentials
+
+The Secure Client sends username and password to the Identity Provider using the `Authorization` header.
+
+```
+GET /saml/sso/redirect?SAMLRequest=<DATA>&RelayState=<TOKEN> HTTP/1.1
+Accept: */*
+Host: idp.example.org
+Authorization: Basic <base64 encoded credentials>
+```
+
+#### Identity Provider: Respond with SAML Authentication Response Document
+
+The Identity Provider validates the credentials from the Secure Client, and responds with the SAML Authentication Response document.
+
+```xml
+HTTP/1.1 200 OK
+Content-Type: text/xml
+
+<samlp:Response
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    ID="identifier_2"
+    InResponseTo="identifier_1"
+    Version="2.0"
+    IssueInstant="2018-10-16T09:00:00Z"
+    Destination="https://localhost:10080/aabbccddee/saml2">
+    <saml:Issuer>https://idp.example.org/SAML2</saml:Issuer>
+    <samlp:Status>
+      <samlp:StatusCode
+        Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
+    </samlp:Status>
+    <saml:Assertion
+      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+      ID="identifier_3"
+      Version="2.0"
+      IssueInstant="2018-10-16T09:00:00Z">
+      <saml:Issuer>https://idp.example.org/SAML2</saml:Issuer>
+      <!-- a POSTed assertion MUST be signed -->
+      <ds:Signature
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#">...</ds:Signature>
+      <saml:Subject>
+        <saml:NameID
+          Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient">
+          3f7b3dcf-1674-4ecd-92c8-1544f346baf8
+        </saml:NameID>
+        <saml:SubjectConfirmation
+          Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+          <saml:SubjectConfirmationData
+            InResponseTo="identifier_1"
+            Recipient="https://localhost:10080/aabbccddee/saml2"
+            NotOnOrAfter="2018-10-16T09:10:00Z"/>
+        </saml:SubjectConfirmation>
+      </saml:Subject>
+      <saml:Conditions
+        NotBefore="2018-10-16T09:00:00Z"
+        NotOnOrAfter="2018-10-16T09:10:00Z">
+        <saml:AudienceRestriction>
+          <saml:Audience>https://localhost:10080/aabbccddee/saml2</saml:Audience>
+        </saml:AudienceRestriction>
+      </saml:Conditions>
+      <saml:AuthnStatement
+        AuthnInstant="2018-10-16T09:00:00Z"
+        SessionIndex="identifier_3">
+        <saml:AuthnContext>
+          <saml:AuthnContextClassRef>
+            urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+         </saml:AuthnContextClassRef>
+        </saml:AuthnContext>
+      </saml:AuthnStatement>
+    </saml:Assertion>
+  </samlp:Response>
 ```
 
 #### Secure Client: Issue POST request to SAML Callback URL
 
-The form from the the Identity Provider will submit the details to the test suite, using the URL the test suite injected into the SAMLRequest data document.
+The Authentication Response is received by the Secure Client and base64 encoded then deflated and used as the `RESPONSE` parameter as a parameter to the Test Suite.
 
 ```
 POST /aabbccddee/saml2 HTTP/1.1
