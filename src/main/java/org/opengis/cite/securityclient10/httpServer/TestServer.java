@@ -119,7 +119,9 @@ public class TestServer {
                     
                     System.out.println();
                     
-                    HandlerOptions options = handlerBlocks.get(path);
+                    // Split out nonce from the path
+                    String nonce = path.split("/")[0];
+                    HandlerOptions options = handlerBlocks.get(nonce);
                     
                     // Save request
                     try {
@@ -243,6 +245,7 @@ public class TestServer {
 	 * Create a new ServletContextHandler for the given `path`, and create a shared handler block boolean.
 	 * The boolean will be used by the waitForRequest thread to delay until the request is fulfilled or a
 	 * timeout is hit.
+	 * The Handler will catch requests to `path`, and to `path/*` where `*` is a wildcard.
 	 * 
 	 * @param path HTTP path to dynamically add to the embedded server
 	 * @param serverOptions ServerOptions Object with options for the type of OWS to emulate, will 
@@ -255,8 +258,10 @@ public class TestServer {
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
-        ServletHolder asyncHolder = context.addServlet(TestAsyncServlet.class, "/" + path);
-        asyncHolder.setAsyncSupported(true);
+        ServletHolder baseHolder = context.addServlet(TestAsyncServlet.class, "/" + path);
+        baseHolder.setAsyncSupported(true);
+        ServletHolder wildcardHolder = context.addServlet(TestAsyncServlet.class, "/" + path + "/*");
+        wildcardHolder.setAsyncSupported(true);
         serverHandlers.addHandler(context);
         
         context.start();
