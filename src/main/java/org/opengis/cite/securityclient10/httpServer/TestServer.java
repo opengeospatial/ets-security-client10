@@ -73,11 +73,26 @@ public class TestServer {
 	 */
 	@SuppressWarnings("serial")
 	public static class TestAsyncServlet extends HttpServlet {
-		/**
-		 * Override the reception of GET requests
-		 */
 		@Override
-		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		protected void doGet(HttpServletRequest request, HttpServletResponse response) throws 
+			ServletException, IOException {
+			handleRequest(request, response);
+		}
+		
+		@Override
+		protected void doPost(HttpServletRequest request, HttpServletResponse response) throws 
+			ServletException, IOException {
+			handleRequest(request, response);
+		}
+		
+		@Override
+		protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws 
+			ServletException, IOException {
+			handleRequest(request, response);
+		}
+		
+		protected void handleRequest(HttpServletRequest request, HttpServletResponse response) throws 
+			ServletException, IOException {
             final AsyncContext ctxt = request.startAsync();
             // Remove the leading slash from the path to determine the registered path
             String path = request.getServletPath().substring(1);
