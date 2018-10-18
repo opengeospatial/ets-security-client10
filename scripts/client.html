@@ -94,6 +94,16 @@
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
+		// remove HTTPS from URL for testing, as the test server is probably
+		// using a self-signed certificate.
+		function cleanURL(url) {
+			if (url.startsWith("https")) {
+				return url.replace(/https/, "http");
+			} else {
+				return url;
+			}
+		}
+
 		function de(ele) {
 			$(ele).prop("disabled", true);
 		}
@@ -114,6 +124,7 @@
 		}
 
 		function logResponse(target, xhr) {
+			console.log(xhr);
 			$(target).append($("<pre></pre>").text("HTTP/1.1 " + xhr.status + " " + xhr.statusText));
 			$(target).append($("<pre></pre>").text(xhr.getAllResponseHeaders()));
 			$(target).append($("<pre></pre>").text("\n" + xhr.responseText));
@@ -136,7 +147,7 @@
 			}
 
 			$("#url").on("input", function() {
-				url = this.value;
+				url = cleanURL(this.value);
 
 				(url === undefined || url === "") ? de("#get-public") : ee("#get-public");
 			});
@@ -146,6 +157,7 @@
 
 				$.ajax({
 					url: url,
+					method: 'GET',
 					data: {
 						request: "GetCapabilities",
 						service: "WMS"
@@ -172,6 +184,7 @@
 
 				$.ajax({
 					url: secureURL,
+					method: 'GET',
 					data: {
 						request: "GetCapabilities",
 						service: "WMS"
