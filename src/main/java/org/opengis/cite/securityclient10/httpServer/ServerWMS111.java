@@ -1,14 +1,23 @@
 package org.opengis.cite.securityclient10.httpServer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Enumeration;
+import java.util.zip.DeflaterOutputStream;
 
 import org.opengis.cite.securityclient10.Namespaces;
 import org.opengis.cite.securityclient10.Schemas;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 import org.opengis.cite.servlet.http.HttpServletResponse;
+import org.sonatype.plexus.components.cipher.Base64;
+
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -34,6 +43,11 @@ public class ServerWms111 extends EmulatedServer {
 	ServerOptions options;
 	
 	/**
+	 * RelayState token for SAML2
+	 */
+	String relayState;
+	
+	/**
 	 * Create an emulated WMS 1.1.1.
 	 * 
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
@@ -44,6 +58,30 @@ public class ServerWms111 extends EmulatedServer {
 	 */
 	public ServerWms111(ServerOptions options) throws ParserConfigurationException, TransformerConfigurationException {
 		this.options = options;
+		this.relayState = "token";
+	}
+	
+	/**
+	 * Extract the uri from a request object.
+	 * If contextOnly is true, then any path segments after the context path are excluded.
+	 * 
+	 * @param request The request to extract
+	 * @param contextOnly Only include up to the context path
+	 * @return The uri
+	 */
+	public static String getUri(HttpServletRequest request, Boolean contextOnly) {
+		String path;
+		if (contextOnly) {
+			path = "/" + request.getRequestURI().split("/")[1];
+		} else {
+			path = request.getRequestURI();
+		}
+		
+		return String.format("%s://%s:%d%s",
+				request.getScheme(),
+				request.getServerName(),
+				request.getServerPort(),
+				path);
 	}
 	
 	/**
@@ -76,7 +114,11 @@ public class ServerWms111 extends EmulatedServer {
 			}
 		}
 		
-		if (serviceValue == null || requestValue == null || !serviceValue.equals("WMS")) {
+		// If it is the SAML callback URL then process the SAML Authentication Response and set up a
+		// security context for the user.
+		if (request.getPathInfo().endsWith("/saml")) {
+			// TODO: Set up security context, respond with redirect and cookie
+		} else if (serviceValue == null || requestValue == null || !serviceValue.equals("WMS")) {
 			buildException("Invalid query parameters", response);
 		} else {
 			
@@ -84,8 +126,14 @@ public class ServerWms111 extends EmulatedServer {
 			switch (requestValue) {
 				case "GetCapabilities":
 				case "capabilities":
-					// Return a GetCapabilities document
-					buildCapabilities(request, response);
+					// Return a Capabilities document
+					if (request.getPathInfo().endsWith("/full") && this.getAuthenticationEnabled()) {
+						if (validateSecureRequest(request, response)) {
+							buildCapabilities(request, response, true);
+						}
+					} else {
+						buildCapabilities(request, response, false);
+					}
 					break;
 				case "GetMap":
 					// Return a GetMap document
@@ -107,25 +155,34 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
-	 * Return an HTTP response to the client with valid headers and a body containing the  Capabilities 
-	 * XML document.
+	 * Return an HTTP response to the client with valid headers and a body containing the Capabilities
+	 * document. If `fullCapabilities` is true, then a full capabilities document with a Content section
+	 * (Layers) will be generated, and the embedded links will use the "/full" URL. If false, then a 
+	 * partial capabilities document will be generated without a Content section (Layers), and clients
+	 * must use authentication to request the full capabilities.
 	 * 
-	 *  Source: Annex A
+	 * Source: Annex A
+	 * 
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
+	 * @param fullCapabilities If true, build a full capabilities document
 	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean fullCapabilities) throws IOException, TransformerException {
 		response.setContentType("application/vnd.ogc.wms_xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
 		// Extract scheme/host/port/path for HREFs
-		String href = String.format("%s://%s:%d%s",
-				request.getScheme(),
-				request.getServerName(),
-				request.getServerPort(),
-				request.getRequestURI());
+		String baseHref = getUri(request, false);
+		String href;
+		
+		if (fullCapabilities) {
+			href = baseHref + "/full";
+		} else {
+			href = baseHref;
+		}
+		
 		
 		PrintWriter printWriter = response.getWriter();
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
@@ -229,8 +286,22 @@ public class ServerWms111 extends EmulatedServer {
 		exceptionFormat.setTextContent("application/vnd.ogc.se_xml");
 		exception.appendChild(exceptionFormat);
 		
+		if (fullCapabilities) {
+			// Capabilities > Layer
+			Element layer = doc.createElement("Layer");
+			capability.appendChild(layer);
+			
+			Element layerTitle = doc.createElement("Title");
+			layerTitle.setTextContent("False Layer Data");
+			layer.appendChild(layerTitle);
+			
+			Element layerSrs = doc.createElement("SRS");
+			layerSrs.setTextContent("EPSG:4326");
+			layer.appendChild(layerSrs);
+		}
+		
 		// Capability > VendorSpecificCapabilities
-		Element vendorSpecificCapabilities = buildVendorSpecificCapabilities(doc, href);
+		Element vendorSpecificCapabilities = buildVendorSpecificCapabilities(doc, baseHref);
 		capability.appendChild(vendorSpecificCapabilities);
 		
 		printWriter.print(documentToString(doc));
@@ -242,6 +313,8 @@ public class ServerWms111 extends EmulatedServer {
 	 */
 	private Element buildVendorSpecificCapabilities(Document doc, String href) {
 		Element vendorSpecificCapabilities = doc.createElement("VendorSpecificCapabilities");
+		
+		String fullCapabilitiesUrl = href + "/full";
 		
 		// Add SAML2 constraint
 		if (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null) {
@@ -268,7 +341,7 @@ public class ServerWms111 extends EmulatedServer {
 			Element getCapabilitiesDcpHttpGet = doc.createElement("ows:Get");
 			getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
 			getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
-			getCapabilitiesDcpHttpGet.setAttribute("xlink:href", href);
+			getCapabilitiesDcpHttpGet.setAttribute("xlink:href", fullCapabilitiesUrl);
 			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
 			
 			Element getCapabilitiesDcpHttpGetConstraint = doc.createElement("ows:Constraint");
@@ -283,7 +356,7 @@ public class ServerWms111 extends EmulatedServer {
 			Element getCapabilitiesDcpHttpPost = doc.createElement("ows:Post");
 			getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
 			getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
-			getCapabilitiesDcpHttpPost.setAttribute("xlink:href", href);
+			getCapabilitiesDcpHttpPost.setAttribute("xlink:href", fullCapabilitiesUrl);
 			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
 			
 			Element getCapabilitiesDcpHttpPostConstraint = doc.createElement("ows:Constraint");
@@ -327,5 +400,126 @@ public class ServerWms111 extends EmulatedServer {
 		rootElement.appendChild(serviceException);
 		
 		printWriter.print(documentToString(doc));
+	}
+	
+	/**
+	 * Generate a deflated and base64-encoded representation of a SAML authentication request document.
+	 * This is meant to be used as a query parameter for clients to use when authenticating to a SAML 2
+	 * Identity Provider.
+	 * 
+	 * The base path of the request handler is necessary to include the SAML callback URL that is sent to
+	 * the Identity Provider.
+	 * 
+	 * @param href The base path of the request handler
+	 * @return String of auth request
+	 * @throws TransformerException Exception if transformer could not convert document to stream
+	 */
+	private String buildSamlAuthRequest(String href) throws TransformerException {
+		Document doc = this.documentBuilder.newDocument();
+		
+		Element rootElement = doc.createElement("samlp:AuthnRequest");
+		rootElement.setAttribute("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
+		rootElement.setAttribute("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion");
+		rootElement.setAttribute("ID", "identifier_1");
+		rootElement.setAttribute("Version", "2.0");
+		ZonedDateTime date = ZonedDateTime.now(ZoneId.of("UTC"));
+		rootElement.setAttribute("IssueInstant", date.toString());
+		rootElement.setAttribute("AssertionConsumerServiceIndex", "0");
+		doc.appendChild(rootElement);
+		
+		Element issuer = doc.createElement("saml:Issuer");
+		issuer.setTextContent(href + "/saml2");
+		rootElement.appendChild(issuer);
+		
+		Element nameIdPolicy = doc.createElement("samlp:NameIDPolicy");
+		nameIdPolicy.setAttribute("AllowCreate", "true");
+		nameIdPolicy.setAttribute("Format", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
+		rootElement.appendChild(nameIdPolicy);
+		
+		// Temporarily disable the XML Declaration for this fragment
+		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		String flatDoc = documentToString(doc);
+		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+		
+		return deflateAndBase64String(flatDoc);
+	}
+	
+	/**
+	 * Deflate (compress) the input String then encode it in base64
+	 * @param input String to compress and encode
+	 * @return Base64 encoded version of the deflated String
+	 */
+	private String deflateAndBase64String(String input) {
+		// Convert to bytes
+		byte[] inputBytes = null;
+		try {
+			inputBytes = input.getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// If UTF-8 is unsupported, there are problems
+			e.printStackTrace();
+		}
+		
+		// Compress
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		DeflaterOutputStream outputStream = new DeflaterOutputStream(output);
+		String outputString = null;
+		try {
+			outputStream.write(inputBytes, 0, inputBytes.length);
+			outputStream.close();
+			byte[] encodedBytes = Base64.encodeBase64(output.toByteArray());
+			outputString = new String(encodedBytes);
+		} catch (IOException e) {
+			// When the deflate output stream does not accept a write, or close
+			e.printStackTrace();
+		}
+		
+		return outputString;
+	}
+	
+	/**
+	 * Return true if authentication has been set to SAML2 or another valid value in the test server 
+	 * options. Returns false if no authentication method has been enabled.
+	 * @return Boolean
+	 */
+	private boolean getAuthenticationEnabled() {
+		return this.options.getAuthentication() != null;
+	}
+	
+	/**
+	 * Validate a request to a secure resource has a valid Security Context.
+	 * In this case, a security context is defined using an HTTP cookie. If the cookie is invalid or 
+	 * missing, then respond with a redirect to the Identity Provider (if using SAML2) or Service Exception
+	 * (if no authentication defined).
+	 * If the cookie is valid, then simply return true, leaving the response alone.
+	 * 
+	 * @param request The request from the client
+	 * @param response The response to send to the client
+	 * @return If the request has a valid security context
+	 * @throws IOException Exception raised when a response writer could not be created
+	 * @throws TransformerException Exception if transformer could not convert document to stream
+	 */
+	private boolean validateSecureRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+		String cookie = request.getHeader("Cookie");
+		
+		if (!this.getAuthenticationEnabled()) {
+			buildException("Authentication undefined in test run properties", response);
+			return false;
+		} else if (cookie == null) {
+			// If the cookie is missing, then redirect to IdP
+			
+			String idpUrl = this.options.getSaml2Url() + "?RelayState=" + this.relayState + "&SAMLRequest=" 
+					+ this.buildSamlAuthRequest(getUri(request, true));
+			
+			response.setStatus(HttpServletResponse.SC_FOUND);
+			response.setHeader("Location", idpUrl);
+			return false;
+		} else if (cookie.contains("session_id=")) {
+			// Cookie is valid, do nothing
+			return true;
+		} else {
+			// Cookie is malformed, return service exception
+			buildException("Cookie is missing session_id", response);
+			return false;
+		}
 	}
 }
