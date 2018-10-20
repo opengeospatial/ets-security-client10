@@ -3,7 +3,6 @@ require 'base64'
 require 'faraday'
 require 'logger'
 require 'nokogiri'
-require 'pry'
 
 # Parse arguments
 endpoint_url = ARGV[0]
@@ -115,5 +114,23 @@ end
 
 puts ""
 
+raise "Unexpected Response: #{response2.status}" if response5.status != 302
+raise "Missing set-cookie header" if response5.headers["Set-Cookie"].nil?
+
+# Parse cookie
+raw_cookie = response5.headers["Set-Cookie"]
+cookie = raw_cookie[/([^;]+)/, 1]
+
+# Parse location
+final_location_url = response5.headers["Location"]
+
 # 6. Get Full Capabilities Document with Security Context from Service Provider
+response6 = conn.get do |req|
+  req.url final_location_url
+  req.headers['Cookie'] = cookie
+end
+
+raise "Unexpected Response: #{response.status}" if response6.status != 200
+
+puts response6.body
 

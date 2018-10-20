@@ -42,6 +42,11 @@ A ruby script that acts as a SAML2 secure client, used to test the test suite SA
 
 * [faraday](https://github.com/lostisland/faraday) for managing requests and responses
 * [nokogiri](https://github.com/sparklemotion/nokogiri) for parsing the XML
-* [pry](https://pryrepl.org) for a REPL debugger
 
-Still a work in progress.
+Once the gems are installed, the script can be run from the command line:
+
+```terminal
+$ ruby scripts/saml-client.rb "<test endpoint URL>"
+```
+
+Currently only WMS 1.1.1 is tested and supported.
