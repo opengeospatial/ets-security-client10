@@ -41,8 +41,6 @@ import org.opengis.cite.jetty.util.ssl.SslContextFactory;
 /**
  * A wrapper class around the Jetty Server class. This adds functionality for the testing suite for
  * adding/removing servlets to capture test client requests.
- * 
- * @author jpbadger
  *
  */
 public class TestServer {
@@ -67,8 +65,6 @@ public class TestServer {
 	 * Use a servlet class to capture requests from the secure client. The path that is requested by the
 	 * client corresponds to the test session created in TestNGController; in the parent class here
 	 * (TestServer) the path is used to track if a request is fulfilled using the handlerBlocks HashMap.
-	 * 
-	 * @author jpbadger
 	 *
 	 */
 	@SuppressWarnings("serial")
@@ -105,7 +101,7 @@ public class TestServer {
                     System.out.println("Request received.");
                     
                     // Log request details
-                    System.out.printf("Path: /%s\n", path);
+                    System.out.printf("Path: %s\n", request.getPathInfo());
                     System.out.printf("HTTP Method: %s\n", request.getMethod());
                     System.out.printf("Is Secure: %s\n", request.isSecure() ? "true" : "false");
                     System.out.printf("Query String: %s\n", request.getQueryString());
@@ -270,6 +266,7 @@ public class TestServer {
 	
 	/**
 	 * Shut down the embedded server. This will force close any open HTTP connections.
+	 * 
 	 * @throws Exception for any errors shutting down the embedded server
 	 */
 	public void shutdown() throws Exception {
@@ -302,6 +299,7 @@ public class TestServer {
 	/**
 	 * Block the thread until a request is received, or the
 	 * timeout is hit.
+	 * 
 	 * @param path The unique code associated with the thread created to wait for the servlet activation
 	 * @throws InterruptedException For any errors caused by the waiting thread being interrupted 
 	 * @throws ExecutionException For any errors caused by the waiting thread having an exception
@@ -327,9 +325,6 @@ public class TestServer {
 	
 	/**
 	 * Thread class for delaying until a servlet request has been made
-	 * @author jpbadger
-	 *
-	 * TODO: Return the request data to waitForRequest
 	 */
 	class WaitTask implements Callable<String> {
 		private String path;
