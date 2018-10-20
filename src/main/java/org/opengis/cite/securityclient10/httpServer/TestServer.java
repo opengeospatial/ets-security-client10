@@ -105,6 +105,7 @@ public class TestServer {
                     System.out.println("Request received.");
                     
                     // Log request details
+                    System.out.printf("Path: /%s\n", path);
                     System.out.printf("HTTP Method: %s\n", request.getMethod());
                     System.out.printf("Is Secure: %s\n", request.isSecure() ? "true" : "false");
                     System.out.printf("Query String: %s\n", request.getQueryString());
