@@ -116,8 +116,10 @@ public class ServerWms111 extends EmulatedServer {
 		
 		// If it is the SAML callback URL then process the SAML Authentication Response and set up a
 		// security context for the user.
-		if (request.getPathInfo().endsWith("/saml")) {
-			// TODO: Set up security context, respond with redirect and cookie
+		if (request.getPathInfo().endsWith("/saml2")) {
+			if (validateSamlAuthenticationResponse(request, response)) {
+				buildSecurityContext(request, response);
+			}
 		} else if (serviceValue == null || requestValue == null || !serviceValue.equals("WMS")) {
 			buildException("Invalid query parameters", response);
 		} else {
@@ -445,6 +447,24 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
+	 * Create a security context for the client, returning a response that sets a cookie and redirects to
+	 * the full capabilities document.
+	 * Note: In a complete SAML 2.0 implementation, the redirect URI would be determined from the
+	 * authentication response from the IdP, and the IdP received that URI from the redirect that was made
+	 * by this Service Provider. In this test case, we only support GetCapabilities so that is where the
+	 * redirect will go instead.
+	 * 
+	 * @param request The request from the client
+	 * @param response The response that will be modified
+	 */
+	private void buildSecurityContext(HttpServletRequest request, HttpServletResponse response) {
+		response.setStatus(HttpServletResponse.SC_FOUND);
+		response.setHeader("Set-Cookie", "sessionToken=sample-token; Max-age=600; httpOnly");
+		String baseUrl = getUri(request, true);
+		response.setHeader("Location", baseUrl + "/full?request=GetCapabilities&service=WMS");
+	}
+	
+	/**
 	 * Deflate (compress) the input String then encode it in base64, then URL encode
 	 * @param input String to compress and encode
 	 * @return URL Encoded and Base64 encoded version of the deflated String
@@ -495,6 +515,18 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
+	 * Check if the request body has a valid SAML 2.0 Authentication Response document. For the test suite,
+	 * no check is actually done and "true" can always be returned.
+	 * 
+	 * @param request The request from the client
+	 * @param response The response to send to the client
+	 * @return If the SAML Authentication response is valid
+	 */
+	private boolean validateSamlAuthenticationResponse(HttpServletRequest request, HttpServletResponse response) {
+		return true;
+	}
+	
+	/**
 	 * Validate a request to a secure resource has a valid Security Context.
 	 * In this case, a security context is defined using an HTTP cookie. If the cookie is invalid or 
 	 * missing, then respond with a redirect to the Identity Provider (if using SAML2) or Service Exception
@@ -522,12 +554,12 @@ public class ServerWms111 extends EmulatedServer {
 			response.setStatus(HttpServletResponse.SC_FOUND);
 			response.setHeader("Location", idpUrl);
 			return false;
-		} else if (cookie.contains("session_id=")) {
+		} else if (cookie.contains("sessionToken=")) {
 			// Cookie is valid, do nothing
 			return true;
 		} else {
 			// Cookie is malformed, return service exception
-			buildException("Cookie is missing session_id", response);
+			buildException("Cookie is missing sessionToken", response);
 			return false;
 		}
 	}

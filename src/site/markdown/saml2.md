@@ -162,7 +162,7 @@ A Service Provider would normally validate the SAML Callback, but the Test Suite
 
 ```
 HTTP/1.1 302 Found
-Set-Cookie: sessionToken=asdf11; Expires=<EXPIRATION> httpOnly
+Set-Cookie: sessionToken=asdf11; Max-age=600; httpOnly
 Location: https://localhost:10080/aabbccddee/full?request=GetCapabilities&service=WMS
 ```
 
@@ -171,7 +171,7 @@ Location: https://localhost:10080/aabbccddee/full?request=GetCapabilities&servic
 Now that the Secure Client has a cookie, it can be used to request the Secure Capabilities document.
 
 ```
-GET /aabbccddee/full HTTP/1.1
+GET /aabbccddee/full?request=GetCapabilities&service=WMS HTTP/1.1
 Accept: */*
 Cookie: sessionToken=asdf11
 Host: localhost:10080
@@ -191,6 +191,6 @@ Content-Type: application/vnd.ogc.wms_xml
 
 This is the final request in the workflow, so the Test Suite shuts down the embedded server and runs the TestNG test methods to validate the Secure Client behavior.
 
-## Testing with curl
+## Testing the Workflow
 
-TODO: Write an example test where curl emulates a secure SAML2 client
+A sample secure client that follows this workflow has been included in the `scripts` directory of the test suite repository. It will require you to manually set up your own Identity Provider and use its SSO callback URL as a test run property in the test suite. For more details, see the README in the scripts directory.
