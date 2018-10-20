@@ -158,20 +158,20 @@ public class ServerWms111 extends EmulatedServer {
 	
 	/**
 	 * Return an HTTP response to the client with valid headers and a body containing the Capabilities
-	 * document. If `fullCapabilities` is true, then a full capabilities document with a Content section
-	 * (Layers) will be generated, and the embedded links will use the "/full" URL. If false, then a 
-	 * partial capabilities document will be generated without a Content section (Layers), and clients
-	 * must use authentication to request the full capabilities.
+	 * document. If `completeCapabilities` is true, then a complete capabilities document with a Content 
+	 * section (Layers) will be generated, and the embedded links will use the "/full" URL. If false, then 
+	 * a partial capabilities document will be generated without a Content section (Layers), and clients
+	 * must use authentication to request the complete capabilities.
 	 * 
 	 * Source: Annex A
 	 * 
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
-	 * @param fullCapabilities If true, build a full capabilities document
+	 * @param completeCapabilities If true, build a complete capabilities document
 	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean fullCapabilities) throws IOException, TransformerException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean completeCapabilities) throws IOException, TransformerException {
 		response.setContentType("application/vnd.ogc.wms_xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
@@ -179,7 +179,7 @@ public class ServerWms111 extends EmulatedServer {
 		String baseHref = getUri(request, false);
 		String href;
 		
-		if (fullCapabilities) {
+		if (completeCapabilities) {
 			href = baseHref + "/full";
 		} else {
 			href = baseHref;
@@ -288,7 +288,7 @@ public class ServerWms111 extends EmulatedServer {
 		exceptionFormat.setTextContent("application/vnd.ogc.se_xml");
 		exception.appendChild(exceptionFormat);
 		
-		if (fullCapabilities) {
+		if (completeCapabilities) {
 			// Capabilities > Layer
 			Element layer = doc.createElement("Layer");
 			capability.appendChild(layer);
@@ -316,7 +316,7 @@ public class ServerWms111 extends EmulatedServer {
 	private Element buildVendorSpecificCapabilities(Document doc, String href) {
 		Element vendorSpecificCapabilities = doc.createElement("VendorSpecificCapabilities");
 		
-		String fullCapabilitiesUrl = href + "/full";
+		String completeCapabilitiesUrl = href + "/full";
 		
 		// Add SAML2 constraint
 		if (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null) {
@@ -343,7 +343,7 @@ public class ServerWms111 extends EmulatedServer {
 			Element getCapabilitiesDcpHttpGet = doc.createElement("ows:Get");
 			getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
 			getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
-			getCapabilitiesDcpHttpGet.setAttribute("xlink:href", fullCapabilitiesUrl);
+			getCapabilitiesDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
 			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
 			
 			Element getCapabilitiesDcpHttpGetConstraint = doc.createElement("ows:Constraint");
@@ -358,7 +358,7 @@ public class ServerWms111 extends EmulatedServer {
 			Element getCapabilitiesDcpHttpPost = doc.createElement("ows:Post");
 			getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
 			getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
-			getCapabilitiesDcpHttpPost.setAttribute("xlink:href", fullCapabilitiesUrl);
+			getCapabilitiesDcpHttpPost.setAttribute("xlink:href", completeCapabilitiesUrl);
 			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
 			
 			Element getCapabilitiesDcpHttpPostConstraint = doc.createElement("ows:Constraint");
@@ -448,7 +448,7 @@ public class ServerWms111 extends EmulatedServer {
 	
 	/**
 	 * Create a security context for the client, returning a response that sets a cookie and redirects to
-	 * the full capabilities document.
+	 * the complete capabilities document.
 	 * Note: In a complete SAML 2.0 implementation, the redirect URI would be determined from the
 	 * authentication response from the IdP, and the IdP received that URI from the redirect that was made
 	 * by this Service Provider. In this test case, we only support GetCapabilities so that is where the

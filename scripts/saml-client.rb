@@ -53,15 +53,15 @@ puts ""
 
 raise "Unexpected Response: #{response.status}" if response.status != 200
 
-# Parse Full Capabilities URL from ExtendedSecurityCapabilities
+# Parse Complete Capabilities URL from ExtendedSecurityCapabilities
 basic_capabilities_doc = Nokogiri::XML(response.body)
-full_capabilities_url = basic_capabilities_doc.xpath("//ows_security:ExtendedSecurityCapabilities//ows:Operation[@name='GetCapabilities']//ows:Get/@xlink:href", namespaces).to_s
+complete_capabilities_url = basic_capabilities_doc.xpath("//ows_security:ExtendedSecurityCapabilities//ows:Operation[@name='GetCapabilities']//ows:Get/@xlink:href", namespaces).to_s
 
-raise "Missing Full Capabilities URL" if (full_capabilities_url.nil? || full_capabilities_url == "")
+raise "Missing Complete Capabilities URL" if (complete_capabilities_url.nil? || complete_capabilities_url == "")
 
-# 2. Get Full Capabilities Document from Service Provider
+# 2. Get Complete Capabilities Document from Service Provider
 response2 = conn.get do |req|
-  req.url full_capabilities_url
+  req.url complete_capabilities_url
   req.params['request'] = 'GetCapabilities'
   req.params['service'] = 'WMS'
   req.headers['Accept'] = 'text/xml, application/xml, */*'
@@ -124,7 +124,7 @@ cookie = raw_cookie[/([^;]+)/, 1]
 # Parse location
 final_location_url = response5.headers["Location"]
 
-# 6. Get Full Capabilities Document with Security Context from Service Provider
+# 6. Get Complete Capabilities Document with Security Context from Service Provider
 response6 = conn.get do |req|
   req.url final_location_url
   req.headers['Cookie'] = cookie

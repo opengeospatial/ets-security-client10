@@ -5,37 +5,37 @@ For secure clients that want to test integration with SAML2 authentication, the 
 
 The testing process is as follows:
 
-1. The Secure Client connects to the Test Suite server, and issues a GET request for the public capabilities
-2. The Test Suite server responds with its basic capabilities document, that contains SAML2 metadata in its security annotations
-3. The Secure Client issues a GET request for the secure capabilities document from the Test Suite server
+1. The Secure Client connects to the Test Suite server, and issues a GET request for the partial capabilities
+2. The Test Suite server responds with its partial capabilities document, that contains SAML2 metadata in its security annotations
+3. The Secure Client issues a GET request for the complete capabilities document from the Test Suite server
 4. The Test Suite server responds with a SAML Authentication redirect to the Identity Provider; the redirect URL contains additional parameters from the Test Suite server
 5. The Secure Client loads the Identity Provider URL
 6. The Identity Provider requires HTTP Basic authentication from the Secure Client, and responds with a `401 Unauthorized` response with the `WWW-Authenticate` header set to require HTTP Basic.
 7. The Secure Client re-issues the GET request to the Identity Provider with the `Authorization` header set with valid HTTP Basic crendentials.
 8. The Identity Provider identifies the Secure Client test user, and returns a base64-encoded SAMLResponse XML Document
 9. The Secure Client sends a POST request to the Test Suite server with the SAMLResponse XML Document (encoded with base64, then URL encoded)
-10. The Test Suite server validates the POST request, creates a security context for the test user, and redirects to the secure capabilities document
-11. The Secure Client makes a GET request to the secure capabilties document with the security context (cookies) defined
-12. The Test Suite server responds with the secure capabilities document, and ends the test session
+10. The Test Suite server validates the POST request, creates a security context for the test user, and redirects to the complete capabilities document
+11. The Secure Client makes a GET request to the complete capabilties document with the security context (cookies) defined
+12. The Test Suite server responds with the complete capabilities document, and ends the test session
 13. The Test Suite then evaluates the requests from the Secure Client against the TestNG test methods
 
 This requires 6 requests from the Secure Client:
 
-1. GET request for Service Provider public capabilities
-2. GET request for Service Provider secure capabilities
+1. GET request for Service Provider partial capabilities
+2. GET request for Service Provider complete capabilities
 3. GET request for Identity Provider SSO
 4. GET request for Identity Provider SSO with HTTP Basic credentials
 5. POST request to Service Provider SSO URL with SAML Response
-6. GET request for Service Provider secure capabilities with cookies set
+6. GET request for Service Provider complete capabilities with cookies set
 
 In this case, the "Service Provider" is the executable test suite's embedded test server.
 
 The Test Server will generate 4 responses for the Secure Client:
 
-1. Respond with public capabilities document containing security annotations
+1. Respond with partial capabilities document containing security annotations
 2. Respond with redirect to Identity Provider SSO with SAML Request query parameters
-3. Respond with a cookie with security context, and redirect to the secure capabilities
-4. Respond with the secure capabilities document, validating the cookie from the Secure Client
+3. Respond with a cookie with security context, and redirect to the complete capabilities
+4. Respond with the complete capabilities document, validating the cookie from the Secure Client
 
 ## Detailed Request Procedure (WMS 1.1.1)
 
@@ -47,7 +47,7 @@ Accept: */*
 Host: localhost:10080
 ```
 
-#### Test Suite: Respond with basic Capabilities document
+#### Test Suite: Respond with partial Capabilities document
 
 Capabilities document will have SAML2 constraint in the Vendor Specific Capabilities.
 
@@ -81,7 +81,7 @@ Content-Type: application/vnd.ogc.wms_xml
 </VendorSpecificCapabilities>
 ```
 
-#### Secure Client: Issue GET request for Secure Capabilities
+#### Secure Client: Issue GET request for complete Capabilities
 
 This is the URL defined in the `<ows:Get>` element.
 
@@ -93,7 +93,7 @@ Host: localhost:10080
 
 #### Test Suite: Respond with Redirect to Identity Provider SSO
 
-As the request for the full capabilities does not include a security context (e.g. valid cookies), the test suite will redirect the test client to the IdP. In the `Location` header, the `SAMLRequest` query parameter will have the [SAML element](https://en.wikipedia.org/wiki/SAML_2.0#SP_Redirect_Request;_IdP_POST_Response), and the `RelayState` query parameter will have a unique token for this test session. (Note that a real Service Provider would have its own secure method of generating and maintaining the RelayState token.)
+As the request for the complete capabilities does not include a security context (e.g. valid cookies), the test suite will redirect the test client to the IdP. In the `Location` header, the `SAMLRequest` query parameter will have the [SAML element](https://en.wikipedia.org/wiki/SAML_2.0#SP_Redirect_Request;_IdP_POST_Response), and the `RelayState` query parameter will have a unique token for this test session. (Note that a real Service Provider would have its own secure method of generating and maintaining the RelayState token.)
 
 ```
 HTTP/1.1 302 Found
@@ -166,9 +166,9 @@ Set-Cookie: sessionToken=asdf11; Max-age=600; httpOnly
 Location: https://localhost:10080/aabbccddee/full?request=GetCapabilities&service=WMS
 ```
 
-#### Secure Client: Issue GET request for Secure Capabilities with a Security Context
+#### Secure Client: Issue GET request for complete Capabilities with a Security Context
 
-Now that the Secure Client has a cookie, it can be used to request the Secure Capabilities document.
+Now that the Secure Client has a cookie, it can be used to request the complete Capabilities document.
 
 ```
 GET /aabbccddee/full?request=GetCapabilities&service=WMS HTTP/1.1
@@ -177,9 +177,9 @@ Cookie: sessionToken=asdf11
 Host: localhost:10080
 ```
 
-#### Test Suite: Respond with Secure Capabilities document
+#### Test Suite: Respond with complete Capabilities document
 
-This document will be the same as the basic capabilities document. In a true WMS, this secure capabilities document would contain the actual WMS contents such as the layers that the Secure Client could now request.
+This document will be the same as the partial capabilities document. In a true WMS, this complete capabilities document would contain the actual WMS contents such as the layers that the Secure Client could now request.
 
 ```xml
 HTTP/1.1 200 OK
