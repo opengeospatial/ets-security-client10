@@ -35,3 +35,13 @@ This web page contains a small AJAX application to emulate a secure client to te
 The webpage must be served from a webserver and not from `file://`, as the origin header will be incorrect and the browser will disallow requests to the test suite because of Cross Origin Resource Sharing. There are simple insecure web server one line programs for Python and Ruby that are sufficient for serving the client webpage so you may test it in your web browser.
 
 As you are probably using a self-signed certificate for the HTTPS from the test suite embedded server, your web browser will likely reject it. You can either use "http" in the test endpoint URL, or manually add the self-signed certificate to either your OS or browser certificate trust store.
+
+## `saml-client.rb`
+
+A ruby script that acts as a SAML2 secure client, used to test the test suite SAML2 workflow. It is recommended that Ruby 2.5 or newer is used, and the following Ruby gems are required:
+
+* [faraday](https://github.com/lostisland/faraday) for managing requests and responses
+* [nokogiri](https://github.com/sparklemotion/nokogiri) for parsing the XML
+* [pry](https://pryrepl.org) for a REPL debugger
+
+Still a work in progress.
