@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDate;
+import java.net.URLEncoder;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Enumeration;
@@ -445,9 +445,9 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
-	 * Deflate (compress) the input String then encode it in base64
+	 * Deflate (compress) the input String then encode it in base64, then URL encode
 	 * @param input String to compress and encode
-	 * @return Base64 encoded version of the deflated String
+	 * @return URL Encoded and Base64 encoded version of the deflated String
 	 */
 	private String deflateAndBase64String(String input) {
 		// Convert to bytes
@@ -462,14 +462,23 @@ public class ServerWms111 extends EmulatedServer {
 		// Compress
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		DeflaterOutputStream outputStream = new DeflaterOutputStream(output);
-		String outputString = null;
+		String base64String = null;
 		try {
 			outputStream.write(inputBytes, 0, inputBytes.length);
 			outputStream.close();
 			byte[] encodedBytes = Base64.encodeBase64(output.toByteArray());
-			outputString = new String(encodedBytes);
+			base64String = new String(encodedBytes);
 		} catch (IOException e) {
 			// When the deflate output stream does not accept a write, or close
+			e.printStackTrace();
+		}
+		
+		// URL Encode
+		String outputString = null;
+		try {
+			outputString = URLEncoder.encode(base64String, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// When the string cannot be encoded to UTF-8
 			e.printStackTrace();
 		}
 		
