@@ -12,8 +12,8 @@ The testing process is as follows:
 5. The Secure Client loads the Identity Provider URL
 6. The Identity Provider requires HTTP Basic authentication from the Secure Client, and responds with a `401 Unauthorized` response with the `WWW-Authenticate` header set to require HTTP Basic.
 7. The Secure Client re-issues the GET request to the Identity Provider with the `Authorization` header set with valid HTTP Basic crendentials.
-8. The Identity Provider identifies the Secure Client test user, and returns a SAMLResponse XML Document
-9. The Secure Client sends a POST request to the Test Suite server with the SAMLResponse XML Document
+8. The Identity Provider identifies the Secure Client test user, and returns a base64-encoded SAMLResponse XML Document
+9. The Secure Client sends a POST request to the Test Suite server with the SAMLResponse XML Document (encoded with base64, then URL encoded)
 10. The Test Suite server validates the POST request, creates a security context for the test user, and redirects to the secure capabilities document
 11. The Secure Client makes a GET request to the secure capabilties document with the security context (cookies) defined
 12. The Test Suite server responds with the secure capabilities document, and ends the test session
@@ -132,70 +132,18 @@ Authorization: Basic <base64 encoded credentials>
 
 #### Identity Provider: Respond with SAML Authentication Response Document
 
-The Identity Provider validates the credentials from the Secure Client, and responds with the SAML Authentication Response document.
+The Identity Provider validates the credentials from the Secure Client, and responds with the SAML Authentication Response document, encoded with base64.
 
 ```xml
 HTTP/1.1 200 OK
 Content-Type: text/xml
 
-<samlp:Response
-    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
-    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    ID="identifier_2"
-    InResponseTo="identifier_1"
-    Version="2.0"
-    IssueInstant="2018-10-16T09:00:00Z"
-    Destination="https://localhost:10080/aabbccddee/saml2">
-    <saml:Issuer>https://idp.example.org/SAML2</saml:Issuer>
-    <samlp:Status>
-      <samlp:StatusCode
-        Value="urn:oasis:names:tc:SAML:2.0:status:Success"/>
-    </samlp:Status>
-    <saml:Assertion
-      xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-      ID="identifier_3"
-      Version="2.0"
-      IssueInstant="2018-10-16T09:00:00Z">
-      <saml:Issuer>https://idp.example.org/SAML2</saml:Issuer>
-      <!-- a POSTed assertion MUST be signed -->
-      <ds:Signature
-        xmlns:ds="http://www.w3.org/2000/09/xmldsig#">...</ds:Signature>
-      <saml:Subject>
-        <saml:NameID
-          Format="urn:oasis:names:tc:SAML:2.0:nameid-format:transient">
-          3f7b3dcf-1674-4ecd-92c8-1544f346baf8
-        </saml:NameID>
-        <saml:SubjectConfirmation
-          Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
-          <saml:SubjectConfirmationData
-            InResponseTo="identifier_1"
-            Recipient="https://localhost:10080/aabbccddee/saml2"
-            NotOnOrAfter="2018-10-16T09:10:00Z"/>
-        </saml:SubjectConfirmation>
-      </saml:Subject>
-      <saml:Conditions
-        NotBefore="2018-10-16T09:00:00Z"
-        NotOnOrAfter="2018-10-16T09:10:00Z">
-        <saml:AudienceRestriction>
-          <saml:Audience>https://localhost:10080/aabbccddee/saml2</saml:Audience>
-        </saml:AudienceRestriction>
-      </saml:Conditions>
-      <saml:AuthnStatement
-        AuthnInstant="2018-10-16T09:00:00Z"
-        SessionIndex="identifier_3">
-        <saml:AuthnContext>
-          <saml:AuthnContextClassRef>
-            urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
-         </saml:AuthnContextClassRef>
-        </saml:AuthnContext>
-      </saml:AuthnStatement>
-    </saml:Assertion>
-  </samlp:Response>
+<base64 encoded SAML Auth Response document>
 ```
 
 #### Secure Client: Issue POST request to SAML Callback URL
 
-The Authentication Response is received by the Secure Client and base64 encoded then deflated and used as the `RESPONSE` parameter as a parameter to the Test Suite.
+The Authentication Response is received by the Secure Client and the base64 encoded string is then URL encoded and used as the `RESPONSE` parameter as a parameter to the Test Suite.
 
 ```
 POST /aabbccddee/saml2 HTTP/1.1
