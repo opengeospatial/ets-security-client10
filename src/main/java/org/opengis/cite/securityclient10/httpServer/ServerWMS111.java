@@ -447,21 +447,21 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
-	 * Create a security context for the client, returning a response that sets a cookie and redirects to
+	 * Create a security context for the client, returning a response that sets a cookie and returns
 	 * the complete capabilities document.
-	 * Note: In a complete SAML 2.0 implementation, the redirect URI would be determined from the
+	 * Note: In a complete SAML 2.0 implementation, the returned resource would be determined from the
 	 * authentication response from the IdP, and the IdP received that URI from the redirect that was made
-	 * by this Service Provider. In this test case, we only support GetCapabilities so that is where the
-	 * redirect will go instead.
+	 * by this Service Provider. In this test case, we only support GetCapabilities so that is the resource
+	 * that will be returned instead.
 	 * 
 	 * @param request The request from the client
 	 * @param response The response that will be modified
+	 * @throws IOException Exception raised when a response writer could not be created
+	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	private void buildSecurityContext(HttpServletRequest request, HttpServletResponse response) {
-		response.setStatus(HttpServletResponse.SC_FOUND);
+	private void buildSecurityContext(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
 		response.setHeader("Set-Cookie", "sessionToken=sample-token; Max-age=600; httpOnly");
-		String baseUrl = getUri(request, true);
-		response.setHeader("Location", baseUrl + "/full?request=GetCapabilities&service=WMS");
+		buildCapabilities(request, response, true);
 	}
 	
 	/**

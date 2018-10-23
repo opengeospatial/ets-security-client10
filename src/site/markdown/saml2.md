@@ -14,28 +14,24 @@ The testing process is as follows:
 7. The Secure Client re-issues the GET request to the Identity Provider with the `Authorization` header set with valid HTTP Basic crendentials.
 8. The Identity Provider identifies the Secure Client test user, and returns a base64-encoded SAMLResponse XML Document
 9. The Secure Client sends a POST request to the Test Suite server with the SAMLResponse XML Document (encoded with base64, then URL encoded)
-10. The Test Suite server validates the POST request, creates a security context for the test user, and redirects to the complete capabilities document
-11. The Secure Client makes a GET request to the complete capabilties document with the security context (cookies) defined
-12. The Test Suite server responds with the complete capabilities document, and ends the test session
-13. The Test Suite then evaluates the requests from the Secure Client against the TestNG test methods
+10. The Test Suite server validates the POST request, creates a security context for the test user, and returns the complete capabilities document, and ends the test session
+11. The Test Suite then evaluates the requests from the Secure Client against the TestNG test methods
 
-This requires 6 requests from the Secure Client:
+This requires 5 requests from the Secure Client:
 
 1. GET request for Service Provider partial capabilities
 2. GET request for Service Provider complete capabilities
 3. GET request for Identity Provider SSO
 4. GET request for Identity Provider SSO with HTTP Basic credentials
 5. POST request to Service Provider SSO URL with SAML Response
-6. GET request for Service Provider complete capabilities with cookies set
 
 In this case, the "Service Provider" is the executable test suite's embedded test server.
 
-The Test Server will generate 4 responses for the Secure Client:
+The Test Server will generate 3 responses for the Secure Client:
 
 1. Respond with partial capabilities document containing security annotations
 2. Respond with redirect to Identity Provider SSO with SAML Request query parameters
-3. Respond with a cookie with security context, and redirect to the complete capabilities
-4. Respond with the complete capabilities document, validating the cookie from the Secure Client
+3. Respond with a cookie with security context, and return the complete capabilities
 
 ## Detailed Request Procedure (WMS 1.1.1)
 
@@ -154,40 +150,22 @@ Content-Type: application/x-www-form-urlencoded
 SAMLResponse=<RESPONSE>&RelayState=<TOKEN>
 ```
 
-#### Test Suite: Respond with Redirect to Secure Capabilities with a Security Context
+#### Test Suite: Respond with Secure Capabilities with a Security Context
 
 A Service Provider would normally validate the SAML Callback, but the Test Suite will accept anything. The Test Suite will create a cookie for the Secure Client to use, and that cookie will represent the security context. The `Secure` property for the cookie is not used as the Secure Client may be testing an HTTP-only workflow. The security context will be destroyed at the end of the test.
 
 (It may be possible to support alternatives to cookies, such as JSON Web Tokens or HTTP Auth.)
 
 ```
-HTTP/1.1 302 Found
+HTTP/1.1 200 Found
 Set-Cookie: sessionToken=asdf11; Max-age=600; httpOnly
-Location: https://localhost:10080/aabbccddee/full?request=GetCapabilities&service=WMS
-```
-
-#### Secure Client: Issue GET request for complete Capabilities with a Security Context
-
-Now that the Secure Client has a cookie, it can be used to request the complete Capabilities document.
-
-```
-GET /aabbccddee/full?request=GetCapabilities&service=WMS HTTP/1.1
-Accept: */*
-Cookie: sessionToken=asdf11
-Host: localhost:10080
-```
-
-#### Test Suite: Respond with complete Capabilities document
-
-This document will be the same as the partial capabilities document. In a true WMS, this complete capabilities document would contain the actual WMS contents such as the layers that the Secure Client could now request.
-
-```xml
-HTTP/1.1 200 OK
 Content-Type: application/vnd.ogc.wms_xml
 
 <?xml version="1.0" encoding="UTF-8"?>
 …
 ```
+
+This document will be the same as the partial capabilities document, except it now contains the Content section (for WMS, the "Layer" set of elements).
 
 This is the final request in the workflow, so the Test Suite shuts down the embedded server and runs the TestNG test methods to validate the Secure Client behavior.
 

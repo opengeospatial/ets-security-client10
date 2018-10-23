@@ -42,7 +42,7 @@ public class ServerOptions {
 	 * must also be defined.
 	 * 
 	 * None  - 1 request
-	 * Saml2 - 4 requests
+	 * Saml2 - 3 requests
 	 * 
 	 * @return int number of requests
 	 */
@@ -50,7 +50,7 @@ public class ServerOptions {
 		if (this.authentication.equals("none")) {
 			return 1;
 		} else if (this.authentication.equals("saml2") && this.saml2Url != null) {
-			return 4;
+			return 3;
 		}
 		
 		return 1;
