@@ -1,6 +1,7 @@
 package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,6 +47,22 @@ public class EmulatedServer {
 	protected void enableCors(HttpServletResponse response) {
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+	}
+	
+	/**
+	 * Get the writer for a HttpServletResponse, so we can send back a body
+	 * @param response HttpServletResponse for the client
+	 * @return PrintWriter for response body
+	 */
+	protected PrintWriter getWriterForResponse(HttpServletResponse response) {
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+		} catch (IOException e) {
+			// Exception if writer could not be created
+			e.printStackTrace();
+		}
+		return printWriter;
 	}
 	
 	/**

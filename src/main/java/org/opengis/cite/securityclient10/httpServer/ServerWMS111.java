@@ -1,6 +1,5 @@
 package org.opengis.cite.securityclient10.httpServer;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
@@ -140,13 +139,7 @@ public class ServerWms111 extends EmulatedServer {
 		}
 		
 		
-		PrintWriter printWriter = null;
-		try {
-			printWriter = response.getWriter();
-		} catch (IOException e) {
-			// Exception if writer could not be created
-			e.printStackTrace();
-		}
+		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		DocumentType doctype = domImplementation.createDocumentType("doctype", null,
 				Schemas.WMS_111);
@@ -347,13 +340,7 @@ public class ServerWms111 extends EmulatedServer {
 		response.setContentType("application/vnd.ogc.se_xml");
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		
-		PrintWriter printWriter = null;
-		try {
-			printWriter = response.getWriter();
-		} catch (IOException e) {
-			// Exception if writer could not be created
-			e.printStackTrace();
-		}
+		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		DocumentType doctype = domImplementation.createDocumentType("doctype", null,
 				Schemas.WMS_111_SE);

@@ -1,6 +1,5 @@
 package org.opengis.cite.securityclient10.httpServer;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
@@ -112,13 +111,7 @@ public class ServerWms13 extends EmulatedServer {
 				request.getServerPort(),
 				request.getRequestURI());
 		
-		PrintWriter printWriter = null;
-		try {
-			printWriter = response.getWriter();
-		} catch (IOException e) {
-			// Exception if writer could not be created
-			e.printStackTrace();
-		}
+		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.WMS, "WMS_Capabilities", null);
 		
@@ -238,13 +231,7 @@ public class ServerWms13 extends EmulatedServer {
 		response.setContentType("application/vnd.ogc.se_xml");
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		
-		PrintWriter printWriter = null;
-		try {
-			printWriter = response.getWriter();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.OGC, "ServiceExceptionReport", null);
 		

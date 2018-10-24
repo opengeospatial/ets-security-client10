@@ -1,6 +1,5 @@
 package org.opengis.cite.securityclient10.httpServer;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
@@ -109,13 +108,7 @@ public class ServerWps20 extends EmulatedServer {
 				request.getServerPort(),
 				request.getRequestURI());
 		
-		PrintWriter printWriter = null;
-		try {
-			printWriter = response.getWriter();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.WPS_20, "wps:Capabilities", null);
 		
@@ -230,13 +223,7 @@ public class ServerWps20 extends EmulatedServer {
 		response.setContentType("text/xml");
 		response.setStatus(code);
 		
-		PrintWriter printWriter = null;
-		try {
-			printWriter = response.getWriter();
-		} catch (IOException e) {
-			// Exception if writer could not be created
-			e.printStackTrace();
-		}
+		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.OWS_2, "ExceptionReport", null);
 		
