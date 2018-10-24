@@ -222,6 +222,10 @@ public class TestNGController implements TestSuiteController {
     	} else {
     		System.out.println("* Conformance Class OWS Common");
     	}
+    	
+    	if (testRunProperties.getProperty("authentication").equals("saml2")) {
+    		System.out.println("* SAML 2.0 Authentication Required");
+    	}
     	System.out.println("");
         
         TestServer server;
