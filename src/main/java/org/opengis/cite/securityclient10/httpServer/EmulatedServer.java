@@ -25,11 +25,16 @@ public class EmulatedServer {
 	 */
 	protected String relayState;
 	
-	public EmulatedServer() throws ParserConfigurationException {
+	public EmulatedServer() {
 		// Create factories and builders and re-use them
-		this.documentFactory = DocumentBuilderFactory.newInstance();
-		this.documentFactory.setNamespaceAware(true);
-		this.documentBuilder = documentFactory.newDocumentBuilder();
+		try {
+			this.documentFactory = DocumentBuilderFactory.newInstance();
+			this.documentFactory.setNamespaceAware(true);
+			this.documentBuilder = documentFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// Exception with default configuration
+			e.printStackTrace();
+		}
 	}
 	
 	/**

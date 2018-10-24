@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.opengis.cite.securityclient10.Namespaces;
@@ -36,9 +35,8 @@ public class ServerWms13 extends EmulatedServer {
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
 	 * declaration.
 	 * @param options ServerOptions object with emulated server configuration
-	 * @throws ParserConfigurationException Exception if new document builder could not be created
 	 */
-	public ServerWms13(ServerOptions options) throws ParserConfigurationException {
+	public ServerWms13(ServerOptions options) {
 		this.documentFactory.setNamespaceAware(true);
 		this.options = options;
 	}

@@ -1,23 +1,15 @@
 package org.opengis.cite.securityclient10.httpServer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Enumeration;
-import java.util.zip.DeflaterOutputStream;
 
 import org.opengis.cite.securityclient10.Namespaces;
 import org.opengis.cite.securityclient10.Schemas;
 import org.opengis.cite.securityclient10.util.XMLUtils;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 import org.opengis.cite.servlet.http.HttpServletResponse;
-import org.sonatype.plexus.components.cipher.Base64;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.DOMImplementation;
@@ -42,9 +34,8 @@ public class ServerWms111 extends EmulatedServer {
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
 	 * declaration.
 	 * @param options ServerOptions object with emulated server configuration
-	 * @throws ParserConfigurationException Exception if new document builder could not be created
 	 */
-	public ServerWms111(ServerOptions options) throws ParserConfigurationException {
+	public ServerWms111(ServerOptions options) {
 		this.options = options;
 		this.relayState = "token";
 	}
@@ -382,29 +373,8 @@ public class ServerWms111 extends EmulatedServer {
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
 	private String buildSamlAuthRequest(String href) throws TransformerException {
-		Document doc = this.documentBuilder.newDocument();
-		
-		Element rootElement = doc.createElement("samlp:AuthnRequest");
-		rootElement.setAttribute("xmlns:samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
-		rootElement.setAttribute("xmlns:saml", "urn:oasis:names:tc:SAML:2.0:assertion");
-		rootElement.setAttribute("ID", "identifier_1");
-		rootElement.setAttribute("Version", "2.0");
-		ZonedDateTime date = ZonedDateTime.now(ZoneId.of("UTC"));
-		rootElement.setAttribute("IssueInstant", date.toString());
-		rootElement.setAttribute("AssertionConsumerServiceIndex", "0");
-		doc.appendChild(rootElement);
-		
-		Element issuer = doc.createElement("saml:Issuer");
-		issuer.setTextContent(href + "/saml2");
-		rootElement.appendChild(issuer);
-		
-		Element nameIdPolicy = doc.createElement("samlp:NameIDPolicy");
-		nameIdPolicy.setAttribute("AllowCreate", "true");
-		nameIdPolicy.setAttribute("Format", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
-		rootElement.appendChild(nameIdPolicy);
-		
-		String flatDoc = XMLUtils.writeDocumentToString(doc, false);
-		return deflateAndBase64String(flatDoc);
+		SamlAuthRequest request = new SamlAuthRequest(href);
+		return request.toUrlParameterString();
 	}
 	
 	/**
@@ -423,47 +393,6 @@ public class ServerWms111 extends EmulatedServer {
 	private void buildSecurityContext(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
 		response.setHeader("Set-Cookie", "sessionToken=sample-token; Max-age=600; httpOnly");
 		buildCapabilities(request, response, true);
-	}
-	
-	/**
-	 * Deflate (compress) the input String then encode it in base64, then URL encode
-	 * @param input String to compress and encode
-	 * @return URL Encoded and Base64 encoded version of the deflated String
-	 */
-	private String deflateAndBase64String(String input) {
-		// Convert to bytes
-		byte[] inputBytes = null;
-		try {
-			inputBytes = input.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// If UTF-8 is unsupported, there are problems
-			e.printStackTrace();
-		}
-		
-		// Compress
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		DeflaterOutputStream outputStream = new DeflaterOutputStream(output);
-		String base64String = null;
-		try {
-			outputStream.write(inputBytes, 0, inputBytes.length);
-			outputStream.close();
-			byte[] encodedBytes = Base64.encodeBase64(output.toByteArray());
-			base64String = new String(encodedBytes);
-		} catch (IOException e) {
-			// When the deflate output stream does not accept a write, or close
-			e.printStackTrace();
-		}
-		
-		// URL Encode
-		String outputString = null;
-		try {
-			outputString = URLEncoder.encode(base64String, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// When the string cannot be encoded to UTF-8
-			e.printStackTrace();
-		}
-		
-		return outputString;
 	}
 	
 	/**

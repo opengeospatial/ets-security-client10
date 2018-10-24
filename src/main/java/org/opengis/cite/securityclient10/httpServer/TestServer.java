@@ -13,8 +13,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.opengis.cite.servlet.AsyncContext;
@@ -132,19 +130,15 @@ public class TestServer {
                     // Return the proper document to the client
                     ServerOptions serverOptions = options.getServerOptions();
                     String serviceType = serverOptions.getServiceType();
-                    try {
-						if (serviceType.equals("wms111")) {
-                    		emulated = new ServerWms111(serverOptions);
-                        } else if (serviceType.equals("wms13")) {
-                        	emulated = new ServerWms13(serverOptions);
-                        } else if (serviceType.equals("wps20")) {
-                        	emulated = new ServerWps20(serverOptions);
-                        } else {
-                        	System.err.println("Unknown service type for emulation: " + serviceType);
-                        }
-                    } catch (ParserConfigurationException e) {
-						emulated = null;
-					}
+                    if (serviceType.equals("wms111")) {
+                		emulated = new ServerWms111(serverOptions);
+                    } else if (serviceType.equals("wms13")) {
+                    	emulated = new ServerWms13(serverOptions);
+                    } else if (serviceType.equals("wps20")) {
+                    	emulated = new ServerWps20(serverOptions);
+                    } else {
+                    	System.err.println("Unknown service type for emulation: " + serviceType);
+                    }
                     
                     if (emulated != null) {
                     	try {
