@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
@@ -46,10 +43,9 @@ public class ServerWms13 extends EmulatedServer {
 	 * 
 	 * @param request Request from client
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		System.out.println("Building WMS 1.3.0 Response");
 		System.out.println("Query Params: " + request.getQueryString());
 		
@@ -103,10 +99,9 @@ public class ServerWms13 extends EmulatedServer {
 	 * Source: Annex E.1, Annex H.1
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		response.setContentType("application/vnd.ogc.wms_xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
@@ -117,7 +112,13 @@ public class ServerWms13 extends EmulatedServer {
 				request.getServerPort(),
 				request.getRequestURI());
 		
-		PrintWriter printWriter = response.getWriter();
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+		} catch (IOException e) {
+			// Exception if writer could not be created
+			e.printStackTrace();
+		}
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.WMS, "WMS_Capabilities", null);
 		
@@ -231,14 +232,19 @@ public class ServerWms13 extends EmulatedServer {
 	 * 
 	 * @param reason String with reason for Service Exception.
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildException(String reason, HttpServletResponse response) throws IOException, TransformerException {
+	public void buildException(String reason, HttpServletResponse response) throws TransformerException {
 		response.setContentType("application/vnd.ogc.se_xml");
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		
-		PrintWriter printWriter = response.getWriter();
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.OGC, "ServiceExceptionReport", null);
 		

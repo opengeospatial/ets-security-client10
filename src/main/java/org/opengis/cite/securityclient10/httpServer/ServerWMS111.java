@@ -45,10 +45,9 @@ public class ServerWms111 extends EmulatedServer {
 	 * 
 	 * @param request Request from client
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		System.out.println("Building WMS 1.1.1 Response");
 		System.out.println("Query Params: " + request.getQueryString());
 		
@@ -124,10 +123,9 @@ public class ServerWms111 extends EmulatedServer {
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
 	 * @param completeCapabilities If true, build a complete capabilities document
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean completeCapabilities) throws IOException, TransformerException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean completeCapabilities) throws TransformerException {
 		response.setContentType("application/vnd.ogc.wms_xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
@@ -142,7 +140,13 @@ public class ServerWms111 extends EmulatedServer {
 		}
 		
 		
-		PrintWriter printWriter = response.getWriter();
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+		} catch (IOException e) {
+			// Exception if writer could not be created
+			e.printStackTrace();
+		}
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		DocumentType doctype = domImplementation.createDocumentType("doctype", null,
 				Schemas.WMS_111);
@@ -337,14 +341,19 @@ public class ServerWms111 extends EmulatedServer {
 	 * 
 	 * @param reason String with reason for Service Exception.
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildException(String reason, HttpServletResponse response) throws IOException, TransformerException {
+	public void buildException(String reason, HttpServletResponse response) throws TransformerException {
 		response.setContentType("application/vnd.ogc.se_xml");
 		response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		
-		PrintWriter printWriter = response.getWriter();
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+		} catch (IOException e) {
+			// Exception if writer could not be created
+			e.printStackTrace();
+		}
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		DocumentType doctype = domImplementation.createDocumentType("doctype", null,
 				Schemas.WMS_111_SE);
@@ -387,10 +396,9 @@ public class ServerWms111 extends EmulatedServer {
 	 * 
 	 * @param request The request from the client
 	 * @param response The response that will be modified
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	private void buildSecurityContext(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	private void buildSecurityContext(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		response.setHeader("Set-Cookie", "sessionToken=sample-token; Max-age=600; httpOnly");
 		buildCapabilities(request, response, true);
 	}
@@ -426,10 +434,9 @@ public class ServerWms111 extends EmulatedServer {
 	 * @param request The request from the client
 	 * @param response The response to send to the client
 	 * @return If the request has a valid security context
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	private boolean validateSecureRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	private boolean validateSecureRequest(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		String cookie = request.getHeader("Cookie");
 		
 		if (!this.getAuthenticationEnabled()) {

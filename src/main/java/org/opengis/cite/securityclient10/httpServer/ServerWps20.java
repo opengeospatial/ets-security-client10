@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.opengis.cite.securityclient10.httpServer;
 
 import java.io.IOException;
@@ -46,10 +43,9 @@ public class ServerWps20 extends EmulatedServer {
 	 * 
 	 * @param request Request from client
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		System.out.println("Building WPS 2.0 Response");
 		System.out.println("Query Params: " + request.getQueryString());
 		
@@ -100,10 +96,9 @@ public class ServerWps20 extends EmulatedServer {
 	 * Source: OGC 14-065r2, Annex B.4.2; OGC 06-121r9 Section 7
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws IOException, TransformerException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		response.setContentType("text/xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
@@ -114,7 +109,13 @@ public class ServerWps20 extends EmulatedServer {
 				request.getServerPort(),
 				request.getRequestURI());
 		
-		PrintWriter printWriter = response.getWriter();
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.WPS_20, "wps:Capabilities", null);
 		
@@ -223,14 +224,19 @@ public class ServerWps20 extends EmulatedServer {
 	 * @param reason String with reason for the Exception Report.
 	 * @param code Integer for HTTP status code
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildException(String reason, int code, HttpServletResponse response) throws IOException, TransformerException {
+	public void buildException(String reason, int code, HttpServletResponse response) throws TransformerException {
 		response.setContentType("text/xml");
 		response.setStatus(code);
 		
-		PrintWriter printWriter = response.getWriter();
+		PrintWriter printWriter = null;
+		try {
+			printWriter = response.getWriter();
+		} catch (IOException e) {
+			// Exception if writer could not be created
+			e.printStackTrace();
+		}
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
 		Document doc = domImplementation.createDocument(Namespaces.OWS_2, "ExceptionReport", null);
 		
@@ -254,10 +260,9 @@ public class ServerWps20 extends EmulatedServer {
 	 * Source: OGC 06-121r9 Section 8
 	 * 
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildInvalidParameterException(HttpServletResponse response) throws IOException, TransformerException {
+	public void buildInvalidParameterException(HttpServletResponse response) throws TransformerException {
 		buildException("InvalidParameterValue", HttpServletResponse.SC_BAD_REQUEST, response);
 	}
 	
@@ -268,10 +273,9 @@ public class ServerWps20 extends EmulatedServer {
 	 * Source: OGC 06-121r9 Section 8
 	 * 
 	 * @param response Response to build to send back to client
-	 * @throws IOException Exception raised when a response writer could not be created
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildNotSupportedException(HttpServletResponse response) throws IOException, TransformerException {
+	public void buildNotSupportedException(HttpServletResponse response) throws TransformerException {
 		buildException("OperationNotSupported", HttpServletResponse.SC_NOT_IMPLEMENTED, response);
 	}
 }
