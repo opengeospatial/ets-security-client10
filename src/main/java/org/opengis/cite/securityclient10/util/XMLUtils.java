@@ -23,6 +23,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
@@ -46,6 +47,7 @@ import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -69,6 +71,41 @@ public class XMLUtils {
         XMLInputFactory factory = XMLInputFactory.newInstance();
         factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
         return factory;
+    }
+    
+    /**
+	 * Use a Transformer to convert the XML Document to a String.
+	 * 
+	 * @param document XML document to convert
+     * @param includeDeclaration Boolean for if the XML declaration should be included
+	 * @return String containing the XML document
+     * @throws TransformerFactoryConfigurationError Exception if new transformer could not be created 
+	 * @throws TransformerException Exception if transformer could not convert document to stream
+	 */
+    public static String writeDocumentToString(Document document, boolean includeDeclaration) throws TransformerFactoryConfigurationError,
+    	TransformerException {
+    	StringWriter stringWriter = new StringWriter();
+    	Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		
+		// Add the DOCTYPE parameters, as long as they are not null
+		DocumentType docType = document.getDoctype();
+		if (docType != null) {
+			if (docType.getPublicId() != null) {
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, docType.getPublicId());
+			}
+			
+			if (docType.getSystemId() != null) {
+				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, docType.getSystemId());
+			}
+		}
+		// Adjust defaults for XML document-to-String output
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, 
+				includeDeclaration ? "no" : "yes");
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+		
+		transformer.transform(new DOMSource(document), new StreamResult(stringWriter));
+		return stringWriter.toString();
     }
 
     /**

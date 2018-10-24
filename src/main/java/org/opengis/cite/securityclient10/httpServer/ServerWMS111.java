@@ -12,13 +12,12 @@ import java.util.zip.DeflaterOutputStream;
 
 import org.opengis.cite.securityclient10.Namespaces;
 import org.opengis.cite.securityclient10.Schemas;
+import org.opengis.cite.securityclient10.util.XMLUtils;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 import org.opengis.cite.servlet.http.HttpServletResponse;
 import org.sonatype.plexus.components.cipher.Base64;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.DOMImplementation;
@@ -44,9 +43,8 @@ public class ServerWms111 extends EmulatedServer {
 	 * declaration.
 	 * @param options ServerOptions object with emulated server configuration
 	 * @throws ParserConfigurationException Exception if new document builder could not be created
-	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWms111(ServerOptions options) throws ParserConfigurationException, TransformerConfigurationException {
+	public ServerWms111(ServerOptions options) throws ParserConfigurationException {
 		this.options = options;
 		this.relayState = "token";
 	}
@@ -296,7 +294,7 @@ public class ServerWms111 extends EmulatedServer {
 		Element vendorSpecificCapabilities = buildVendorSpecificCapabilities(doc, baseHref);
 		capability.appendChild(vendorSpecificCapabilities);
 		
-		printWriter.print(documentToString(doc));
+		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
 	}
 	
 	/**
@@ -391,7 +389,7 @@ public class ServerWms111 extends EmulatedServer {
 		serviceException.setTextContent(reason);
 		rootElement.appendChild(serviceException);
 		
-		printWriter.print(documentToString(doc));
+		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
 	}
 	
 	/**
@@ -428,11 +426,7 @@ public class ServerWms111 extends EmulatedServer {
 		nameIdPolicy.setAttribute("Format", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient");
 		rootElement.appendChild(nameIdPolicy);
 		
-		// Temporarily disable the XML Declaration for this fragment
-		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		String flatDoc = documentToString(doc);
-		this.transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-		
+		String flatDoc = XMLUtils.writeDocumentToString(doc, false);
 		return deflateAndBase64String(flatDoc);
 	}
 	

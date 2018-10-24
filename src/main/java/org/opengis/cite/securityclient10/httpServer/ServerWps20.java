@@ -8,11 +8,11 @@ import java.io.PrintWriter;
 import java.util.Enumeration;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.opengis.cite.securityclient10.Namespaces;
 import org.opengis.cite.securityclient10.Schemas;
+import org.opengis.cite.securityclient10.util.XMLUtils;
 import org.opengis.cite.servlet.http.HttpServletRequest;
 import org.opengis.cite.servlet.http.HttpServletResponse;
 import org.w3c.dom.DOMImplementation;
@@ -37,9 +37,8 @@ public class ServerWps20 extends EmulatedServer {
 	 * declaration.
 	 * @param options ServerOptions object with emulated server configuration
 	 * @throws ParserConfigurationException Exception if new document builder could not be created
-	 * @throws TransformerConfigurationException Exception if new transformer could not be created
 	 */
-	public ServerWps20(ServerOptions options) throws ParserConfigurationException, TransformerConfigurationException {
+	public ServerWps20(ServerOptions options) throws ParserConfigurationException {
 		this.documentFactory.setNamespaceAware(true);
 		this.options = options;
 	}
@@ -214,7 +213,7 @@ public class ServerWps20 extends EmulatedServer {
 		processIdentifier.setTextContent(href + "/false-process");
 		processSummary.appendChild(processIdentifier);
 		
-		printWriter.print(documentToString(doc));
+		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
 	}
 	
 	/**
@@ -247,7 +246,7 @@ public class ServerWps20 extends EmulatedServer {
 		exceptionElement.setAttribute("exceptionCode", reason);
 		rootElement.appendChild(exceptionElement);
 		
-		printWriter.print(documentToString(doc));
+		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
 	}
 	
 	/**

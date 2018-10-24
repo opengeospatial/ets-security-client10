@@ -142,7 +142,7 @@ public class TestServer {
                         } else {
                         	System.err.println("Unknown service type for emulation: " + serviceType);
                         }
-                    } catch (TransformerConfigurationException | ParserConfigurationException e) {
+                    } catch (ParserConfigurationException e) {
 						emulated = null;
 					}
                     
