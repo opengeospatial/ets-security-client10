@@ -26,6 +26,16 @@ public class EmulatedServer {
 	protected TransformerFactory transformerFactory;
 	protected Transformer transformer;
 	
+	/**
+	 * Test Run Properties for this emulated server
+	 */
+	protected ServerOptions options;
+	
+	/**
+	 * RelayState token for SAML2
+	 */
+	protected String relayState;
+	
 	public EmulatedServer() throws ParserConfigurationException, TransformerConfigurationException {
 		// Create factories and builders and re-use them
 		this.documentFactory = DocumentBuilderFactory.newInstance();

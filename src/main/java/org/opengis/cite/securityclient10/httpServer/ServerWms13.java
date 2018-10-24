@@ -31,11 +31,6 @@ import org.w3c.dom.Element;
  */
 public class ServerWms13 extends EmulatedServer {
 	/**
-	 * Test Run Properties for this emulated server
-	 */
-	ServerOptions options;
-	
-	/**
 	 * Create an emulated WMS 1.3.0.
 	 * 
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 

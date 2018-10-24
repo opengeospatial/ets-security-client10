@@ -36,17 +36,7 @@ import org.w3c.dom.Element;
  * (OGC 01-068r3).
  *
  */
-public class ServerWms111 extends EmulatedServer {
-	/**
-	 * Test Run Properties for this emulated server
-	 */
-	ServerOptions options;
-	
-	/**
-	 * RelayState token for SAML2
-	 */
-	String relayState;
-	
+public class ServerWms111 extends EmulatedServer {	
 	/**
 	 * Create an emulated WMS 1.1.1.
 	 * 

@@ -31,10 +31,6 @@ import org.w3c.dom.Element;
  */
 public class ServerWps20 extends EmulatedServer {
 	/**
-	 * Test Run Properties for this emulated server
-	 */
-	ServerOptions options;
-	/**
 	 * Create an emulated WPS 2.0.
 	 * 
 	 * Currently hard-codes the output style for the XML string to have indented XML, and the XML 
