@@ -44,6 +44,29 @@ public class EmulatedServer {
 	}
 	
 	/**
+	 * Extract the uri from a request object.
+	 * If contextOnly is true, then any path segments after the context path are excluded.
+	 * 
+	 * @param request The request to extract
+	 * @param contextOnly Only include up to the context path
+	 * @return The uri
+	 */
+	protected static String getUri(HttpServletRequest request, Boolean contextOnly) {
+		String path;
+		if (contextOnly) {
+			path = "/" + request.getRequestURI().split("/")[1];
+		} else {
+			path = request.getRequestURI();
+		}
+		
+		return String.format("%s://%s:%d%s",
+				request.getScheme(),
+				request.getServerName(),
+				request.getServerPort(),
+				path);
+	}
+	
+	/**
 	 * Subclasses must override this
 	 * @param request Request from client
 	 * @param response Response to build to send back to client

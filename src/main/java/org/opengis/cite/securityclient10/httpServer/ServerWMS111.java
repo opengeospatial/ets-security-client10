@@ -50,29 +50,6 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
-	 * Extract the uri from a request object.
-	 * If contextOnly is true, then any path segments after the context path are excluded.
-	 * 
-	 * @param request The request to extract
-	 * @param contextOnly Only include up to the context path
-	 * @return The uri
-	 */
-	public static String getUri(HttpServletRequest request, Boolean contextOnly) {
-		String path;
-		if (contextOnly) {
-			path = "/" + request.getRequestURI().split("/")[1];
-		} else {
-			path = request.getRequestURI();
-		}
-		
-		return String.format("%s://%s:%d%s",
-				request.getScheme(),
-				request.getServerName(),
-				request.getServerPort(),
-				path);
-	}
-	
-	/**
 	 * Build a valid WMS 1.1.1 response for the client request, and automatically complete the response.
 	 * 
 	 * @param request Request from client
