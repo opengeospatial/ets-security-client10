@@ -66,15 +66,28 @@ public class ServerWps20 extends EmulatedServer {
 			}
 		}
 		
-		if (serviceValue == null || requestValue == null || !serviceValue.equals("WPS")) {
+		// If it is the SAML callback URL then process the SAML Authentication Response and set up a
+		// security context for the user.
+		if (request.getPathInfo().endsWith("/saml2")) {
+			if (validateSamlAuthenticationResponse(request, response)) {
+				buildSecurityContext(request, response);
+				buildCapabilities(request, response, true);
+			}
+		} else if (serviceValue == null || requestValue == null || !serviceValue.equals("WPS")) {
 			buildInvalidParameterException(response);
 		} else {
 			
 			// Handle potential other request types
 			switch (requestValue) {
 				case "GetCapabilities":
-					// Return a GetCapabilities document
-					buildCapabilities(request, response);
+					// Return a Capabilities document
+					if (request.getPathInfo().endsWith("/full") && this.getAuthenticationEnabled()) {
+						if (validateSecureRequest(request, response)) {
+							buildCapabilities(request, response, true);
+						}
+					} else {
+						buildCapabilities(request, response, false);
+					}
 					break;
 				case "DescribeProcess":
 				case "Execute":
@@ -85,28 +98,36 @@ public class ServerWps20 extends EmulatedServer {
 					break;
 			}
 		}
-		
 	}
 	
 	/**
 	 * Return an HTTP response to the client with valid headers and a body containing the Capabilities 
-	 * XML document.
+	 * XML document. If `completeCapabilities` is true, then a complete capabilities document with a 
+	 * Content section (Layers) will be generated, and the embedded links will use the "/full" URL. If 
+	 * false, then a partial capabilities document will be generated without a Content section (Contents), 
+	 * and clients must use authentication to request the complete capabilities.
 	 * 
 	 * Source: OGC 14-065r2, Annex B.4.2; OGC 06-121r9 Section 7
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
+	 * @param completeCapabilities If true, build a complete capabilities document
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean completeCapabilities) throws TransformerException {
 		response.setContentType("text/xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
+		boolean samlAuth = (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null);
+		
 		// Extract scheme/host/port/path for HREFs
-		String href = String.format("%s://%s:%d%s",
-				request.getScheme(),
-				request.getServerName(),
-				request.getServerPort(),
-				request.getRequestURI());
+		String baseHref = getUri(request, false);
+		String href;
+		
+		if (samlAuth) {
+			href = baseHref + "/full";
+		} else {
+			href = baseHref;
+		}
 		
 		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
@@ -159,53 +180,96 @@ public class ServerWps20 extends EmulatedServer {
 		getCapabilities.setAttribute("name", "GetCapabilities");
 		operationsMetadata.appendChild(getCapabilities);
 		
-		Element getCapabilitiesDCP = doc.createElementNS(Namespaces.OWS_2, "ows:DCP");
-		getCapabilities.appendChild(getCapabilitiesDCP);
+		Element getCapabilitiesDcp = doc.createElementNS(Namespaces.OWS_2, "ows:DCP");
+		getCapabilities.appendChild(getCapabilitiesDcp);
 		
-		Element getCapabilitiesDCPHTTP = doc.createElementNS(Namespaces.OWS_2, "ows:HTTP");
-		getCapabilitiesDCP.appendChild(getCapabilitiesDCPHTTP);
+		Element getCapabilitiesDcpHttp = doc.createElementNS(Namespaces.OWS_2, "ows:HTTP");
+		getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
 		
-		Element getCapabilitiesDCPHTTPGet = doc.createElementNS(Namespaces.OWS_2, "ows:Get");
-		getCapabilitiesDCPHTTPGet.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
-		getCapabilitiesDCPHTTP.appendChild(getCapabilitiesDCPHTTPGet);
+		Element getCapabilitiesDcpHttpGet = doc.createElementNS(Namespaces.OWS_2, "ows:Get");
+		getCapabilitiesDcpHttpGet.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
+		
+		// ows:Constraint for SAML2
+		if (samlAuth) {
+			addSamlConstraintToElement(doc, getCapabilitiesDcpHttpGet);
+		}
+		
+		Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS_2, "ows:Post");
+		getCapabilitiesDcpHttpPost.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
+		
+		// ows:Constraint for SAML2
+		if (samlAuth) {
+			addSamlConstraintToElement(doc, getCapabilitiesDcpHttpPost);
+		}
 		
 		// DescribeProcess Operation Section
 		Element describeProcess = doc.createElementNS(Namespaces.OWS_2, "ows:Operation");
 		describeProcess.setAttribute("name", "DescribeProcess");
 		operationsMetadata.appendChild(describeProcess);
 		
-		Element describeProcessDCP = doc.createElementNS(Namespaces.OWS_2, "ows:DCP");
-		describeProcess.appendChild(describeProcessDCP);
+		Element describeProcessDcp = doc.createElementNS(Namespaces.OWS_2, "ows:DCP");
+		describeProcess.appendChild(describeProcessDcp);
 		
-		Element describeProcessDCPHTTP = doc.createElementNS(Namespaces.OWS_2, "ows:HTTP");
-		describeProcessDCP.appendChild(describeProcessDCPHTTP);
+		Element describeProcessDcpHttp = doc.createElementNS(Namespaces.OWS_2, "ows:HTTP");
+		describeProcessDcp.appendChild(describeProcessDcpHttp);
 		
-		Element describeProcessDCPHTTPGet = doc.createElementNS(Namespaces.OWS_2, "ows:Get");
-		describeProcessDCPHTTPGet.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
-		describeProcessDCPHTTP.appendChild(describeProcessDCPHTTPGet);
+		Element describeProcessDcpHttpGet = doc.createElementNS(Namespaces.OWS_2, "ows:Get");
+		describeProcessDcpHttpGet.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		describeProcessDcpHttp.appendChild(describeProcessDcpHttpGet);
 		
-		Element describeProcessDCPHTTPPost = doc.createElementNS(Namespaces.OWS_2, "ows:Post");
-		describeProcessDCPHTTPPost.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
-		describeProcessDCPHTTP.appendChild(describeProcessDCPHTTPPost);
+		// ows:Constraint for SAML2
+		if (samlAuth) {
+			addSamlConstraintToElement(doc, describeProcessDcpHttpGet);
+		}
 		
-		// Contents Section
-		Element contents = doc.createElementNS(Namespaces.WPS_20, "wps:Contents");
-		rootElement.appendChild(contents);
+		Element describeProcessDcpHttpPost = doc.createElementNS(Namespaces.OWS_2, "ows:Post");
+		describeProcessDcpHttpPost.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		describeProcessDcpHttp.appendChild(describeProcessDcpHttpPost);
 		
-		// Sample ProcessSummary, needed to validate Contents element
-		Element processSummary = doc.createElementNS(Namespaces.WPS_20, "wps:ProcessSummary");
-		processSummary.setAttribute("jobControlOptions", "sync-execute dismiss");
-		contents.appendChild(processSummary);
+		// ows:Constraint for SAML2
+		if (samlAuth) {
+			addSamlConstraintToElement(doc, describeProcessDcpHttpPost);
+		}
 		
-		Element processTitle = doc.createElementNS(Namespaces.OWS_2, "ows:Title");
-		processTitle.setTextContent("False Process");
-		processSummary.appendChild(processTitle);
-		
-		Element processIdentifier = doc.createElementNS(Namespaces.OWS_2, "ows:Identifier");
-		processIdentifier.setTextContent(href + "/false-process");
-		processSummary.appendChild(processIdentifier);
+		if (completeCapabilities) {
+			// Contents Section
+			Element contents = doc.createElementNS(Namespaces.WPS_20, "wps:Contents");
+			rootElement.appendChild(contents);
+			
+			// Sample ProcessSummary, needed to validate Contents element
+			Element processSummary = doc.createElementNS(Namespaces.WPS_20, "wps:ProcessSummary");
+			processSummary.setAttribute("jobControlOptions", "sync-execute dismiss");
+			contents.appendChild(processSummary);
+			
+			Element processTitle = doc.createElementNS(Namespaces.OWS_2, "ows:Title");
+			processTitle.setTextContent("False Process");
+			processSummary.appendChild(processTitle);
+			
+			Element processIdentifier = doc.createElementNS(Namespaces.OWS_2, "ows:Identifier");
+			processIdentifier.setTextContent(href + "/false-process");
+			processSummary.appendChild(processIdentifier);
+		}
 		
 		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
+	}
+	
+	/**
+	 * Add an OWS Constraint element as a child to Element `element` in Document `doc`.
+	 * This Constraint is for SAML 2 authentication.
+	 * 
+	 * @param doc The parent document, used to create namespaced elements
+	 * @param element The parent element
+	 */
+	private void addSamlConstraintToElement(Document doc, Element element) {
+		Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+		constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+		element.appendChild(constraint);
+		
+		Element constraintValues = doc.createElementNS(Namespaces.OWS_2, "ValuesReference");
+		constraintValues.setAttributeNS(Namespaces.OWS_2, "ows:reference", this.options.getSaml2Url());
+		constraint.appendChild(constraintValues);
 	}
 	
 	/**

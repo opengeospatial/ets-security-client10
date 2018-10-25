@@ -71,6 +71,7 @@ public class ServerWms13 extends EmulatedServer {
 		if (request.getPathInfo().endsWith("/saml2")) {
 			if (validateSamlAuthenticationResponse(request, response)) {
 				buildSecurityContext(request, response);
+				buildCapabilities(request, response, true);
 			}
 		} else if (serviceValue == null || requestValue == null || !serviceValue.equals("WMS")) {
 			buildException("Invalid query parameters", response);

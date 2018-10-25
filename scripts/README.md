@@ -38,7 +38,11 @@ A ruby script that acts as a SAML2 secure client, used to test the test suite SA
 Once the gems are installed, the script can be run from the command line:
 
 ```terminal
-$ ruby scripts/saml-client.rb "<test endpoint URL>"
+$ ruby scripts/saml-client.rb <wms|wps> "<test endpoint URL>"
 ```
 
-Currently only WMS 1.1.1 and WMS 1.3.0 have been tested and are supported.
+The following service types have been tested:
+
+* WMS 1.1.1
+* WMS 1.3.0
+* WPS 2.0 (OWS Common 2.0)

@@ -5,15 +5,22 @@ require 'logger'
 require 'nokogiri'
 
 # Parse arguments
-endpoint_url = ARGV[0]
+service_type = ARGV[0].upcase
+endpoint_url = ARGV[1]
 
 namespaces = {
   'ows' => 'http://www.opengis.net/ows/1.1',
+  'ows2' => 'http://www.opengis.net/ows/2.0',
   'ows_security' => 'http://www.opengis.net/security/1.0',
   'saml' => 'urn:oasis:names:tc:SAML:2.0:assertion',
   'samlp' => 'urn:oasis:names:tc:SAML:2.0:protocol',
   'xlink' => 'http://www.w3.org/1999/xlink'
 }
+
+if (service_type != "WMS")
+  # For OWS Common services, use OWS2 in place of the 'ows' prefix
+  namespaces['ows'] = namespaces['ows2']
+end
 
 def print_response(response)
   # Print status
@@ -45,7 +52,7 @@ end
 response = conn.get do |req|
   req.url endpoint_url
   req.params['request'] = 'GetCapabilities'
-  req.params['service'] = 'WMS'
+  req.params['service'] = service_type
   req.headers['Accept'] = 'text/xml, application/xml, */*'
 end
 
@@ -55,7 +62,12 @@ raise "Unexpected Response: #{response.status}" if response.status != 200
 
 # Parse Complete Capabilities URL from ExtendedSecurityCapabilities
 basic_capabilities_doc = Nokogiri::XML(response.body)
-complete_capabilities_url = basic_capabilities_doc.xpath("//ows_security:ExtendedSecurityCapabilities//ows:Operation[@name='GetCapabilities']//ows:Get/@xlink:href", namespaces).to_s
+
+if (service_type == "WMS")
+  complete_capabilities_url = basic_capabilities_doc.xpath("//ows_security:ExtendedSecurityCapabilities//ows:Operation[@name='GetCapabilities']//ows:Get/@xlink:href", namespaces).to_s
+elsif (service_type == "WPS")
+  complete_capabilities_url = basic_capabilities_doc.xpath("//ows:OperationsMetadata//ows:Operation[@name='GetCapabilities']//ows:Get/@xlink:href", namespaces).to_s
+end
 
 raise "Missing Complete Capabilities URL" if (complete_capabilities_url.nil? || complete_capabilities_url == "")
 
@@ -63,7 +75,7 @@ raise "Missing Complete Capabilities URL" if (complete_capabilities_url.nil? || 
 response2 = conn.get do |req|
   req.url complete_capabilities_url
   req.params['request'] = 'GetCapabilities'
-  req.params['service'] = 'WMS'
+  req.params['service'] = service_type
   req.headers['Accept'] = 'text/xml, application/xml, */*'
 end
 

@@ -153,12 +153,7 @@ public class EmulatedServer {
 	}
 	
 	/**
-	 * Create a security context for the client, returning a response that sets a cookie and returns
-	 * the complete capabilities document.
-	 * Note: In a complete SAML 2.0 implementation, the returned resource would be determined from the
-	 * authentication response from the IdP, and the IdP received that URI from the redirect that was made
-	 * by this Service Provider. In this test case, we only support GetCapabilities so that is the resource
-	 * that will be returned instead.
+	 * Create a security context for the client, returning a response that sets a cookie.
 	 * 
 	 * @param request The request from the client
 	 * @param response The response that will be modified
@@ -166,7 +161,6 @@ public class EmulatedServer {
 	 */
 	protected void buildSecurityContext(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
 		response.setHeader("Set-Cookie", "sessionToken=sample-token; Max-age=600; httpOnly");
-		buildCapabilities(request, response, true);
 	}
 
 	/**
