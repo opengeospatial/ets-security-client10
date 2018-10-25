@@ -41,4 +41,4 @@ Once the gems are installed, the script can be run from the command line:
 $ ruby scripts/saml-client.rb "<test endpoint URL>"
 ```
 
-Currently only WMS 1.1.1 is tested and supported.
+Currently only WMS 1.1.1 and WMS 1.3.0 have been tested and are supported.

@@ -66,15 +66,27 @@ public class ServerWms13 extends EmulatedServer {
 			}
 		}
 		
-		if (serviceValue == null || requestValue == null || !serviceValue.equals("WMS")) {
+		// If it is the SAML callback URL then process the SAML Authentication Response and set up a
+		// security context for the user.
+		if (request.getPathInfo().endsWith("/saml2")) {
+			if (validateSamlAuthenticationResponse(request, response)) {
+				buildSecurityContext(request, response);
+			}
+		} else if (serviceValue == null || requestValue == null || !serviceValue.equals("WMS")) {
 			buildException("Invalid query parameters", response);
 		} else {
 			
 			// Handle potential other request types
 			switch (requestValue) {
 				case "GetCapabilities":
-					// Return a GetCapabilities document
-					buildCapabilities(request, response, false);
+					// Return a Capabilities document
+					if (request.getPathInfo().endsWith("/full") && this.getAuthenticationEnabled()) {
+						if (validateSecureRequest(request, response)) {
+							buildCapabilities(request, response, true);
+						}
+					} else {
+						buildCapabilities(request, response, false);
+					}
 					break;
 				case "GetMap":
 					// Return a GetMap document
