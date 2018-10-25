@@ -141,7 +141,7 @@
                 // Open pop up window with test endpoint URL, in case
                 // tester submits form before copying the URL
                 document.querySelector("form").addEventListener("submit", function(e) {
-                  var w = window.open("", "", "width=640, height=480, scrollbars=no");
+                  var w = window.open("", "ets-security-client-10-endpoint-url", "width=640, height=480, scrollbars=no");
                   var desc = w.document.createElement("p");
                   desc.textContent = "Your Test Session URL";
                   var header = w.document.createElement("h2");
