@@ -105,10 +105,10 @@ public class ServerWms13 extends EmulatedServer {
 	
 	/**
 	 * Return an HTTP response to the client with valid headers and a body containing the  Capabilities 
-	 * XML document.If `completeCapabilities` is true, then a complete capabilities document with a Content 
-	 * section (Layers) will be generated, and the embedded links will use the "/full" URL. If false, then 
-	 * a partial capabilities document will be generated without a Content section (Layers), and clients
-	 * must use authentication to request the complete capabilities.
+	 * XML document. If `completeCapabilities` is true, then a complete capabilities document with a 
+	 * Content section (Layers) will be generated, and the embedded links will use the "/full" URL. If 
+	 * false, then a partial capabilities document will be generated without a Content section (Layers), 
+	 * and clients must use authentication to request the complete capabilities.
 	 * 
 	 * Source: Annex E.1, Annex H.1
 	 * @param request Source request from client, used to build absolute URLs for HREFs
