@@ -3,7 +3,6 @@ package org.opengis.cite.securityclient10;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -13,10 +12,10 @@ import java.util.Properties;
 public class TestRunArgValidator {
 
 	/**
-	 * List of service type test run properties currently supported by this ETS. Should match emulated
+	 * Array of service type test run properties currently supported by this ETS. Should match emulated
 	 * service types in org.opengis.cite.securityclient10.httpServer package.
 	 */
-	private static final List<String> allowedServiceTypes = Arrays.asList("wms111", "wms13", "wps20");
+	private static final String[] allowedServiceTypes = {"wms111", "wms13", "wps20"};
 	
 	/**
 	 * Validate a String, String HashMap of Test Run Arguments. Raise an exception on invalid data.
@@ -24,14 +23,14 @@ public class TestRunArgValidator {
 	 */
 	public static void validateMap(Map<String, String> params) {
         // Test Server Emulated Service Type
-        String serviceTypeParam = params.get(TestRunArg.Service_Type.toString());
+        final String serviceTypeParam = params.get(TestRunArg.Service_Type.toString());
         
         if ((null == serviceTypeParam) || serviceTypeParam.isEmpty()) {
             throw new IllegalArgumentException("Required test run parameter not found: " 
             		+ TestRunArg.Service_Type.toString());
         }
         
-        if (!allowedServiceTypes.contains(serviceTypeParam)) {
+		if (Arrays.stream(allowedServiceTypes).noneMatch(serviceTypeParam::equals)) {
         	throw new IllegalArgumentException("Unsupported service type in test run properties: " 
         			+ serviceTypeParam);
         }
