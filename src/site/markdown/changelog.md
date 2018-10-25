@@ -1,6 +1,35 @@
 
 # Release Notes
 
+## 0.4 (2018-10-25)
+
+This release adds the SAML 2.0 Web Browser SSO Profile for testing.
+
+- Add `ServerOptions` class for passing test run properties to the emulated server
+- Support receiving more than one request on the emulated server before the test server is killed and results sent to TestNG tests
+- Allow specification of a single authentication method (not supporting multiple at the same time)
+- Add sample scripts in the `scripts` directory that can emulate secure clients
+- Hard-code the number of expected requests for the SAML 2 workflow
+- Add SAML 2 workflow support for WMS 1.1.1 emulated server
+- Document how to use the SAML 2 workflow, including a sample test session
+- Create webpage for testing secure client SAML 2 workflow, and abandon it because SAML 2 workflow has issues working in browser CORS sandbox which limit usability of AJAX
+- Support catching `POST` and `OPTIONS` in addition to `GET` for `TestServer`
+- Support requests to sub-paths under the randomly generated test session nonce path
+- Add Ruby sample SAML 2 test client to `scripts` directory
+- Standardize on using "Partial Capabilities" and "Complete Capabilities"
+- Extract SAML 2 methods to `EmulatedServer`
+- Simplify catching of some exceptions, cleaning up the code
+- Add SAML 2 workflow support for WMS 1.3.0 emulated server
+- Add SAML 2 workflow support for WPS 2.0 emulated server
+- Adjust WMS 1.1.1 to use "WMS" as the Name in the capabilities document
+- Improve TEAM Engine setup page documentation
+- Update TEAM Engine interface to allow specifying the authentication type and the Identity Provider URL
+- Re-add filtering of sensitive test run properties
+- Open pop-up with test session URL in TEAM Engine
+- Use `AssertionConsumerServiceURL` instead of `Issuer` for passing the SP callback URL to the IdP
+- Use `SubjectCOnfirmationData/@Recipient` in Ruby SAML client for parsing SP callback URL
+- Add name for TEAM Engine pop-up window to re-use it in subsequent tests
+
 ## 0.3 (2018-10-02)
 
 This release adds support for other emulated server types, WMS 1.3.0 and
