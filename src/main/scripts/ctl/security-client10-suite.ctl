@@ -57,7 +57,7 @@
                  <select id="service-type" name="service-type">
                     <option value="wms111">WMS 1.1.1</option>
                     <option value="wms13">WMS 1.3.0</option>
-                    <option value="wps20">WPS 2.0.0</option>
+                    <option value="wps20">WPS 2.0.2</option>
                  </select>
                  <input type="hidden" id="path" name="path" value="" />
                </p>
