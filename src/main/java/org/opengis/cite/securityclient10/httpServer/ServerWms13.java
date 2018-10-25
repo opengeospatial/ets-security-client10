@@ -74,7 +74,7 @@ public class ServerWms13 extends EmulatedServer {
 			switch (requestValue) {
 				case "GetCapabilities":
 					// Return a GetCapabilities document
-					buildCapabilities(request, response);
+					buildCapabilities(request, response, false);
 					break;
 				case "GetMap":
 					// Return a GetMap document
@@ -93,23 +93,30 @@ public class ServerWms13 extends EmulatedServer {
 	
 	/**
 	 * Return an HTTP response to the client with valid headers and a body containing the  Capabilities 
-	 * XML document.
+	 * XML document.If `completeCapabilities` is true, then a complete capabilities document with a Content 
+	 * section (Layers) will be generated, and the embedded links will use the "/full" URL. If false, then 
+	 * a partial capabilities document will be generated without a Content section (Layers), and clients
+	 * must use authentication to request the complete capabilities.
 	 * 
 	 * Source: Annex E.1, Annex H.1
 	 * @param request Source request from client, used to build absolute URLs for HREFs
 	 * @param response Response to build to send back to client
+	 * @param completeCapabilities If true, build a complete capabilities document
 	 * @throws TransformerException Exception if transformer could not convert document to stream
 	 */
-	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response) throws TransformerException {
+	public void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean completeCapabilities) throws TransformerException {
 		response.setContentType("application/vnd.ogc.wms_xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
 		// Extract scheme/host/port/path for HREFs
-		String href = String.format("%s://%s:%d%s",
-				request.getScheme(),
-				request.getServerName(),
-				request.getServerPort(),
-				request.getRequestURI());
+		String baseHref = getUri(request, false);
+		String href;
+		
+		if (completeCapabilities) {
+			href = baseHref + "/full";
+		} else {
+			href = baseHref;
+		}
 		
 		PrintWriter printWriter = getWriterForResponse(response);
 		DOMImplementation domImplementation = this.documentBuilder.getDOMImplementation();
@@ -119,6 +126,7 @@ public class ServerWms13 extends EmulatedServer {
 		rootElement.setAttribute("version", "1.3.0");
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xlink", Namespaces.XLINK);
 		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:xsi", Namespaces.XSI);
+		rootElement.setAttributeNS(Namespaces.XMLNS, "xmlns:ows", Namespaces.OWS);
 		rootElement.setAttributeNS(Namespaces.XSI, "xsi:schemaLocation", Namespaces.WMS + " " + Schemas.WMS_13);
 
 		// Service Section
@@ -214,7 +222,109 @@ public class ServerWms13 extends EmulatedServer {
 		exceptionFormat.setTextContent("application/vnd.ogc.se_xml");
 		exception.appendChild(exceptionFormat);
 		
+		if (completeCapabilities) {
+			// Capability > Layer
+			Element layer = doc.createElementNS(Namespaces.WMS, "Layer");
+			capability.appendChild(layer);
+			
+			Element layerTitle = doc.createElementNS(Namespaces.WMS, "Title");
+			layerTitle.setTextContent("False Layer Data");
+			layer.appendChild(layerTitle);
+			
+			Element layerSrs = doc.createElementNS(Namespaces.WMS, "CRS");
+			layerSrs.setTextContent("EPSG:4326");
+			layer.appendChild(layerSrs);
+		}
+		
+		// Capability > ExtendedSecurityCapabilities
+		Element vendorSpecificCapabilities = buildExtendedSecurityCapabilities(doc, baseHref);
+		capability.appendChild(vendorSpecificCapabilities);
+		
 		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
+	}
+	
+	/**
+	 * Create the ExtendedSecurityCapabilities element and populate it with security annotations based on
+	 * the test run properties for the ETS.
+	 */
+	private Element buildExtendedSecurityCapabilities(Document doc, String href) {
+		Element extendedSecurityCapabilities = doc.createElementNS(Namespaces.OWS_SECURITY, "ExtendedSecurityCapabilities");
+		String completeCapabilitiesUrl = href + "/full";
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null) {
+			Element operationsMetadata = doc.createElementNS(Namespaces.OWS, "OperationsMetadata");
+			extendedSecurityCapabilities.appendChild(operationsMetadata);
+			
+			// GetCapabilities
+			Element getCapabilities = doc.createElementNS(Namespaces.OWS, "Operation");
+			getCapabilities.setAttribute("name", "GetCapabilities");
+			operationsMetadata.appendChild(getCapabilities);
+			
+			Element getCapabilitiesDcp = doc.createElementNS(Namespaces.OWS, "DCP");
+			getCapabilities.appendChild(getCapabilitiesDcp);
+			
+			Element getCapabilitiesDcpHttp = doc.createElementNS(Namespaces.OWS, "HTTP");
+			getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
+			
+			// GetCapabilities GET
+			Element getCapabilitiesDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
+			getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
+			getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
+			getCapabilitiesDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
+			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
+			
+			Element getCapabilitiesDcpHttpGetConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			getCapabilitiesDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			getCapabilitiesDcpHttpGet.appendChild(getCapabilitiesDcpHttpGetConstraint);
+			
+			Element getCapabilitiesDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
+			getCapabilitiesDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
+			
+			// GetCapabilities POST
+			Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS, "Post");
+			getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
+			getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
+			getCapabilitiesDcpHttpPost.setAttribute("xlink:href", completeCapabilitiesUrl);
+			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
+			
+			Element getCapabilitiesDcpHttpPostConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			getCapabilitiesDcpHttpPostConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			getCapabilitiesDcpHttpPost.appendChild(getCapabilitiesDcpHttpPostConstraint);
+			
+			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
+			getCapabilitiesDcpHttpPostConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
+			
+			// GetMap
+			Element getMap = doc.createElementNS(Namespaces.OWS, "Operation");
+			getMap.setAttribute("name", "GetMap");
+			operationsMetadata.appendChild(getMap);
+			
+			Element getMapDcp = doc.createElementNS(Namespaces.OWS, "DCP");
+			getMap.appendChild(getMapDcp);
+			
+			Element getMapDcpHttp = doc.createElementNS(Namespaces.OWS, "HTTP");
+			getMapDcp.appendChild(getMapDcpHttp);
+			
+			// GetMap GET
+			Element getMapDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
+			getMapDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
+			getMapDcpHttpGet.setAttribute("xlink:type", "simple");
+			getMapDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
+			getMapDcpHttp.appendChild(getMapDcpHttpGet);
+			
+			Element getMapDcpHttpGetConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			getMapDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			getMapDcpHttpGet.appendChild(getMapDcpHttpGetConstraint);
+			
+			Element getMapDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
+			getMapDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getSaml2Url());
+			getMapDcpHttpGetConstraint.appendChild(getMapDcpHttpGetConstraintValues);
+		}
+		
+		return extendedSecurityCapabilities;
 	}
 	
 	/**

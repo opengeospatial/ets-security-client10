@@ -36,7 +36,6 @@ public class ServerWms111 extends EmulatedServer {
 	 */
 	public ServerWms111(ServerOptions options) {
 		this.options = options;
-		this.relayState = "token";
 	}
 	
 	/**

@@ -36,6 +36,10 @@ public class EmulatedServer {
 			// Exception with default configuration
 			e.printStackTrace();
 		}
+		
+		// RelayState is used for SAML2, we will hard-code something as we
+		// are only testing.
+		this.relayState = "token";
 	}
 	
 	/**
