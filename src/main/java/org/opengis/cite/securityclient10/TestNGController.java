@@ -199,7 +199,7 @@ public class TestNGController implements TestSuiteController {
     	PropertiesDocument testRunProperties;
     	try {
 			testRunProperties = new PropertiesDocument(testRunArgs);
-		} catch (TransformerException | TransformerFactoryConfigurationError | IOException e1) {
+		} catch (TransformerFactoryConfigurationError e1) {
 			// If test run arguments could not be converted to a Properties Document, then
 			// skip to tests with an exception.
 			e1.printStackTrace();
@@ -311,13 +311,9 @@ public class TestNGController implements TestSuiteController {
      */
 	private Source executeWithException(Throwable e) {
 		PropertiesDocument testRunProperties;
-		try {
-			testRunProperties = new PropertiesDocument();
-			testRunProperties.setProperty(e.getClass().toString(), e.getMessage());
-			return executor.execute(testRunProperties.getDocument());
-		} catch (ParserConfigurationException e1) {
-			return executor.execute(null);
-		}
+		testRunProperties = new PropertiesDocument();
+		testRunProperties.setProperty(e.getClass().toString(), e.getMessage());
+		return executor.execute(testRunProperties.getDocument());
 	}
 
 	/**

@@ -9,9 +9,6 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -34,11 +31,15 @@ public class PropertiesDocument {
 	
 	/**
 	 * Create blank PropertiesDocument with blank Properties object
-	 * @throws ParserConfigurationException Exception if document builder could not be created
 	 */
-	public PropertiesDocument() throws ParserConfigurationException {
+	public PropertiesDocument() {
 		this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        try {
+			this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// Exception with default configuration
+			e.printStackTrace();
+		}
         this.properties = new Properties();
 	}
 	
@@ -46,16 +47,11 @@ public class PropertiesDocument {
 	 * Create a Properties Document from an input XML file
 	 * @param xmlFile File to open for parsing
 	 * @throws SAXException Exception on parsing input as XML
-	 * @throws TransformerFactoryConfigurationError Exception if TransformerFactory could not be created
-	 * @throws TransformerException Exception if XML could not be transformed to input stream
-	 * @throws TransformerConfigurationException Exception if transformer could not use input XML
 	 * @throws IOException Exception if XML could not be read for properties file
 	 * @throws ParserConfigurationException Exception if Document Builder could not be created
 	 * @throws InvalidPropertiesFormatException Exception if XML is not in Properties format
 	 */
-	public PropertiesDocument(File xmlFile) throws SAXException, IOException, 
-			TransformerConfigurationException, TransformerException, TransformerFactoryConfigurationError, 
-			ParserConfigurationException {
+	public PropertiesDocument(File xmlFile) throws ParserConfigurationException, SAXException, IOException {
 		this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
         this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		this.document = this.documentBuilder.parse(xmlFile);
@@ -65,16 +61,9 @@ public class PropertiesDocument {
 	/**
 	 * Create a Properties Document using the input as the existing Document.
 	 * @param testRunArgs Document to use as base
-	 * @throws TransformerFactoryConfigurationError Exception if TransformerFactory could not be created
-	 * @throws TransformerException Exception if XML could not be transformed to input stream
-	 * @throws TransformerConfigurationException Exception if transformer could not use input XML
-	 * @throws IOException Exception if XML could not be read for properties file
-	 * @throws InvalidPropertiesFormatException Exception if XML is not in Properties format
 	 * @throws ParserConfigurationException Exception if Document Builder could not be created
 	 */
-	public PropertiesDocument(Document testRunArgs) throws TransformerConfigurationException, 
-			InvalidPropertiesFormatException, TransformerException, TransformerFactoryConfigurationError, 
-			IOException, ParserConfigurationException {
+	public PropertiesDocument(Document testRunArgs) throws ParserConfigurationException {
 		this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
         this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		this.document = this.documentBuilder.newDocument();
