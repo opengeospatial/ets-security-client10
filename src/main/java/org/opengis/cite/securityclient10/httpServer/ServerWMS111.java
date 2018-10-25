@@ -153,7 +153,7 @@ public class ServerWms111 extends EmulatedServer {
 		rootElement.appendChild(service);
 		
 		Element name = doc.createElement("Name");
-		name.setTextContent("ets-security-client-10-wms-111");
+		name.setTextContent("WMS");
 		service.appendChild(name);
 		
 		Element title = doc.createElement("Title");
