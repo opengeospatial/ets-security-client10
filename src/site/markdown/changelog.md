@@ -1,6 +1,10 @@
 
 # Release Notes
 
+## 0.4.1 (2018-10-25)
+
+- Fix case on a source class file causing compilation issues
+
 ## 0.4 (2018-10-25)
 
 This release adds the SAML 2.0 Web Browser SSO Profile for testing.
