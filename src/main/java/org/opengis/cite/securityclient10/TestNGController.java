@@ -301,6 +301,15 @@ public class TestNGController implements TestSuiteController {
 			return executeWithException(e);
 		}
     	
+    	// Remove sensitive properties from test run properties, so they are not leaked into
+    	// the test results.
+    	// The JKS has a path that should not be shown.
+    	testRunProperties.removeProperty("jks_path");
+    	// The JKS password should not be shown.
+    	testRunProperties.removeProperty("jks_password");
+    	// The IUT has a path that should not be shown.
+    	testRunProperties.removeProperty("iut");
+    	
         return executor.execute(testRunProperties.getDocument());
     }
 

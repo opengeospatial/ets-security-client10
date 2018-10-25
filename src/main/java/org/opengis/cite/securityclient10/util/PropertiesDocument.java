@@ -115,6 +115,14 @@ public class PropertiesDocument {
 	}
 	
 	/**
+	 * Delete a key and its value from the Properties object
+	 * @param key The key to remove
+	 */
+	public void removeProperty(String key) {
+		this.properties.remove(key);
+	}
+	
+	/**
 	 * Update a value in the Properties object
 	 * @param key String with key name
 	 * @param value String with value
