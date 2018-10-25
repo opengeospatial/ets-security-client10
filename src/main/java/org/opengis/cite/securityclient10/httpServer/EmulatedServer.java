@@ -54,6 +54,15 @@ public class EmulatedServer {
 	}
 	
 	/**
+	 * Return true if authentication has been set to SAML2 or another valid value in the test server 
+	 * options. Returns false if no authentication method has been enabled.
+	 * @return Boolean
+	 */
+	protected boolean getAuthenticationEnabled() {
+		return this.options.getAuthentication() != null;
+	}
+	
+	/**
 	 * Get the writer for a HttpServletResponse, so we can send back a body
 	 * @param response HttpServletResponse for the client
 	 * @return PrintWriter for response body

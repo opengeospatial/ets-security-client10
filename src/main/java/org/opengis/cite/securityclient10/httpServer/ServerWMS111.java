@@ -390,15 +390,6 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
-	 * Return true if authentication has been set to SAML2 or another valid value in the test server 
-	 * options. Returns false if no authentication method has been enabled.
-	 * @return Boolean
-	 */
-	private boolean getAuthenticationEnabled() {
-		return this.options.getAuthentication() != null;
-	}
-	
-	/**
 	 * Check if the request body has a valid SAML 2.0 Authentication Response document. For the test suite,
 	 * no check is actually done and "true" can always be returned.
 	 * 
