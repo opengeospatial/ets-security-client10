@@ -251,7 +251,7 @@ public class TestNGController implements TestSuiteController {
         // Register a servlet handler with the path, service type, and requirement class options
         ServerOptions serverOptions = new ServerOptions(serviceType);
         serverOptions.setAuthentication(testRunProperties.getProperty("authentication"));
-        serverOptions.setSaml2Url(testRunProperties.getProperty("saml2_url"));
+        serverOptions.setIdpUrl(testRunProperties.getProperty("idp_url"));
         
         try {
 			server.registerHandler(path, serverOptions);

@@ -46,9 +46,9 @@ public enum SuiteAttribute {
      */
     TEST_AUTHENTICATION("testAuthentication", String.class),
     /**
-     * A String for the SAML2 metadata file, if SAML2 is enabled.
+     * A String for the Identity Provider SSO resource URL, if SAML2 is enabled.
      */
-    TEST_SAML2_URL("testSAML2Url", String.class),
+    TEST_IDP_URL("testIdpUrl", String.class),
     /**
      * A String for the filesystem path of the serialized client requests document.
      */

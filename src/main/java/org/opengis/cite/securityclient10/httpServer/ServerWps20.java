@@ -117,7 +117,7 @@ public class ServerWps20 extends EmulatedServer {
 		response.setContentType("text/xml");
 		response.setStatus(HttpServletResponse.SC_OK);
 		
-		boolean samlAuth = (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null);
+		boolean samlAuth = (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null);
 		
 		// Extract scheme/host/port/path for HREFs
 		String baseHref = getUri(request, false);
@@ -268,7 +268,7 @@ public class ServerWps20 extends EmulatedServer {
 		element.appendChild(constraint);
 		
 		Element constraintValues = doc.createElementNS(Namespaces.OWS_2, "ValuesReference");
-		constraintValues.setAttributeNS(Namespaces.OWS_2, "ows:reference", this.options.getSaml2Url());
+		constraintValues.setAttributeNS(Namespaces.OWS_2, "ows:reference", this.options.getIdpUrl());
 		constraint.appendChild(constraintValues);
 	}
 	

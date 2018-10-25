@@ -184,7 +184,7 @@ public class EmulatedServer {
 		} else if (cookie == null) {
 			// If the cookie is missing, then redirect to IdP
 			
-			String idpUrl = this.options.getSaml2Url() + "?RelayState=" + this.relayState + "&SAMLRequest=" 
+			String idpUrl = this.options.getIdpUrl() + "?RelayState=" + this.relayState + "&SAMLRequest=" 
 					+ this.buildSamlAuthRequest(getUri(request, true));
 			
 			response.setStatus(HttpServletResponse.SC_FOUND);

@@ -272,7 +272,7 @@ public class ServerWms111 extends EmulatedServer {
 		String completeCapabilitiesUrl = href + "/full";
 		
 		// Add SAML2 constraint
-		if (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null) {
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
 			Element extendedSecurityCapabilities = doc.createElement("ows_security:ExtendedSecurityCapabilities");
 			extendedSecurityCapabilities.setAttribute("xmlns:ows_security", Namespaces.OWS_SECURITY);
 			vendorSpecificCapabilities.appendChild(extendedSecurityCapabilities);
@@ -304,7 +304,7 @@ public class ServerWms111 extends EmulatedServer {
 			getCapabilitiesDcpHttpGet.appendChild(getCapabilitiesDcpHttpGetConstraint);
 			
 			Element getCapabilitiesDcpHttpGetConstraintValues = doc.createElement("ows:ValuesReference");
-			getCapabilitiesDcpHttpGetConstraintValues.setAttribute("ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpGetConstraintValues.setAttribute("ows:reference", this.options.getIdpUrl());
 			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
 			
 			// GetCapabilities POST
@@ -319,7 +319,7 @@ public class ServerWms111 extends EmulatedServer {
 			getCapabilitiesDcpHttpPost.appendChild(getCapabilitiesDcpHttpPostConstraint);
 			
 			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElement("ows:ValuesReference");
-			getCapabilitiesDcpHttpPostConstraintValues.setAttribute("ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpPostConstraintValues.setAttribute("ows:reference", this.options.getIdpUrl());
 			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
 		}
 		

@@ -169,7 +169,7 @@
             <entry key="jks_path"><xsl:value-of select="$jks_path" /></entry>
             <entry key="jks_password"><xsl:value-of select="$jks_password" /></entry>
             <entry key="authentication"><xsl:value-of select="$form-data/values/value[@key='auth']"/></entry>
-            <entry key="saml2_url"><xsl:value-of select="$form-data/values/value[@key='idp-url']"/></entry>
+            <entry key="idp_url"><xsl:value-of select="$form-data/values/value[@key='idp-url']"/></entry>
           </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">

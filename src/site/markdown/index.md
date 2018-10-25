@@ -166,12 +166,12 @@ have the following values: M (mandatory), O (optional), or C (conditional).
         <p>If this element is omitted or is empty, then authentication 
         will not be enabled.</p>
         <p>For SAML2 authentication, specify <code>saml2</code> and specify
-          the <code>saml2_url</code> test run property:</p>
+          the <code>idp_url</code> test run property:</p>
           <pre>&lt;entry name=&quot;authentication&quot;&gt;saml2&lt;/entry&gt;</pre>
       </td>
     </tr>
     <tr>
-      <td>saml2_url</td>
+      <td>idp_url</td>
       <td>String</td>
       <td>O</td>
       <td>
@@ -182,8 +182,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
         requiring SAML2 authentication from the secure client. The
         <code>authentication</code> test run property must be set to
         <code>saml2</code>, otherwise this test run property is ignored.</p>
-        <p>The value must be a URL that resolves to a SAML2 metadata file 
-        for the federation. This value will then be passed to the 
+        <p>The value must be a URL that resolves to a SAML2 SSO resource. This value will then be passed to the 
         secure client in the <code>ows:Constraint</code>. Note that it 
         is up to the test user to validate the URL and the service at 
         that URL, the ETS will do no verification and pass the URL 

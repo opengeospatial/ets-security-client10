@@ -265,7 +265,7 @@ public class ServerWms13 extends EmulatedServer {
 		String completeCapabilitiesUrl = href + "/full";
 		
 		// Add SAML2 constraint
-		if (this.options.getAuthentication().equals("saml2") && this.options.getSaml2Url() != null) {
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
 			Element operationsMetadata = doc.createElementNS(Namespaces.OWS, "OperationsMetadata");
 			extendedSecurityCapabilities.appendChild(operationsMetadata);
 			
@@ -292,7 +292,7 @@ public class ServerWms13 extends EmulatedServer {
 			getCapabilitiesDcpHttpGet.appendChild(getCapabilitiesDcpHttpGetConstraint);
 			
 			Element getCapabilitiesDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
-			getCapabilitiesDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
 			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
 			
 			// GetCapabilities POST
@@ -307,7 +307,7 @@ public class ServerWms13 extends EmulatedServer {
 			getCapabilitiesDcpHttpPost.appendChild(getCapabilitiesDcpHttpPostConstraint);
 			
 			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
-			getCapabilitiesDcpHttpPostConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getSaml2Url());
+			getCapabilitiesDcpHttpPostConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
 			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
 			
 			// GetMap
@@ -333,7 +333,7 @@ public class ServerWms13 extends EmulatedServer {
 			getMapDcpHttpGet.appendChild(getMapDcpHttpGetConstraint);
 			
 			Element getMapDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
-			getMapDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getSaml2Url());
+			getMapDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
 			getMapDcpHttpGetConstraint.appendChild(getMapDcpHttpGetConstraintValues);
 		}
 		

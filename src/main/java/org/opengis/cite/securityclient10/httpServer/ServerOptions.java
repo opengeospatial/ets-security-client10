@@ -19,9 +19,9 @@ public class ServerOptions {
 	 */
 	private String authentication;
 	/**
-	 * The URL to the SAML2 metadata file. Optional.
+	 * The URL to the Identity Provider SSO resource URL. Optional.
 	 */
-	private String saml2Url;
+	private String idpUrl;
 
 	public ServerOptions(String serviceType) {
 		this.serviceType = serviceType;
@@ -38,7 +38,7 @@ public class ServerOptions {
 	
 	/**
 	 * Determine the number of client requests to expect for a
-	 * given type of authentication scheme. For SAML2, the SAML2 URL
+	 * given type of authentication scheme. For SAML2, the IdP URL
 	 * must also be defined.
 	 * 
 	 * None  - 1 request
@@ -49,7 +49,7 @@ public class ServerOptions {
 	public int getExpectedRequestCount() {
 		if (this.authentication.equals("none")) {
 			return 1;
-		} else if (this.authentication.equals("saml2") && this.saml2Url != null) {
+		} else if (this.authentication.equals("saml2") && this.idpUrl != null) {
 			return 3;
 		}
 		
@@ -57,11 +57,11 @@ public class ServerOptions {
 	}
 	
 	/**
-	 * Get the URL for the SAML2 metadata file.
+	 * Get the URL for the Identity Provider SSO resource.
 	 * @return String
 	 */
-	public String getSaml2Url() {
-		return this.saml2Url;
+	public String getIdpUrl() {
+		return this.idpUrl;
 	}
 	
 	/**
@@ -85,16 +85,16 @@ public class ServerOptions {
 	}
 	
 	/**
-	 * Set the SAML2 metadata file URL. If a blank string, then
+	 * Set the Identity Provider SSO resource URL. If a blank string, then
 	 * null is used and the parameter is omitted from the emulated
 	 * server.
-	 * @param url A string with the URL to the SAML2 metadata file.
+	 * @param url A string with the URL to the Identity Provider SSO resource.
 	 */
-	public void setSaml2Url(String url) {
+	public void setIdpUrl(String url) {
 		if (url == null || url.isEmpty()) {
-			this.saml2Url = null;
+			this.idpUrl = null;
 		} else {
-			this.saml2Url = url;
+			this.idpUrl = url;
 		}
 	}
 }

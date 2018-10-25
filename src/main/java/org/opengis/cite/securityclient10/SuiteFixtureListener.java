@@ -58,8 +58,8 @@ public class SuiteFixtureListener implements ISuiteListener {
         suite.setAttribute(SuiteAttribute.TEST_AUTHENTICATION.getName(), 
         		params.get(TestRunArg.Authentication.toString()));
         
-        suite.setAttribute(SuiteAttribute.TEST_SAML2_URL.getName(), 
-        		params.get(TestRunArg.SAML2_URL.toString()));
+        suite.setAttribute(SuiteAttribute.TEST_IDP_URL.getName(), 
+        		params.get(TestRunArg.IDP_URL.toString()));
         
         suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), 
         		params.get(TestRunArg.IUT.toString()));

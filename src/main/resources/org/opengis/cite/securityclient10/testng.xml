@@ -7,7 +7,8 @@
   <parameter name="path" value=""/>
   <parameter name="jks_path" value=""/>
   <parameter name="jks_password" value=""/>
-  <parameter name="authentication_saml2" value=""/>
+  <parameter name="authentication" value=""/>
+  <parameter name="idp_url" value=""/>
 
   <listeners>
     <listener class-name="org.opengis.cite.securityclient10.TestRunListener" />
