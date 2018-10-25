@@ -93,6 +93,7 @@
               <p>When the test starts, your session URL will be as follows.</p>
               <h4 id="test-endpoint"></h4>
             </fieldset>
+            <p>Suggestion: Ensure your browser has allowed pop-up windows from this domain. This will allow you to see the test console and test session URL pop up windows.</p>
             <p>
               <input class="form-button" type="submit" value="Start"/> | 
               <input class="form-button" type="reset" value="Clear"/>
@@ -134,7 +135,21 @@
                 document.getElementById("path").value = nonce;
                 
                 // Display test endpoint URL
-                document.getElementById("test-endpoint").innerText = "https://" + host + ":" + port + "/" + nonce;
+                var endpointUrl = "https://" + host + ":" + port + "/" + nonce;
+                document.getElementById("test-endpoint").innerText = endpointUrl;
+
+                // Open pop up window with test endpoint URL, in case
+                // tester submits form before copying the URL
+                document.querySelector("form").addEventListener("submit", function(e) {
+                  var w = window.open("", "", "width=640, height=480, scrollbars=no");
+                  var desc = w.document.createElement("p");
+                  desc.textContent = "Your Test Session URL";
+                  var header = w.document.createElement("h2");
+                  header.textContent = endpointUrl;
+
+                  w.document.body.appendChild(desc);
+                  w.document.body.appendChild(header);
+                });
               }
               ]]>
             </script>
