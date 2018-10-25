@@ -115,7 +115,7 @@ raise "Unexpected Response: #{response.status}" if response4.status != 200
 # Parse auth response for callback URL in SAML Audience element
 encoded_auth_response = response4.body
 auth_response_doc = Nokogiri::XML(Base64.decode64(encoded_auth_response))
-callback_url = auth_response_doc.xpath('/samlp:Response//saml:Audience', namespaces).text
+callback_url = auth_response_doc.xpath('/samlp:Response//saml:SubjectConfirmationData/@Recipient', namespaces).text
 
 # 5. Post SAML Authentication Response to Service Provider
 response5 = conn.post do |req|

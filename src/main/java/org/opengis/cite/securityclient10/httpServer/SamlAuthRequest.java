@@ -85,11 +85,11 @@ public class SamlAuthRequest {
 		rootElement.setAttribute("Version", "2.0");
 		ZonedDateTime date = ZonedDateTime.now(ZoneId.of("UTC"));
 		rootElement.setAttribute("IssueInstant", date.toString());
-		rootElement.setAttribute("AssertionConsumerServiceIndex", "0");
+		rootElement.setAttribute("AssertionConsumerServiceURL", href + "/saml2");
 		this.doc.appendChild(rootElement);
 		
 		Element issuer = this.doc.createElement("saml:Issuer");
-		issuer.setTextContent(href + "/saml2");
+		issuer.setTextContent(href);
 		rootElement.appendChild(issuer);
 		
 		Element nameIdPolicy = this.doc.createElement("samlp:NameIDPolicy");
