@@ -116,18 +116,6 @@ public class EmulatedServer {
 	/**
 	 * Subclasses must override this.
 	 * 
-	 * @param request Source request from client, used to build absolute URLs for HREFs
-	 * @param response Response to build to send back to client
-	 * @param completeCapabilities If true, build a complete capabilities document
-	 * @throws TransformerException Exception if transformer could not convert document to stream
-	 */
-	private void buildCapabilities(HttpServletRequest request, HttpServletResponse response, boolean b) {
-		// Override this method
-	}
-	
-	/**
-	 * Subclasses must override this.
-	 * 
 	 * @param reason String with reason for Service Exception.
 	 * @param response Response to build to send back to client
 	 */
