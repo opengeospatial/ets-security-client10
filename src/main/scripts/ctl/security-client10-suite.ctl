@@ -147,6 +147,10 @@
                   var header = w.document.createElement("h2");
                   header.textContent = endpointUrl;
 
+                  while (w.document.body.firstChild) {
+                    w.document.body.removeChild(w.document.body.firstChild);
+                  }
+
                   w.document.body.appendChild(desc);
                   w.document.body.appendChild(header);
                 });
