@@ -100,7 +100,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>address</td>
       <td>String</td>
       <td>M</td>
-      <td>Host interface on which to bind test server.</td>
+      <td>Host interface on which to bind test server. When using IPv6, do not use square brackets, e.g. <code>::1</code></td>
     </tr>
     <tr>
       <td>port</td>
@@ -112,11 +112,7 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>host</td>
       <td>String</td>
       <td>M</td>
-      <td>Host name that will be advertised to clients. May be an IP
-      address or domain name. Clients must be able to resolve this IP or
-      name to the machine running the test server. If you are using a
-      certificate from a Certificate Authority, this parameter must match
-      the common name on that certificate.</td>
+      <td>Host name that will be advertised to clients. May be an IP address or domain name. Clients must be able to resolve this IP or name to the machine running the test server. If you are using a certificate from a Certificate Authority, this parameter must match the common name on that certificate. When using IPv6, use square brackets around the address, e.g. <code>[::1]</code></td>
     </tr>
     <tr>
       <td>path</td>
