@@ -296,6 +296,24 @@ public class ServerWms13 extends EmulatedServer {
 			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
 		}
 		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element getConstraintHttpMethods = doc.createElement("ows:Constraint");
+			getConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			getCapabilitiesDcpHttpGet.appendChild(getConstraintHttpMethods);
+			
+			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
+			getConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
+			
+			Element valueGet = doc.createElement("ows:Value");
+			valueGet.setTextContent("GET");
+			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
+			
+			Element valuePost = doc.createElement("ows:Value");
+			valuePost.setTextContent("POST");
+			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
+		}
+		
 		// GetCapabilities POST
 		Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS, "Post");
 		getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
@@ -312,6 +330,24 @@ public class ServerWms13 extends EmulatedServer {
 			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
 			getCapabilitiesDcpHttpPostConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
 			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element postConstraintHttpMethods = doc.createElement("ows:Constraint");
+			postConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			getCapabilitiesDcpHttpPost.appendChild(postConstraintHttpMethods);
+			
+			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
+			postConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
+			
+			Element valueGet = doc.createElement("ows:Value");
+			valueGet.setTextContent("GET");
+			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
+			
+			Element valuePost = doc.createElement("ows:Value");
+			valuePost.setTextContent("POST");
+			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
 		}
 		
 		// GetMap
@@ -341,6 +377,20 @@ public class ServerWms13 extends EmulatedServer {
 			Element getMapDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
 			getMapDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
 			getMapDcpHttpGetConstraint.appendChild(getMapDcpHttpGetConstraintValues);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element getConstraintHttpMethods = doc.createElement("ows:Constraint");
+			getConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			getMapDcpHttpGet.appendChild(getConstraintHttpMethods);
+			
+			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
+			getConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
+			
+			Element valueGet = doc.createElement("ows:Value");
+			valueGet.setTextContent("GET");
+			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
 		}
 		
 		return extendedSecurityCapabilities;
