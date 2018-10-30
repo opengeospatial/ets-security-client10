@@ -214,6 +214,9 @@ public class TestNGController implements TestSuiteController {
     	System.out.println("* Abstract Conformance Class Common Security");
     	
     	String serviceType = testRunProperties.getProperty(TestRunArg.Service_Type.toString());
+    	String httpMethods = testRunProperties.getProperty("http_methods");
+        Boolean hasHttpMethods = (httpMethods != null && httpMethods.equals("true"));
+        String auth = testRunProperties.getProperty("authentication");
     	
     	if (serviceType.equals("wms111")) {
     		System.out.println("* Conformance Class WMS 1.1.1");
@@ -223,10 +226,10 @@ public class TestNGController implements TestSuiteController {
     		System.out.println("* Conformance Class OWS Common");
     	}
     	
-    	if (testRunProperties.getProperty("http_methods").equals("true")) {
+    	if (hasHttpMethods) {
     		System.out.println("* HTTP Methods enabled");
     	}
-    	if (testRunProperties.getProperty("authentication").equals("saml2")) {
+    	if (auth != null && auth.equals("saml2")) {
     		System.out.println("* SAML 2.0 Authentication Required");
     	}
     	System.out.println("");
@@ -253,9 +256,9 @@ public class TestNGController implements TestSuiteController {
         
         // Register a servlet handler with the path, service type, and requirement class options
         ServerOptions serverOptions = new ServerOptions(serviceType);
-        serverOptions.setAuthentication(testRunProperties.getProperty("authentication"));
+        serverOptions.setAuthentication(auth);
         serverOptions.setIdpUrl(testRunProperties.getProperty("idp_url"));
-        serverOptions.setHttpMethods(testRunProperties.getProperty("http_methods").equals("true"));
+        serverOptions.setHttpMethods(hasHttpMethods);
         
         try {
 			server.registerHandler(path, serverOptions);

@@ -80,7 +80,8 @@ public class TestRunArgValidator {
         String idpUrl = params.get(TestRunArg.IDP_URL.toString());
         
         // HTTP Methods
-        Boolean httpMethods = params.get(TestRunArg.HTTP_METHODS.toString()).equals("true");
+        String httpMethods = params.get(TestRunArg.HTTP_METHODS.toString());
+        Boolean hasHttpMethods = (httpMethods != null && httpMethods.equals("true"));
         
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());
