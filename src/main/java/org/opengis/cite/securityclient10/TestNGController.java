@@ -214,9 +214,9 @@ public class TestNGController implements TestSuiteController {
     	System.out.println("* Abstract Conformance Class Common Security");
     	
     	String serviceType = testRunProperties.getProperty(TestRunArg.Service_Type.toString());
-    	String httpMethods = testRunProperties.getProperty("http_methods");
+    	String httpMethods = testRunProperties.getProperty(TestRunArg.HTTP_METHODS.toString());
         Boolean hasHttpMethods = (httpMethods != null && httpMethods.equals("true"));
-        String auth = testRunProperties.getProperty("authentication");
+        String auth = testRunProperties.getProperty(TestRunArg.Authentication.toString());
     	
     	if (serviceType.equals("wms111")) {
     		System.out.println("* Conformance Class WMS 1.1.1");
@@ -236,10 +236,10 @@ public class TestNGController implements TestSuiteController {
         
         TestServer server;
 		try {
-			server = getServer(testRunProperties.getProperty("address"), 
-					Integer.parseInt(testRunProperties.getProperty("port")),
-					testRunProperties.getProperty("jks_path"), 
-					testRunProperties.getProperty("jks_password"));
+			server = getServer(testRunProperties.getProperty(TestRunArg.Address.toString()), 
+					Integer.parseInt(testRunProperties.getProperty(TestRunArg.Port.toString())),
+					testRunProperties.getProperty(TestRunArg.JKS_Path.toString()), 
+					testRunProperties.getProperty(TestRunArg.JKS_Password.toString()));
 		} catch (Exception e) {
 			// If Test Server could not be started, skip to tests
 			e.printStackTrace();
@@ -247,17 +247,17 @@ public class TestNGController implements TestSuiteController {
 		}
     	
         String path;
-        if (testRunProperties.getProperty("path") == "") {
+        if (testRunProperties.getProperty(TestRunArg.Path.toString()) == "") {
         	// Generate nonce for this test session, which will be used as the unique servlet address
             path = this.getNonce();
         } else {
-        	path = testRunProperties.getProperty("path");
+        	path = testRunProperties.getProperty(TestRunArg.Path.toString());
         }
         
         // Register a servlet handler with the path, service type, and requirement class options
         ServerOptions serverOptions = new ServerOptions(serviceType);
         serverOptions.setAuthentication(auth);
-        serverOptions.setIdpUrl(testRunProperties.getProperty("idp_url"));
+        serverOptions.setIdpUrl(testRunProperties.getProperty(TestRunArg.IDP_URL.toString()));
         serverOptions.setHttpMethods(hasHttpMethods);
         
         try {
@@ -270,7 +270,8 @@ public class TestNGController implements TestSuiteController {
         
         // Print out the servlet test path for the test user
         System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s", 
-        		testRunProperties.getProperty("host"), testRunProperties.getProperty("port"), path));
+        		testRunProperties.getProperty(TestRunArg.Host.toString()), 
+        		testRunProperties.getProperty(TestRunArg.Port.toString()), path));
     	
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
@@ -287,7 +288,8 @@ public class TestNGController implements TestSuiteController {
     	
     	// Save to file
     	String nonce = this.getNonce();
-    	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "requests-" + nonce + ".xml");
+    	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), 
+    			"requests-" + nonce + ".xml");
     	try {
 			requests.saveToPath(requestsFilePath);
 		} catch (FileNotFoundException | TransformerException e) {
@@ -297,7 +299,8 @@ public class TestNGController implements TestSuiteController {
 		}
     	
     	// Add argument for requests document path as IUT
-    	testRunProperties.setProperty("iut", requestsFilePath.toAbsolutePath().toString());
+    	testRunProperties.setProperty(TestRunArg.IUT.toString(), 
+    			requestsFilePath.toAbsolutePath().toString());
     	
     	// Release the servlet as the path is not needed anymore
     	try {
@@ -311,9 +314,9 @@ public class TestNGController implements TestSuiteController {
     	// Remove sensitive properties from test run properties, so they are not leaked into
     	// the test results.
     	// The JKS has a path that should not be shown.
-    	testRunProperties.removeProperty("jks_path");
+    	testRunProperties.removeProperty(TestRunArg.JKS_Path.toString());
     	// The JKS password should not be shown.
-    	testRunProperties.removeProperty("jks_password");
+    	testRunProperties.removeProperty(TestRunArg.JKS_Password.toString());
     	
         return executor.execute(testRunProperties.getDocument());
     }
