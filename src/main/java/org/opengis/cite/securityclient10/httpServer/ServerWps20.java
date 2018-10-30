@@ -195,6 +195,12 @@ public class ServerWps20 extends EmulatedServer {
 			addSamlConstraintToElement(doc, getCapabilitiesDcpHttpGet);
 		}
 		
+		// ows:Constraint for HTTP Methods
+		if (this.options.getHttpMethods()) {
+			String[] methods = {"GET", "POST"};
+			addHttpMethodsConstraintToElement(doc, getCapabilitiesDcpHttpGet, methods);
+		}
+		
 		Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS_2, "ows:Post");
 		getCapabilitiesDcpHttpPost.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
 		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
@@ -202,6 +208,12 @@ public class ServerWps20 extends EmulatedServer {
 		// ows:Constraint for SAML2
 		if (samlAuth) {
 			addSamlConstraintToElement(doc, getCapabilitiesDcpHttpPost);
+		}
+		
+		// ows:Constraint for HTTP Methods
+		if (this.options.getHttpMethods()) {
+			String[] methods = {"GET", "POST"};
+			addHttpMethodsConstraintToElement(doc, getCapabilitiesDcpHttpPost, methods);
 		}
 		
 		// DescribeProcess Operation Section
@@ -224,6 +236,12 @@ public class ServerWps20 extends EmulatedServer {
 			addSamlConstraintToElement(doc, describeProcessDcpHttpGet);
 		}
 		
+		// ows:Constraint for HTTP Methods
+		if (this.options.getHttpMethods()) {
+			String[] methods = {"GET", "POST"};
+			addHttpMethodsConstraintToElement(doc, describeProcessDcpHttpGet, methods);
+		}
+		
 		Element describeProcessDcpHttpPost = doc.createElementNS(Namespaces.OWS_2, "ows:Post");
 		describeProcessDcpHttpPost.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
 		describeProcessDcpHttp.appendChild(describeProcessDcpHttpPost);
@@ -231,6 +249,12 @@ public class ServerWps20 extends EmulatedServer {
 		// ows:Constraint for SAML2
 		if (samlAuth) {
 			addSamlConstraintToElement(doc, describeProcessDcpHttpPost);
+		}
+		
+		// ows:Constraint for HTTP Methods
+		if (this.options.getHttpMethods()) {
+			String[] methods = {"GET", "POST"};
+			addHttpMethodsConstraintToElement(doc, describeProcessDcpHttpPost, methods);
 		}
 		
 		if (completeCapabilities) {
@@ -253,6 +277,31 @@ public class ServerWps20 extends EmulatedServer {
 		}
 		
 		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
+	}
+	
+	/**
+	 * Add an OWS Constraint element as a child to Element `element` in Document `doc`.
+	 * This Constraint is for HTTP Methods.
+	 * 
+	 * @param doc The parent document, used to create namespaced elements
+	 * @param element The parent element
+	 * @param methods A String[] containing the methods to add
+	 */
+	private void addHttpMethodsConstraintToElement(Document doc, Element element, String[] methods) {
+		Element constraintHttpMethods = doc.createElement("ows:Constraint");
+		constraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+		element.appendChild(constraintHttpMethods);
+		
+		Element allowedValues = doc.createElement("ows:AllowedValues");
+		constraintHttpMethods.appendChild(allowedValues);
+		
+		for (int i = 0; i < methods.length; i++) {
+			String method = methods[i];
+			
+			Element value = doc.createElement("ows:Value");
+			value.setTextContent(method);
+			allowedValues.appendChild(value);
+		}
 	}
 	
 	/**
