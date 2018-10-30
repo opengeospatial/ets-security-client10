@@ -2,6 +2,12 @@
 
 These bash scripts automate curl to act as a very simple Secure Client. I use these to verify the test suite, as I don't have access to other secure clients.
 
+**Tip**: If you are using MacOS, you can copy the test endpoint URL to your clipboard and then use `$(pbpaste)` in the command to automatically paste the test endpoint URL. Example:
+
+```terminal
+$ ./client wms "$(pbpaste)"
+```
+
 ## `badclient`
 
 Issues a GET request to the service URL, but omits the query parameters (an invalid request). Can be used to test service exception responses.
