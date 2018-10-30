@@ -264,29 +264,29 @@ public class ServerWms13 extends EmulatedServer {
 		Element extendedSecurityCapabilities = doc.createElementNS(Namespaces.OWS_SECURITY, "ExtendedSecurityCapabilities");
 		String completeCapabilitiesUrl = href + "/full";
 		
+		Element operationsMetadata = doc.createElementNS(Namespaces.OWS, "OperationsMetadata");
+		extendedSecurityCapabilities.appendChild(operationsMetadata);
+		
+		// GetCapabilities
+		Element getCapabilities = doc.createElementNS(Namespaces.OWS, "Operation");
+		getCapabilities.setAttribute("name", "GetCapabilities");
+		operationsMetadata.appendChild(getCapabilities);
+		
+		Element getCapabilitiesDcp = doc.createElementNS(Namespaces.OWS, "DCP");
+		getCapabilities.appendChild(getCapabilitiesDcp);
+		
+		Element getCapabilitiesDcpHttp = doc.createElementNS(Namespaces.OWS, "HTTP");
+		getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
+		
+		// GetCapabilities GET
+		Element getCapabilitiesDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
+		getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
+		getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
+		getCapabilitiesDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
+		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
+		
 		// Add SAML2 constraint
 		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
-			Element operationsMetadata = doc.createElementNS(Namespaces.OWS, "OperationsMetadata");
-			extendedSecurityCapabilities.appendChild(operationsMetadata);
-			
-			// GetCapabilities
-			Element getCapabilities = doc.createElementNS(Namespaces.OWS, "Operation");
-			getCapabilities.setAttribute("name", "GetCapabilities");
-			operationsMetadata.appendChild(getCapabilities);
-			
-			Element getCapabilitiesDcp = doc.createElementNS(Namespaces.OWS, "DCP");
-			getCapabilities.appendChild(getCapabilitiesDcp);
-			
-			Element getCapabilitiesDcpHttp = doc.createElementNS(Namespaces.OWS, "HTTP");
-			getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
-			
-			// GetCapabilities GET
-			Element getCapabilitiesDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
-			getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
-			getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
-			getCapabilitiesDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
-			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
-			
 			Element getCapabilitiesDcpHttpGetConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
 			getCapabilitiesDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
 			getCapabilitiesDcpHttpGet.appendChild(getCapabilitiesDcpHttpGetConstraint);
@@ -294,14 +294,17 @@ public class ServerWms13 extends EmulatedServer {
 			Element getCapabilitiesDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
 			getCapabilitiesDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
 			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
-			
-			// GetCapabilities POST
-			Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS, "Post");
-			getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
-			getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
-			getCapabilitiesDcpHttpPost.setAttribute("xlink:href", completeCapabilitiesUrl);
-			getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
-			
+		}
+		
+		// GetCapabilities POST
+		Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS, "Post");
+		getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
+		getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
+		getCapabilitiesDcpHttpPost.setAttribute("xlink:href", completeCapabilitiesUrl);
+		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
 			Element getCapabilitiesDcpHttpPostConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
 			getCapabilitiesDcpHttpPostConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
 			getCapabilitiesDcpHttpPost.appendChild(getCapabilitiesDcpHttpPostConstraint);
@@ -309,25 +312,28 @@ public class ServerWms13 extends EmulatedServer {
 			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
 			getCapabilitiesDcpHttpPostConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
 			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
-			
-			// GetMap
-			Element getMap = doc.createElementNS(Namespaces.OWS, "Operation");
-			getMap.setAttribute("name", "GetMap");
-			operationsMetadata.appendChild(getMap);
-			
-			Element getMapDcp = doc.createElementNS(Namespaces.OWS, "DCP");
-			getMap.appendChild(getMapDcp);
-			
-			Element getMapDcpHttp = doc.createElementNS(Namespaces.OWS, "HTTP");
-			getMapDcp.appendChild(getMapDcpHttp);
-			
-			// GetMap GET
-			Element getMapDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
-			getMapDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
-			getMapDcpHttpGet.setAttribute("xlink:type", "simple");
-			getMapDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
-			getMapDcpHttp.appendChild(getMapDcpHttpGet);
-			
+		}
+		
+		// GetMap
+		Element getMap = doc.createElementNS(Namespaces.OWS, "Operation");
+		getMap.setAttribute("name", "GetMap");
+		operationsMetadata.appendChild(getMap);
+		
+		Element getMapDcp = doc.createElementNS(Namespaces.OWS, "DCP");
+		getMap.appendChild(getMapDcp);
+		
+		Element getMapDcpHttp = doc.createElementNS(Namespaces.OWS, "HTTP");
+		getMapDcp.appendChild(getMapDcpHttp);
+		
+		// GetMap GET
+		Element getMapDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
+		getMapDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
+		getMapDcpHttpGet.setAttribute("xlink:type", "simple");
+		getMapDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
+		getMapDcpHttp.appendChild(getMapDcpHttpGet);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
 			Element getMapDcpHttpGetConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
 			getMapDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
 			getMapDcpHttpGet.appendChild(getMapDcpHttpGetConstraint);
