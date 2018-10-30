@@ -193,16 +193,12 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>http_methods</td>
       <td>String</td>
       <td>O</td>
-      <td><p><strong>(not yet implemented)</strong></p>
-        <p>As part of the annotated capabilities document presented to the secure
-        client, include Requirements Class "HTTP Methods" 
+      <td>
+        <p>As part of the annotated capabilities document presented to the secure client, include Requirements Class "HTTP Methods" 
         (https://www.opengis.net/def/security/1.0/rc/http-methods).</p>
-        <p>Enabling this will include an <code>ows:Constraint</code> for listing all supported 
-        HTTP methods.</p>
-        <p>Only a value of <code>true</code> will enable this property, any other value will
-        be evaluated as <code>false</code>.</p>
-        <p>If the <code>w3c_cors</code> property is set to <code>true</code>, then this property will be
-        overridden to <code>true</code> as well.</p>
+        <p>Enabling this will include an <code>ows:Constraint</code> for listing all supported  HTTP methods.</p>
+        <p>Only a value of <code>true</code> will enable this property, any other value will be evaluated as <code>false</code>.</p>
+        <p>If the <code>w3c_cors</code> property is set to <code>true</code>, then this property will be overridden to <code>true</code> as well.</p>
       </td>
     </tr>
     <tr>

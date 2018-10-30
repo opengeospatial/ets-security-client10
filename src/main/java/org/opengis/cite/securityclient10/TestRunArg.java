@@ -52,6 +52,11 @@ public enum TestRunArg {
 	IDP_URL,
 	
 	/**
+	 * Whether HTTP Methods will be added to the security annotations
+	 */
+	HTTP_METHODS,
+	
+	/**
 	 * The request(s) from the secure client, containing the headers and body,
 	 * that will be verified by the test suite.
 	 */

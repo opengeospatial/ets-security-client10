@@ -11,4 +11,5 @@
   <entry key="jks_password"><![CDATA[ets-security-client]]></entry>
   <entry key="authentication"></entry>
   <entry key="idp_url"></entry>
+  <entry key="http_methods">true</entry>
 </properties>

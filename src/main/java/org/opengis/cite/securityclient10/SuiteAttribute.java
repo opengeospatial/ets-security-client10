@@ -50,6 +50,10 @@ public enum SuiteAttribute {
      */
     TEST_IDP_URL("testIdpUrl", String.class),
     /**
+     * A Boolean for whether Requirement Class "HTTP Methods" is enabled.
+     */
+    TEST_HTTP_METHODS("testHttpMethods", Boolean.class),
+    /**
      * A String for the filesystem path of the serialized client requests document.
      */
     TEST_IUT("testIUT", String.class);

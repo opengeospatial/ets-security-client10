@@ -223,6 +223,9 @@ public class TestNGController implements TestSuiteController {
     		System.out.println("* Conformance Class OWS Common");
     	}
     	
+    	if (testRunProperties.getProperty("http_methods").equals("true")) {
+    		System.out.println("* HTTP Methods enabled");
+    	}
     	if (testRunProperties.getProperty("authentication").equals("saml2")) {
     		System.out.println("* SAML 2.0 Authentication Required");
     	}
@@ -252,6 +255,7 @@ public class TestNGController implements TestSuiteController {
         ServerOptions serverOptions = new ServerOptions(serviceType);
         serverOptions.setAuthentication(testRunProperties.getProperty("authentication"));
         serverOptions.setIdpUrl(testRunProperties.getProperty("idp_url"));
+        serverOptions.setHttpMethods(testRunProperties.getProperty("http_methods").equals("true"));
         
         try {
 			server.registerHandler(path, serverOptions);

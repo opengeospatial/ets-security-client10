@@ -9,6 +9,7 @@
   <parameter name="jks_password" value=""/>
   <parameter name="authentication" value=""/>
   <parameter name="idp_url" value=""/>
+  <parameter name="http_methods" value=""/>
 
   <listeners>
     <listener class-name="org.opengis.cite.securityclient10.TestRunListener" />

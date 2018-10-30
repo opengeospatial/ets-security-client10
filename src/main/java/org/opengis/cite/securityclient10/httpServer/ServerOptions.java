@@ -19,6 +19,11 @@ public class ServerOptions {
 	 */
 	private String authentication;
 	/**
+	 * Whether HTTP Methods will be included in the security 
+	 * annotations.
+	 */
+	private Boolean httpMethods;
+	/**
 	 * The URL to the Identity Provider SSO resource URL. Optional.
 	 */
 	private String idpUrl;
@@ -57,6 +62,15 @@ public class ServerOptions {
 	}
 	
 	/**
+	 * Get whether HTTP Methods are enabled from the test
+	 * run properties.
+	 * @return Boolean
+	 */
+	public Boolean getHttpMethods() {
+		return httpMethods;
+	}
+	
+	/**
 	 * Get the URL for the Identity Provider SSO resource.
 	 * @return String
 	 */
@@ -84,6 +98,11 @@ public class ServerOptions {
 		}
 	}
 	
+	public void setHttpMethods(boolean enabled) {
+		this.httpMethods = enabled;
+		
+	}
+	
 	/**
 	 * Set the Identity Provider SSO resource URL. If a blank string, then
 	 * null is used and the parameter is omitted from the emulated
@@ -97,4 +116,5 @@ public class ServerOptions {
 			this.idpUrl = url;
 		}
 	}
+	
 }
