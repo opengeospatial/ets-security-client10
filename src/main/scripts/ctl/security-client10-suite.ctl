@@ -84,6 +84,11 @@
                 The method by which the Identity Provider identifies the User Agent is not mandated by this test suite; it is up to you to make sure your secure client is compatible with the Identity Provider you defined below.
               </p>
               <input type="text" name="idp-url" id="idp-url" value="" disabled="disabled" style="width: 50%" />
+
+              <h4>Other Constraints</h4>
+              <p>These other constraints will add additional annotations to the capabilities document.</p>
+
+              <input type="checkbox" id="http-methods" name="http-methods" value="true" /><label for="http-methods">HTTP Methods</label>
               
               <h4>Conformance Class</h4>
               <p>Based on the Service Type selected, the following Conformance Class will apply:</p>
@@ -174,6 +179,7 @@
             <entry key="jks_password"><xsl:value-of select="$jks_password" /></entry>
             <entry key="authentication"><xsl:value-of select="$form-data/values/value[@key='auth']"/></entry>
             <entry key="idp_url"><xsl:value-of select="$form-data/values/value[@key='idp-url']"/></entry>
+            <entry key="http_methods"><xsl:value-of select="$form-data/values/value[@key='http-methods']"/></entry>
           </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">
