@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ets-security-client10</artifactId>
   <version>0.4.2-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
 
   <name>Test suite: ets-security-client10</name>
   <description>Describe purpose of test suite.</description>
@@ -183,7 +183,4 @@
       </plugin>
     </plugins>
   </reporting>
-  <modules>
-    <module>embedded-dependencies-repacked</module>
-  </modules>
 </project>
