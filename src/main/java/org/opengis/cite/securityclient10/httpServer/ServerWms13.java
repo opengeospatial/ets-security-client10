@@ -284,20 +284,30 @@ public class ServerWms13 extends EmulatedServer {
 		
 		// Add HTTP Methods Constraint
 		if (this.options.getHttpMethods()) {
-			Element constraint = doc.createElement("ows:Constraint");
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
 			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
 			get.appendChild(constraint);
 			
-			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
+			Element constraintAllowedValues = doc.createElementNS(Namespaces.OWS, "AllowedValues");
 			constraint.appendChild(constraintAllowedValues);
 			
 			for (int i = 0; i < methods.length; i++) {
 				String method = methods[i];
 				
-				Element value = doc.createElement("ows:Value");
+				Element value = doc.createElementNS(Namespaces.OWS, "Value");
 				value.setTextContent(method);
 				constraintAllowedValues.appendChild(value);
 			}
+		}
+		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			get.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElementNS(Namespaces.OWS, "NoValues");
+			constraint.appendChild(constraintNoValues);
 		}
 		
 		return get;
@@ -331,20 +341,30 @@ public class ServerWms13 extends EmulatedServer {
 		
 		// Add HTTP Methods Constraint
 		if (this.options.getHttpMethods()) {
-			Element constraint = doc.createElement("ows:Constraint");
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
 			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
 			post.appendChild(constraint);
 			
-			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
+			Element constraintAllowedValues = doc.createElementNS(Namespaces.OWS, "AllowedValues");
 			constraint.appendChild(constraintAllowedValues);
 			
 			for (int i = 0; i < methods.length; i++) {
 				String method = methods[i];
 				
-				Element value = doc.createElement("ows:Value");
+				Element value = doc.createElementNS(Namespaces.OWS, "Value");
 				value.setTextContent(method);
 				constraintAllowedValues.appendChild(value);
 			}
+		}
+		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			post.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElementNS(Namespaces.OWS, "NoValues");
+			constraint.appendChild(constraintNoValues);
 		}
 		
 		return post;
