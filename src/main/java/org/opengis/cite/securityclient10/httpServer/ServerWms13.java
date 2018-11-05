@@ -257,6 +257,100 @@ public class ServerWms13 extends EmulatedServer {
 	}
 	
 	/**
+	 * Build an ows:Get element for an ows:Operation endpoint, using `href` as the embedded URL.
+	 * Will add annotations as necessary from the ServerOptions.
+	 * 
+	 * @param doc Document for creating elements
+	 * @param href String with URL to embed
+	 * @param methods Methods to support in HTTP Methods constraint
+	 * @return Element tree
+	 */
+	private Element buildGetElement(Document doc, String href, String[] methods) {
+		Element get = doc.createElementNS(Namespaces.OWS, "Get");
+		get.setAttribute("xmlns:xlink", Namespaces.XLINK);
+		get.setAttribute("xlink:type", "simple");
+		get.setAttribute("xlink:href", href);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			get.appendChild(constraint);
+			
+			Element constraintValuesReference = doc.createElementNS(Namespaces.OWS, "ValuesReference");
+			constraintValuesReference.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
+			constraint.appendChild(constraintValuesReference);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			get.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			for (int i = 0; i < methods.length; i++) {
+				String method = methods[i];
+				
+				Element value = doc.createElement("ows:Value");
+				value.setTextContent(method);
+				constraintAllowedValues.appendChild(value);
+			}
+		}
+		
+		return get;
+	}
+	
+	/**
+	 * Build an ows:Post element for an ows:Operation endpoint, using `href` as the embedded URL.
+	 * Will add annotations as necessary from the ServerOptions.
+	 * 
+	 * @param doc Document for creating elements
+	 * @param href String with URL to embed
+	 * @param methods Methods to support in HTTP Methods constraint
+	 * @return Element tree
+	 */
+	private Element buildPostElement(Document doc, String href, String[] methods) {
+		Element post = doc.createElementNS(Namespaces.OWS, "Post");
+		post.setAttribute("xmlns:xlink", Namespaces.XLINK);
+		post.setAttribute("xlink:type", "simple");
+		post.setAttribute("xlink:href", href);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			post.appendChild(constraint);
+			
+			Element constraintValuesReference = doc.createElementNS(Namespaces.OWS, "ValuesReference");
+			constraintValuesReference.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
+			constraint.appendChild(constraintValuesReference);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			post.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			for (int i = 0; i < methods.length; i++) {
+				String method = methods[i];
+				
+				Element value = doc.createElement("ows:Value");
+				value.setTextContent(method);
+				constraintAllowedValues.appendChild(value);
+			}
+		}
+		
+		return post;
+	}
+	
+	/**
 	 * Create the ExtendedSecurityCapabilities element and populate it with security annotations based on
 	 * the test run properties for the ETS.
 	 */
@@ -279,76 +373,13 @@ public class ServerWms13 extends EmulatedServer {
 		getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
 		
 		// GetCapabilities GET
-		Element getCapabilitiesDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
-		getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
-		getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
-		getCapabilitiesDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
+		String[] getCapabilitiesMethods = {"GET", "POST"};
+		Element getCapabilitiesDcpHttpGet = this.buildGetElement(doc, completeCapabilitiesUrl, getCapabilitiesMethods);
 		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
 		
-		// Add SAML2 constraint
-		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
-			Element getCapabilitiesDcpHttpGetConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
-			getCapabilitiesDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
-			getCapabilitiesDcpHttpGet.appendChild(getCapabilitiesDcpHttpGetConstraint);
-			
-			Element getCapabilitiesDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
-			getCapabilitiesDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
-			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
-		}
-		
-		// Add HTTP Methods Constraint
-		if (this.options.getHttpMethods()) {
-			Element getConstraintHttpMethods = doc.createElement("ows:Constraint");
-			getConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
-			getCapabilitiesDcpHttpGet.appendChild(getConstraintHttpMethods);
-			
-			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
-			getConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
-			
-			Element valueGet = doc.createElement("ows:Value");
-			valueGet.setTextContent("GET");
-			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
-			
-			Element valuePost = doc.createElement("ows:Value");
-			valuePost.setTextContent("POST");
-			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
-		}
-		
 		// GetCapabilities POST
-		Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS, "Post");
-		getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
-		getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
-		getCapabilitiesDcpHttpPost.setAttribute("xlink:href", completeCapabilitiesUrl);
+		Element getCapabilitiesDcpHttpPost = this.buildPostElement(doc, completeCapabilitiesUrl, getCapabilitiesMethods);
 		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
-		
-		// Add SAML2 constraint
-		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
-			Element getCapabilitiesDcpHttpPostConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
-			getCapabilitiesDcpHttpPostConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
-			getCapabilitiesDcpHttpPost.appendChild(getCapabilitiesDcpHttpPostConstraint);
-			
-			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
-			getCapabilitiesDcpHttpPostConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
-			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
-		}
-		
-		// Add HTTP Methods Constraint
-		if (this.options.getHttpMethods()) {
-			Element postConstraintHttpMethods = doc.createElement("ows:Constraint");
-			postConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
-			getCapabilitiesDcpHttpPost.appendChild(postConstraintHttpMethods);
-			
-			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
-			postConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
-			
-			Element valueGet = doc.createElement("ows:Value");
-			valueGet.setTextContent("GET");
-			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
-			
-			Element valuePost = doc.createElement("ows:Value");
-			valuePost.setTextContent("POST");
-			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
-		}
 		
 		// GetMap
 		Element getMap = doc.createElementNS(Namespaces.OWS, "Operation");
@@ -362,36 +393,9 @@ public class ServerWms13 extends EmulatedServer {
 		getMapDcp.appendChild(getMapDcpHttp);
 		
 		// GetMap GET
-		Element getMapDcpHttpGet = doc.createElementNS(Namespaces.OWS, "Get");
-		getMapDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
-		getMapDcpHttpGet.setAttribute("xlink:type", "simple");
-		getMapDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
+		String[] getMapMethods = {"GET"};
+		Element getMapDcpHttpGet = this.buildGetElement(doc, completeCapabilitiesUrl, getMapMethods);
 		getMapDcpHttp.appendChild(getMapDcpHttpGet);
-		
-		// Add SAML2 constraint
-		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
-			Element getMapDcpHttpGetConstraint = doc.createElementNS(Namespaces.OWS, "Constraint");
-			getMapDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
-			getMapDcpHttpGet.appendChild(getMapDcpHttpGetConstraint);
-			
-			Element getMapDcpHttpGetConstraintValues = doc.createElementNS(Namespaces.OWS, "ValuesReference");
-			getMapDcpHttpGetConstraintValues.setAttributeNS(Namespaces.OWS, "ows:reference", this.options.getIdpUrl());
-			getMapDcpHttpGetConstraint.appendChild(getMapDcpHttpGetConstraintValues);
-		}
-		
-		// Add HTTP Methods Constraint
-		if (this.options.getHttpMethods()) {
-			Element getConstraintHttpMethods = doc.createElement("ows:Constraint");
-			getConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
-			getMapDcpHttpGet.appendChild(getConstraintHttpMethods);
-			
-			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
-			getConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
-			
-			Element valueGet = doc.createElement("ows:Value");
-			valueGet.setTextContent("GET");
-			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
-		}
 		
 		return extendedSecurityCapabilities;
 	}
