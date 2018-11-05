@@ -263,6 +263,120 @@ public class ServerWms111 extends EmulatedServer {
 	}
 	
 	/**
+	 * Build an ows:Get element for an ows:Operation endpoint, using `href` as the embedded URL.
+	 * Will add annotations as necessary from the ServerOptions.
+	 * 
+	 * @param doc Document for creating elements
+	 * @param href String with URL to embed
+	 * @return Element tree
+	 */
+	private Element buildGetElement(Document doc, String href) {
+		Element get = doc.createElement("ows:Get");
+		get.setAttribute("xmlns:xlink", Namespaces.XLINK);
+		get.setAttribute("xlink:type", "simple");
+		get.setAttribute("xlink:href", href);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
+		
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			get.appendChild(constraint);
+			
+			Element constraintValuesReference = doc.createElement("ows:ValuesReference");
+			constraintValuesReference.setAttribute("ows:reference", this.options.getIdpUrl());
+			constraint.appendChild(constraintValuesReference);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			get.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			Element valueGet = doc.createElement("ows:Value");
+			valueGet.setTextContent("GET");
+			constraintAllowedValues.appendChild(valueGet);
+			
+			Element valuePost = doc.createElement("ows:Value");
+			valuePost.setTextContent("POST");
+			constraintAllowedValues.appendChild(valuePost);
+		}
+		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			get.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElement("ows:NoValues");
+			constraint.appendChild(constraintNoValues);
+		}
+		
+		return get;
+	}
+	
+	/**
+	 * Build an ows:Post element for an ows:Operation endpoint, using `href` as the embedded URL.
+	 * Will add annotations as necessary from the ServerOptions.
+	 * 
+	 * @param doc Document for creating elements
+	 * @param href String with URL to embed
+	 * @return Element tree
+	 */
+	private Element buildPostElement(Document doc, String href) {
+		Element post = doc.createElement("ows:Post");
+		post.setAttribute("xmlns:xlink", Namespaces.XLINK);
+		post.setAttribute("xlink:type", "simple");
+		post.setAttribute("xlink:href", href);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
+		
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			post.appendChild(constraint);
+			
+			Element constraintValuesReference = doc.createElement("ows:ValuesReference");
+			constraintValuesReference.setAttribute("ows:reference", this.options.getIdpUrl());
+			constraint.appendChild(constraintValuesReference);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			post.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			Element valueGet = doc.createElement("ows:Value");
+			valueGet.setTextContent("GET");
+			constraintAllowedValues.appendChild(valueGet);
+			
+			Element valuePost = doc.createElement("ows:Value");
+			valuePost.setTextContent("POST");
+			constraintAllowedValues.appendChild(valuePost);
+		}
+		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			post.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElement("ows:NoValues");
+			constraint.appendChild(constraintNoValues);
+		}
+		
+		return post;
+	}
+	
+	/**
 	 * Create the VendorSpecificCapabilities element and populate it with security annotations based on
 	 * the test run properties for the ETS.
 	 */
@@ -291,97 +405,12 @@ public class ServerWms111 extends EmulatedServer {
 		getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
 		
 		// GetCapabilities GET
-		Element getCapabilitiesDcpHttpGet = doc.createElement("ows:Get");
-		getCapabilitiesDcpHttpGet.setAttribute("xmlns:xlink", Namespaces.XLINK);
-		getCapabilitiesDcpHttpGet.setAttribute("xlink:type", "simple");
-		getCapabilitiesDcpHttpGet.setAttribute("xlink:href", completeCapabilitiesUrl);
+		Element getCapabilitiesDcpHttpGet = this.buildGetElement(doc, completeCapabilitiesUrl);
 		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
 		
-		// Add SAML2 constraint
-		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
-		
-			Element getCapabilitiesDcpHttpGetConstraint = doc.createElement("ows:Constraint");
-			getCapabilitiesDcpHttpGetConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
-			getCapabilitiesDcpHttpGet.appendChild(getCapabilitiesDcpHttpGetConstraint);
-			
-			Element getCapabilitiesDcpHttpGetConstraintValues = doc.createElement("ows:ValuesReference");
-			getCapabilitiesDcpHttpGetConstraintValues.setAttribute("ows:reference", this.options.getIdpUrl());
-			getCapabilitiesDcpHttpGetConstraint.appendChild(getCapabilitiesDcpHttpGetConstraintValues);
-		}
-		
-		// Add HTTP Methods Constraint
-		if (this.options.getHttpMethods()) {
-			Element getConstraintHttpMethods = doc.createElement("ows:Constraint");
-			getConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
-			getCapabilitiesDcpHttpGet.appendChild(getConstraintHttpMethods);
-			
-			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
-			getConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
-			
-			Element valueGet = doc.createElement("ows:Value");
-			valueGet.setTextContent("GET");
-			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
-			
-			Element valuePost = doc.createElement("ows:Value");
-			valuePost.setTextContent("POST");
-			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
-		}
-		
-		// Add W3C CORS Constraint
-		if (this.options.getCors()) {
-			Element getConstraintCors = doc.createElement("ows:Constraint");
-			getConstraintCors.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
-			getCapabilitiesDcpHttpGet.appendChild(getConstraintCors);
-			
-			Element getConstraintCorsNoValues = doc.createElement("ows:NoValues");
-			getConstraintCors.appendChild(getConstraintCorsNoValues);
-		}
-		
 		// GetCapabilities POST
-		Element getCapabilitiesDcpHttpPost = doc.createElement("ows:Post");
-		getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
-		getCapabilitiesDcpHttpPost.setAttribute("xlink:type", "simple");
-		getCapabilitiesDcpHttpPost.setAttribute("xlink:href", completeCapabilitiesUrl);
+		Element getCapabilitiesDcpHttpPost = this.buildPostElement(doc, completeCapabilitiesUrl);
 		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
-		
-		// Add SAML2 constraint
-		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
-			Element getCapabilitiesDcpHttpPostConstraint = doc.createElement("ows:Constraint");
-			getCapabilitiesDcpHttpPostConstraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
-			getCapabilitiesDcpHttpPost.appendChild(getCapabilitiesDcpHttpPostConstraint);
-			
-			Element getCapabilitiesDcpHttpPostConstraintValues = doc.createElement("ows:ValuesReference");
-			getCapabilitiesDcpHttpPostConstraintValues.setAttribute("ows:reference", this.options.getIdpUrl());
-			getCapabilitiesDcpHttpPostConstraint.appendChild(getCapabilitiesDcpHttpPostConstraintValues);
-		}
-		
-		// Add HTTP Methods Constraint
-		if (this.options.getHttpMethods()) {
-			Element postConstraintHttpMethods = doc.createElement("ows:Constraint");
-			postConstraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
-			getCapabilitiesDcpHttpPost.appendChild(postConstraintHttpMethods);
-			
-			Element getConstraintHttpMethodsAllowedValues = doc.createElement("ows:AllowedValues");
-			postConstraintHttpMethods.appendChild(getConstraintHttpMethodsAllowedValues);
-			
-			Element valueGet = doc.createElement("ows:Value");
-			valueGet.setTextContent("GET");
-			getConstraintHttpMethodsAllowedValues.appendChild(valueGet);
-			
-			Element valuePost = doc.createElement("ows:Value");
-			valuePost.setTextContent("POST");
-			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
-		}
-		
-		// Add W3C CORS Constraint
-		if (this.options.getCors()) {
-			Element postConstraintCors = doc.createElement("ows:Constraint");
-			postConstraintCors.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
-			getCapabilitiesDcpHttpPost.appendChild(postConstraintCors);
-			
-			Element postConstraintCorsNoValues = doc.createElement("ows:NoValues");
-			postConstraintCors.appendChild(postConstraintCorsNoValues);
-		}
 		
 		return vendorSpecificCapabilities;
 	}
