@@ -216,6 +216,8 @@ public class TestNGController implements TestSuiteController {
     	String serviceType = testRunProperties.getProperty(TestRunArg.Service_Type.toString());
     	String httpMethods = testRunProperties.getProperty(TestRunArg.HTTP_METHODS.toString());
         Boolean hasHttpMethods = (httpMethods != null && httpMethods.equals("true"));
+        String w3cCors = testRunProperties.getProperty(TestRunArg.W3C_CORS.toString());
+        Boolean hasW3CCors = (w3cCors != null && w3cCors.equals("true"));
         String auth = testRunProperties.getProperty(TestRunArg.Authentication.toString());
     	
     	if (serviceType.equals("wms111")) {
@@ -227,7 +229,10 @@ public class TestNGController implements TestSuiteController {
     	}
     	
     	if (hasHttpMethods) {
-    		System.out.println("* HTTP Methods enabled");
+    		System.out.println("* HTTP Methods annotation enabled");
+    	}
+    	if (hasW3CCors) {
+    		System.out.println("* W3C CORS annotation enabled");
     	}
     	if (auth != null && auth.equals("saml2")) {
     		System.out.println("* SAML 2.0 Authentication Required");
@@ -259,6 +264,7 @@ public class TestNGController implements TestSuiteController {
         serverOptions.setAuthentication(auth);
         serverOptions.setIdpUrl(testRunProperties.getProperty(TestRunArg.IDP_URL.toString()));
         serverOptions.setHttpMethods(hasHttpMethods);
+        serverOptions.setCors(hasW3CCors);
         
         try {
 			server.registerHandler(path, serverOptions);

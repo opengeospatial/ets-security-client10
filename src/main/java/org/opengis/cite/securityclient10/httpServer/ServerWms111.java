@@ -327,6 +327,16 @@ public class ServerWms111 extends EmulatedServer {
 			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
 		}
 		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element getConstraintCors = doc.createElement("ows:Constraint");
+			getConstraintCors.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			getCapabilitiesDcpHttpGet.appendChild(getConstraintCors);
+			
+			Element getConstraintCorsNoValues = doc.createElement("ows:NoValues");
+			getConstraintCors.appendChild(getConstraintCorsNoValues);
+		}
+		
 		// GetCapabilities POST
 		Element getCapabilitiesDcpHttpPost = doc.createElement("ows:Post");
 		getCapabilitiesDcpHttpPost.setAttribute("xmlns:xlink", Namespaces.XLINK);
@@ -361,6 +371,16 @@ public class ServerWms111 extends EmulatedServer {
 			Element valuePost = doc.createElement("ows:Value");
 			valuePost.setTextContent("POST");
 			getConstraintHttpMethodsAllowedValues.appendChild(valuePost);
+		}
+		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element postConstraintCors = doc.createElement("ows:Constraint");
+			postConstraintCors.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			getCapabilitiesDcpHttpPost.appendChild(postConstraintCors);
+			
+			Element postConstraintCorsNoValues = doc.createElement("ows:NoValues");
+			postConstraintCors.appendChild(postConstraintCorsNoValues);
 		}
 		
 		return vendorSpecificCapabilities;

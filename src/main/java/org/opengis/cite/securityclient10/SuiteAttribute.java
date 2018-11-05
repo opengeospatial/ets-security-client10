@@ -54,6 +54,10 @@ public enum SuiteAttribute {
      */
     TEST_HTTP_METHODS("testHttpMethods", Boolean.class),
     /**
+     * A Boolean for whether Requirement Class "HTTP Methods" is enabled.
+     */
+    TEST_W3C_CORS("testW3CCors", Boolean.class),
+    /**
      * A String for the filesystem path of the serialized client requests document.
      */
     TEST_IUT("testIUT", String.class);

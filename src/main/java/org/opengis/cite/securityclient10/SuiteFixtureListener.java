@@ -64,6 +64,9 @@ public class SuiteFixtureListener implements ISuiteListener {
         suite.setAttribute(SuiteAttribute.TEST_HTTP_METHODS.getName(), 
         		params.get(TestRunArg.HTTP_METHODS.toString()));
         
+        suite.setAttribute(SuiteAttribute.TEST_W3C_CORS.getName(), 
+        		params.get(TestRunArg.W3C_CORS.toString()));
+        
         suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), 
         		params.get(TestRunArg.IUT.toString()));
     }

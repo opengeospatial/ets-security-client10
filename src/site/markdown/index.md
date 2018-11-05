@@ -205,17 +205,11 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>w3c_cors</td>
       <td>String</td>
       <td>O</td>
-      <td><p><strong>(not yet implemented)</strong></p>
-        <p>As part of the annotated capabilities document presented to the secure
-        client, include Requirements Class "W3C CORS" 
-        (https://www.opengis.net/def/security/1.0/rc/cors).</p>
-        <p>Enabling this will include an <code>ows:Constraint</code> for the W3C recommendation
-        "Cross Origin Resource Sharing".</p>
-        <p>Only a value of <code>true</code> will enable this property, any other value will
-        be evaluated as <code>false</code>.</p>
-        <p>If set to <code>true</code>, then the <code>http_methods</code> test run property will also be
-        set to <code>true</code> regardless of your configuration; "HTTP Methods" is 
-        required for this Requirements Class.</p>
+      <td>
+        <p>As part of the annotated capabilities document presented to the secure client, include Requirements Class "W3C CORS" (https://www.opengis.net/def/security/1.0/rc/cors).</p>
+        <p>Enabling this will include an <code>ows:Constraint</code> for the W3C recommendation"Cross Origin Resource Sharing".</p>
+        <p>Only a value of <code>true</code> will enable this property, any other value will be evaluated as <code>false</code>.</p>
+        <p>If set to <code>true</code>, then the <code>http_methods</code> test run property will also be set to <code>true</code> regardless of your configuration; "HTTP Methods" is required for this Requirements Class.</p>
       </td>
     </tr>
     <tr>

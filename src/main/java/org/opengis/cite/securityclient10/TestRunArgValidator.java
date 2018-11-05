@@ -83,6 +83,10 @@ public class TestRunArgValidator {
         String httpMethods = params.get(TestRunArg.HTTP_METHODS.toString());
         Boolean hasHttpMethods = (httpMethods != null && httpMethods.equals("true"));
         
+        // W3C CORS
+        String w3cCors = params.get(TestRunArg.W3C_CORS.toString());
+        Boolean hasW3cCors = (w3cCors != null && w3cCors.equals("true"));
+        
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());
     }

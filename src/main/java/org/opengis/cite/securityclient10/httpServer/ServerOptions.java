@@ -9,15 +9,15 @@ package org.opengis.cite.securityclient10.httpServer;
 public class ServerOptions {
 
 	/**
-	 * The type of service being emulated. See TestRunArgValidator
-	 * for valid values.
-	 */
-	private String serviceType;
-	/**
 	 * The authentication method to apply. Currently supported are
 	 * "none" and "saml2".
 	 */
 	private String authentication;
+	/**
+	 * Whether W3C CORS will be included in the security 
+	 * annotations.
+	 */
+	private Boolean cors;
 	/**
 	 * Whether HTTP Methods will be included in the security 
 	 * annotations.
@@ -27,10 +27,17 @@ public class ServerOptions {
 	 * The URL to the Identity Provider SSO resource URL. Optional.
 	 */
 	private String idpUrl;
+	/**
+	 * The type of service being emulated. See TestRunArgValidator
+	 * for valid values.
+	 */
+	private String serviceType;
 
 	public ServerOptions(String serviceType) {
 		this.serviceType = serviceType;
 		this.authentication = "none";
+		this.cors = false;
+		this.httpMethods = false;
 	}
 	
 	/**
@@ -59,6 +66,15 @@ public class ServerOptions {
 		}
 		
 		return 1;
+	}
+	
+	/**
+	 * Get whether W3C CORS are enabled from the test
+	 * run properties.
+	 * @return Boolean
+	 */
+	public Boolean getCors() {
+		return cors;
 	}
 	
 	/**
@@ -96,6 +112,10 @@ public class ServerOptions {
 		if (auth != null && !auth.isEmpty()) {
 			this.authentication = auth;
 		}
+	}
+	
+	public void setCors(boolean enabled) {
+		this.cors = enabled;
 	}
 	
 	public void setHttpMethods(boolean enabled) {

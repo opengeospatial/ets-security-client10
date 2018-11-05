@@ -57,6 +57,11 @@ public enum TestRunArg {
 	HTTP_METHODS,
 	
 	/**
+	 * Whether W3C CORS support will be added to the security annotations
+	 */
+	W3C_CORS,
+	
+	/**
 	 * The request(s) from the secure client, containing the headers and body,
 	 * that will be verified by the test suite.
 	 */
