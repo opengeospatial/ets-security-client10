@@ -102,6 +102,116 @@ public class ServerWps20 extends EmulatedServer {
 	}
 	
 	/**
+	 * Build an ows:Get element for an ows:Operation endpoint, using `href` as the embedded URL.
+	 * Will add annotations as necessary from the ServerOptions.
+	 * 
+	 * @param doc Document for creating elements
+	 * @param href String with URL to embed
+	 * @param methods Methods to support in HTTP Methods constraint
+	 * @return Element tree
+	 */
+	private Element buildGetElement(Document doc, String href, String[] methods) {
+		Element get = doc.createElementNS(Namespaces.OWS_2, "Get");
+		get.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
+			Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+			constraint.setAttribute("name", Identifiers.SAML2);
+			get.appendChild(constraint);
+			
+			Element constraintValuesReference = doc.createElementNS(Namespaces.OWS_2, "ValuesReference");
+			constraintValuesReference.setAttributeNS(Namespaces.OWS_2, "ows:reference", this.options.getIdpUrl());
+			constraint.appendChild(constraintValuesReference);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+			constraint.setAttribute("name", Identifiers.HTTP_METHODS);
+			get.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElementNS(Namespaces.OWS_2, "AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			for (int i = 0; i < methods.length; i++) {
+				String method = methods[i];
+				
+				Element value = doc.createElementNS(Namespaces.OWS_2, "Value");
+				value.setTextContent(method);
+				constraintAllowedValues.appendChild(value);
+			}
+		}
+		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+			constraint.setAttribute("name", Identifiers.W3C_CORS);
+			get.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElementNS(Namespaces.OWS_2, "NoValues");
+			constraint.appendChild(constraintNoValues);
+		}
+		
+		return get;
+	}
+	
+	/**
+	 * Build an ows:Post element for an ows:Operation endpoint, using `href` as the embedded URL.
+	 * Will add annotations as necessary from the ServerOptions.
+	 * 
+	 * @param doc Document for creating elements
+	 * @param href String with URL to embed
+	 * @param methods Methods to support in HTTP Methods constraint
+	 * @return Element tree
+	 */
+	private Element buildPostElement(Document doc, String href, String[] methods) {
+		Element post = doc.createElementNS(Namespaces.OWS_2, "Post");
+		post.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		
+		// Add SAML2 constraint
+		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
+			Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+			constraint.setAttribute("name", Identifiers.SAML2);
+			post.appendChild(constraint);
+			
+			Element constraintValuesReference = doc.createElementNS(Namespaces.OWS_2, "ValuesReference");
+			constraintValuesReference.setAttributeNS(Namespaces.OWS_2, "ows:reference", this.options.getIdpUrl());
+			constraint.appendChild(constraintValuesReference);
+		}
+		
+		// Add HTTP Methods Constraint
+		if (this.options.getHttpMethods()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+			constraint.setAttribute("name", Identifiers.HTTP_METHODS);
+			post.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElementNS(Namespaces.OWS_2, "AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			for (int i = 0; i < methods.length; i++) {
+				String method = methods[i];
+				
+				Element value = doc.createElementNS(Namespaces.OWS_2, "Value");
+				value.setTextContent(method);
+				constraintAllowedValues.appendChild(value);
+			}
+		}
+		
+		// Add W3C CORS Constraint
+		if (this.options.getCors()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+			constraint.setAttribute("name", Identifiers.W3C_CORS);
+			post.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElementNS(Namespaces.OWS_2, "NoValues");
+			constraint.appendChild(constraintNoValues);
+		}
+		
+		return post;
+	}
+	
+	/**
 	 * Return an HTTP response to the client with valid headers and a body containing the Capabilities 
 	 * XML document. If `completeCapabilities` is true, then a complete capabilities document with a 
 	 * Content section (Layers) will be generated, and the embedded links will use the "/full" URL. If 
@@ -187,35 +297,12 @@ public class ServerWps20 extends EmulatedServer {
 		Element getCapabilitiesDcpHttp = doc.createElementNS(Namespaces.OWS_2, "ows:HTTP");
 		getCapabilitiesDcp.appendChild(getCapabilitiesDcpHttp);
 		
-		Element getCapabilitiesDcpHttpGet = doc.createElementNS(Namespaces.OWS_2, "ows:Get");
-		getCapabilitiesDcpHttpGet.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		String[] getCapabilitiesMethods = {"GET", "POST"};
+		Element getCapabilitiesDcpHttpGet = this.buildGetElement(doc, href, getCapabilitiesMethods);		
 		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpGet);
 		
-		// ows:Constraint for SAML2
-		if (samlAuth) {
-			addSamlConstraintToElement(doc, getCapabilitiesDcpHttpGet);
-		}
-		
-		// ows:Constraint for HTTP Methods
-		if (this.options.getHttpMethods()) {
-			String[] methods = {"GET", "POST"};
-			addHttpMethodsConstraintToElement(doc, getCapabilitiesDcpHttpGet, methods);
-		}
-		
-		Element getCapabilitiesDcpHttpPost = doc.createElementNS(Namespaces.OWS_2, "ows:Post");
-		getCapabilitiesDcpHttpPost.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		Element getCapabilitiesDcpHttpPost = this.buildPostElement(doc, href, getCapabilitiesMethods);
 		getCapabilitiesDcpHttp.appendChild(getCapabilitiesDcpHttpPost);
-		
-		// ows:Constraint for SAML2
-		if (samlAuth) {
-			addSamlConstraintToElement(doc, getCapabilitiesDcpHttpPost);
-		}
-		
-		// ows:Constraint for HTTP Methods
-		if (this.options.getHttpMethods()) {
-			String[] methods = {"GET", "POST"};
-			addHttpMethodsConstraintToElement(doc, getCapabilitiesDcpHttpPost, methods);
-		}
 		
 		// DescribeProcess Operation Section
 		Element describeProcess = doc.createElementNS(Namespaces.OWS_2, "ows:Operation");
@@ -228,35 +315,12 @@ public class ServerWps20 extends EmulatedServer {
 		Element describeProcessDcpHttp = doc.createElementNS(Namespaces.OWS_2, "ows:HTTP");
 		describeProcessDcp.appendChild(describeProcessDcpHttp);
 		
-		Element describeProcessDcpHttpGet = doc.createElementNS(Namespaces.OWS_2, "ows:Get");
-		describeProcessDcpHttpGet.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		String[] describeProcessMethods = {"GET", "POST"};
+		Element describeProcessDcpHttpGet = this.buildGetElement(doc, href, describeProcessMethods);
 		describeProcessDcpHttp.appendChild(describeProcessDcpHttpGet);
 		
-		// ows:Constraint for SAML2
-		if (samlAuth) {
-			addSamlConstraintToElement(doc, describeProcessDcpHttpGet);
-		}
-		
-		// ows:Constraint for HTTP Methods
-		if (this.options.getHttpMethods()) {
-			String[] methods = {"GET", "POST"};
-			addHttpMethodsConstraintToElement(doc, describeProcessDcpHttpGet, methods);
-		}
-		
-		Element describeProcessDcpHttpPost = doc.createElementNS(Namespaces.OWS_2, "ows:Post");
-		describeProcessDcpHttpPost.setAttributeNS(Namespaces.XLINK, "xlink:href", href);
+		Element describeProcessDcpHttpPost = this.buildPostElement(doc, href, describeProcessMethods);
 		describeProcessDcpHttp.appendChild(describeProcessDcpHttpPost);
-		
-		// ows:Constraint for SAML2
-		if (samlAuth) {
-			addSamlConstraintToElement(doc, describeProcessDcpHttpPost);
-		}
-		
-		// ows:Constraint for HTTP Methods
-		if (this.options.getHttpMethods()) {
-			String[] methods = {"GET", "POST"};
-			addHttpMethodsConstraintToElement(doc, describeProcessDcpHttpPost, methods);
-		}
 		
 		if (completeCapabilities) {
 			// Contents Section
@@ -278,48 +342,6 @@ public class ServerWps20 extends EmulatedServer {
 		}
 		
 		printWriter.print(XMLUtils.writeDocumentToString(doc, true));
-	}
-	
-	/**
-	 * Add an OWS Constraint element as a child to Element `element` in Document `doc`.
-	 * This Constraint is for HTTP Methods.
-	 * 
-	 * @param doc The parent document, used to create namespaced elements
-	 * @param element The parent element
-	 * @param methods A String[] containing the methods to add
-	 */
-	private void addHttpMethodsConstraintToElement(Document doc, Element element, String[] methods) {
-		Element constraintHttpMethods = doc.createElement("ows:Constraint");
-		constraintHttpMethods.setAttribute("name", Identifiers.HTTP_METHODS);
-		element.appendChild(constraintHttpMethods);
-		
-		Element allowedValues = doc.createElement("ows:AllowedValues");
-		constraintHttpMethods.appendChild(allowedValues);
-		
-		for (int i = 0; i < methods.length; i++) {
-			String method = methods[i];
-			
-			Element value = doc.createElement("ows:Value");
-			value.setTextContent(method);
-			allowedValues.appendChild(value);
-		}
-	}
-	
-	/**
-	 * Add an OWS Constraint element as a child to Element `element` in Document `doc`.
-	 * This Constraint is for SAML 2 authentication.
-	 * 
-	 * @param doc The parent document, used to create namespaced elements
-	 * @param element The parent element
-	 */
-	private void addSamlConstraintToElement(Document doc, Element element) {
-		Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
-		constraint.setAttribute("name", Identifiers.SAML2);
-		element.appendChild(constraint);
-		
-		Element constraintValues = doc.createElementNS(Namespaces.OWS_2, "ValuesReference");
-		constraintValues.setAttributeNS(Namespaces.OWS_2, "ows:reference", this.options.getIdpUrl());
-		constraint.appendChild(constraintValues);
 	}
 	
 	/**
