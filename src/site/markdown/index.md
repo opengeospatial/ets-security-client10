@@ -25,7 +25,7 @@ the ones listed below are covered by this test suite:
 * Conformance Class "WMS 1.3.0"
     - Only affects Capabilities document presented to secure client
 
-[standard]: https://portal.opengeospatial.org/files/?artifact_id=79178&version=1 "Download PDF of OGC Web Services Security Standard, version 1.0"
+[standard]: https://portal.opengeospatial.org/files/?artifact_id=79178&amp;version=1 "Download PDF of OGC Web Services Security Standard, version 1.0"
 
 ## Test suite structure
 
