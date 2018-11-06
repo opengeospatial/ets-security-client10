@@ -394,6 +394,20 @@ public class ServerWms111 extends EmulatedServer {
 			constraint.appendChild(constraintNoValues);
 		}
 		
+		// Add HTTP POST Content-Type Constraint
+		if (this.options.getHttpPostContentType()) {
+			Element constraint = doc.createElement("ows:Constraint");
+			constraint.setAttribute("name", Identifiers.CONTENT_TYPE);
+			post.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			Element value = doc.createElement("ows:Value");
+			value.setTextContent("application/x-www-form-urlencoded");
+			constraintAllowedValues.appendChild(value);
+		}
+		
 		return post;
 	}
 	

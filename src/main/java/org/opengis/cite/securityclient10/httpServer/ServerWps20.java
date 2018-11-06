@@ -228,6 +228,20 @@ public class ServerWps20 extends EmulatedServer {
 			constraint.appendChild(constraintNoValues);
 		}
 		
+		// Add HTTP POST Content-Type Constraint
+		if (this.options.getHttpPostContentType()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
+			constraint.setAttribute("name", Identifiers.CONTENT_TYPE);
+			post.appendChild(constraint);
+			
+			Element constraintAllowedValues = doc.createElementNS(Namespaces.OWS_2, "AllowedValues");
+			constraint.appendChild(constraintAllowedValues);
+			
+			Element value = doc.createElementNS(Namespaces.OWS_2, "Value");
+			value.setTextContent("application/x-www-form-urlencoded");
+			constraintAllowedValues.appendChild(value);
+		}
+		
 		return post;
 	}
 	
