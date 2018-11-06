@@ -219,6 +219,11 @@ public class TestNGController implements TestSuiteController {
         String w3cCors = testRunProperties.getProperty(TestRunArg.W3C_CORS.toString());
         Boolean hasW3CCors = (w3cCors != null && w3cCors.equals("true"));
         String auth = testRunProperties.getProperty(TestRunArg.Authentication.toString());
+        
+        // Force-enable HTTP Methods if W3C CORS is enabled
+        if (hasW3CCors) {
+        	hasHttpMethods = true;
+        }
     	
     	if (serviceType.equals("wms111")) {
     		System.out.println("* Conformance Class WMS 1.1.1");
