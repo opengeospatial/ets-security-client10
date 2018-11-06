@@ -216,14 +216,10 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>http_exception_handling</td>
       <td>String</td>
       <td>O</td>
-      <td><p><strong>(not yet implemented)</strong></p>
-        <p>As part of the annotated capabilities document presented to the secure
-        client, include Requirements Class "HTTP Exception Handling" 
-        (https://www.opengis.net/def/security/1.0/rc/http-exception-handling).</p>
-        <p>Enabling this will include an <code>ows:Constraint</code> for enabling HTTP error
-        code mapping to OWS Common exception codes.</p>
-        <p>Only a value of <code>true</code> will enable this property, any other value will
-        be evaluated as <code>false</code>.</p>
+      <td>
+        <p>As part of the annotated capabilities document presented to the secure client, include Requirements Class "HTTP Exception Handling" (https://www.opengis.net/def/security/1.0/rc/http-exception-handling).</p>
+        <p>Enabling this will include an <code>ows:Constraint</code> for enabling HTTP error code mapping to OWS Common exception codes.</p>
+        <p>Only a value of <code>true</code> will enable this property, any other value will be evaluated as <code>false</code>.</p>
       </td>
     </tr>
     <tr>

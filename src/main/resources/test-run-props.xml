@@ -13,4 +13,5 @@
   <entry key="idp_url"></entry>
   <entry key="http_methods">true</entry>
   <entry key="w3c_cors">true</entry>
+  <entry key="http_exception_handling">true</entry>
 </properties>

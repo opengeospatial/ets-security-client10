@@ -214,10 +214,16 @@ public class TestNGController implements TestSuiteController {
     	System.out.println("* Abstract Conformance Class Common Security");
     	
     	String serviceType = testRunProperties.getProperty(TestRunArg.Service_Type.toString());
+    	
     	String httpMethods = testRunProperties.getProperty(TestRunArg.HTTP_METHODS.toString());
         Boolean hasHttpMethods = (httpMethods != null && httpMethods.equals("true"));
+        
         String w3cCors = testRunProperties.getProperty(TestRunArg.W3C_CORS.toString());
         Boolean hasW3CCors = (w3cCors != null && w3cCors.equals("true"));
+        
+        String httpExceptionHandling = testRunProperties.getProperty(TestRunArg.HTTP_EXCEPTION_HANDLING.toString());
+        Boolean hasExceptionHandling = (httpExceptionHandling != null && httpExceptionHandling.equals("true"));
+        
         String auth = testRunProperties.getProperty(TestRunArg.Authentication.toString());
         
         // Force-enable HTTP Methods if W3C CORS is enabled
@@ -238,6 +244,9 @@ public class TestNGController implements TestSuiteController {
     	}
     	if (hasW3CCors) {
     		System.out.println("* W3C CORS annotation enabled");
+    	}
+    	if (hasExceptionHandling) {
+    		System.out.println("* HTTP Exception Handling annotation enabled");
     	}
     	if (auth != null && auth.equals("saml2")) {
     		System.out.println("* SAML 2.0 Authentication Required");
@@ -270,6 +279,7 @@ public class TestNGController implements TestSuiteController {
         serverOptions.setIdpUrl(testRunProperties.getProperty(TestRunArg.IDP_URL.toString()));
         serverOptions.setHttpMethods(hasHttpMethods);
         serverOptions.setCors(hasW3CCors);
+        serverOptions.setHttpExceptionHandling(hasExceptionHandling);
         
         try {
 			server.registerHandler(path, serverOptions);

@@ -62,6 +62,11 @@ public enum TestRunArg {
 	W3C_CORS,
 	
 	/**
+	 * Whether HTTP Exception Handling support will be added to the security annotations
+	 */
+	HTTP_EXCEPTION_HANDLING,
+	
+	/**
 	 * The request(s) from the secure client, containing the headers and body,
 	 * that will be verified by the test suite.
 	 */

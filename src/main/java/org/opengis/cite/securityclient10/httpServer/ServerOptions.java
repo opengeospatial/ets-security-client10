@@ -19,6 +19,11 @@ public class ServerOptions {
 	 */
 	private Boolean cors;
 	/**
+	 * Whether HTTP Exception Handling will be included in the security 
+	 * annotations.
+	 */
+	private Boolean httpExceptionHandling;
+	/**
 	 * Whether HTTP Methods will be included in the security 
 	 * annotations.
 	 */
@@ -37,6 +42,7 @@ public class ServerOptions {
 		this.serviceType = serviceType;
 		this.authentication = "none";
 		this.cors = false;
+		this.httpExceptionHandling = false;
 		this.httpMethods = false;
 	}
 	
@@ -75,6 +81,15 @@ public class ServerOptions {
 	 */
 	public Boolean getCors() {
 		return cors;
+	}
+	
+	/**
+	 * Get whether HTTP Exception Handling are enabled from the test
+	 * run properties.
+	 * @return Boolean
+	 */
+	public Boolean getHttpExceptionHandling() {
+		return httpExceptionHandling;
 	}
 	
 	/**
@@ -118,9 +133,12 @@ public class ServerOptions {
 		this.cors = enabled;
 	}
 	
+	public void setHttpExceptionHandling(boolean enabled) {
+		this.httpExceptionHandling = enabled;
+	}
+	
 	public void setHttpMethods(boolean enabled) {
 		this.httpMethods = enabled;
-		
 	}
 	
 	/**

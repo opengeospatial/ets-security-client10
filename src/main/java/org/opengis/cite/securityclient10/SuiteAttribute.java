@@ -58,6 +58,10 @@ public enum SuiteAttribute {
      */
     TEST_W3C_CORS("testW3CCors", Boolean.class),
     /**
+     * A Boolean for whether Requirement Class "HTTP Exception Handling" is enabled.
+     */
+    TEST_HTTP_EXCEPTION_HANDLING("testHttpExceptionHandling", Boolean.class),
+    /**
      * A String for the filesystem path of the serialized client requests document.
      */
     TEST_IUT("testIUT", String.class);
