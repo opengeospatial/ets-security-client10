@@ -88,7 +88,11 @@
               <h4>Other Constraints</h4>
               <p>These other constraints will add additional annotations to the capabilities document.</p>
 
-              <input type="checkbox" id="http-methods" name="http-methods" value="true" /><label for="http-methods">HTTP Methods</label>
+              <p><input type="checkbox" id="http-methods" name="http-methods" value="true" /><label for="http-methods">HTTP Methods</label></p>
+
+              <p><input type="checkbox" id="w3c-cors" name="w3c-cors" value="true" /><label for="w3c-cors">W3C CORS</label></p>
+
+              <p><strong>Please Note:</strong> "HTTP Methods" must be enabled for "W3C CORS" to be enabled.</p>
               
               <h4>Conformance Class</h4>
               <p>Based on the Service Type selected, the following Conformance Class will apply:</p>
@@ -159,6 +163,12 @@
                   w.document.body.appendChild(desc);
                   w.document.body.appendChild(header);
                 });
+
+                document.querySelector("#w3c-cors").addEventListener("change", function(e) {
+                  if (this.value === "true") {
+                    document.querySelector("#http-methods").value = "true";
+                  }
+                });
               }
               ]]>
             </script>
@@ -180,6 +190,7 @@
             <entry key="authentication"><xsl:value-of select="$form-data/values/value[@key='auth']"/></entry>
             <entry key="idp_url"><xsl:value-of select="$form-data/values/value[@key='idp-url']"/></entry>
             <entry key="http_methods"><xsl:value-of select="$form-data/values/value[@key='http-methods']"/></entry>
+            <entry key="w3c_cors"><xsl:value-of select="$form-data/values/value[@key='w3c-cors']"/></entry>
           </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">
