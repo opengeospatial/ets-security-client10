@@ -7,7 +7,7 @@ This executable test suite (ETS) verifies the conformance of the secure
 client behavior as the implementation under test (IUT) with respect to 
 the following specification(s):
 
-* \[OGC-17-007] OGC Web Service Security 1.0
+* *OGC Web Service Security 1.0* ([OGC-17-007][standard])
 
 Conformance testing is a kind of "black box" testing that examines the 
 externally visible characteristics or behaviors of the IUT while disregarding 
@@ -24,6 +24,8 @@ the ones listed below are covered by this test suite:
     - Only affects Capabilities document presented to secure client
 * Conformance Class "WMS 1.3.0"
     - Only affects Capabilities document presented to secure client
+
+[standard]: https://portal.opengeospatial.org/files/?artifact_id=79178&version=1 "Download PDF of OGC Web Services Security Standard, version 1.0"
 
 ## Test suite structure
 
