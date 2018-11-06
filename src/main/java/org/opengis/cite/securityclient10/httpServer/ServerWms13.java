@@ -311,6 +311,16 @@ public class ServerWms13 extends EmulatedServer {
 			constraint.appendChild(constraintNoValues);
 		}
 		
+		// Add HTTP Exception Handling Constraint
+		if (this.options.getHttpExceptionHandling()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			constraint.setAttribute("name", Identifiers.EXCEPTION_HANDLING);
+			get.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElementNS(Namespaces.OWS, "NoValues");
+			constraint.appendChild(constraintNoValues);
+		}
+		
 		return get;
 	}
 	
@@ -362,6 +372,16 @@ public class ServerWms13 extends EmulatedServer {
 		if (this.options.getCors()) {
 			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
 			constraint.setAttribute("name", Identifiers.W3C_CORS);
+			post.appendChild(constraint);
+			
+			Element constraintNoValues = doc.createElementNS(Namespaces.OWS, "NoValues");
+			constraint.appendChild(constraintNoValues);
+		}
+		
+		// Add HTTP Exception Handling Constraint
+		if (this.options.getHttpExceptionHandling()) {
+			Element constraint = doc.createElementNS(Namespaces.OWS, "Constraint");
+			constraint.setAttribute("name", Identifiers.EXCEPTION_HANDLING);
 			post.appendChild(constraint);
 			
 			Element constraintNoValues = doc.createElementNS(Namespaces.OWS, "NoValues");
