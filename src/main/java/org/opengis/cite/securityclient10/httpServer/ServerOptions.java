@@ -29,6 +29,11 @@ public class ServerOptions {
 	 */
 	private Boolean httpMethods;
 	/**
+	 * Whether HTTP POST Content-Type will be included in the security 
+	 * annotations.
+	 */
+	private Boolean httpPostContentType;
+	/**
 	 * The URL to the Identity Provider SSO resource URL. Optional.
 	 */
 	private String idpUrl;
@@ -44,6 +49,7 @@ public class ServerOptions {
 		this.cors = false;
 		this.httpExceptionHandling = false;
 		this.httpMethods = false;
+		this.httpPostContentType = false;
 	}
 	
 	/**
@@ -75,7 +81,7 @@ public class ServerOptions {
 	}
 	
 	/**
-	 * Get whether W3C CORS are enabled from the test
+	 * Get whether W3C CORS is enabled from the test
 	 * run properties.
 	 * @return Boolean
 	 */
@@ -84,7 +90,7 @@ public class ServerOptions {
 	}
 	
 	/**
-	 * Get whether HTTP Exception Handling are enabled from the test
+	 * Get whether HTTP Exception Handling is enabled from the test
 	 * run properties.
 	 * @return Boolean
 	 */
@@ -92,6 +98,15 @@ public class ServerOptions {
 		return httpExceptionHandling;
 	}
 	
+	/**
+	 * Get whether HTTP POST Content-Type is enabled from the test
+	 * run properties.
+	 * @return Boolean
+	 */
+	public Boolean getHttpPostContentType() {
+		return httpPostContentType;
+	}
+
 	/**
 	 * Get whether HTTP Methods are enabled from the test
 	 * run properties.
@@ -139,6 +154,10 @@ public class ServerOptions {
 	
 	public void setHttpMethods(boolean enabled) {
 		this.httpMethods = enabled;
+	}
+	
+	public void setHttpPostContentType(boolean enabled) {
+		this.httpPostContentType = enabled;
 	}
 	
 	/**

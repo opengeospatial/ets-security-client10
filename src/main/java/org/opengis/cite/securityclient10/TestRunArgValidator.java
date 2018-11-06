@@ -88,8 +88,12 @@ public class TestRunArgValidator {
         Boolean hasW3cCors = (w3cCors != null && w3cCors.equals("true"));
         
         // HTTP Exception Handling
-        String httpExceptionHandling = params.get(TestRunArg.W3C_CORS.toString());
+        String httpExceptionHandling = params.get(TestRunArg.HTTP_EXCEPTION_HANDLING.toString());
         Boolean hasExceptionHandling = (httpExceptionHandling != null && httpExceptionHandling.equals("true"));
+        
+        // HTTP POST Content-Type
+        String httpPostContentType = params.get(TestRunArg.HTTP_POST_CONTENT_TYPE.toString());
+        Boolean hasPostContentType = (httpPostContentType != null && httpPostContentType.equals("true"));
         
         // Secure Client Requests Document Path
         String iutParam = params.get(TestRunArg.IUT.toString());

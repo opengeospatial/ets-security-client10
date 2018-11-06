@@ -226,14 +226,10 @@ have the following values: M (mandatory), O (optional), or C (conditional).
       <td>http_post_content_type</td>
       <td>String</td>
       <td>O</td>
-      <td><p><strong>(not yet implemented)</strong></p>
-        <p>As part of the annotated capabilities document presented to the secure
-        client, include Requirements Class "HTTP POST Content-Type" 
-        (https://www.opengis.net/def/security/1.0/rc/content-type).</p>
-        <p>Enabling this will include an <code>ows:Constraint</code> for listing the mime-types
-        permitted to be submitted by HTTP POST.</p>
-        <p>Only a value of <code>true</code> will enable this property, any other value will
-        be evaluated as <code>false</code>.</p>
+      <td>
+        <p>As part of the annotated capabilities document presented to the secure client, include Requirements Class "HTTP POST Content-Type" (https://www.opengis.net/def/security/1.0/rc/content-type).</p>
+        <p>Enabling this will include an <code>ows:Constraint</code> for listing the mime-types permitted to be submitted by HTTP POST. At the minimum, the `application/x-www-form-urlencoded` MIME type must (and will) be supported and advertised by the service.</p>
+        <p>Only a value of <code>true</code> will enable this property, any other value will be evaluated as <code>false</code>.</p>
       </td>
     </tr>
 	</tbody>

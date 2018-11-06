@@ -224,6 +224,9 @@ public class TestNGController implements TestSuiteController {
         String httpExceptionHandling = testRunProperties.getProperty(TestRunArg.HTTP_EXCEPTION_HANDLING.toString());
         Boolean hasExceptionHandling = (httpExceptionHandling != null && httpExceptionHandling.equals("true"));
         
+        String httpPostContentType = testRunProperties.getProperty(TestRunArg.HTTP_POST_CONTENT_TYPE.toString());
+        Boolean hasPostContentType = (httpPostContentType != null && httpPostContentType.equals("true"));
+        
         String auth = testRunProperties.getProperty(TestRunArg.Authentication.toString());
         
         // Force-enable HTTP Methods if W3C CORS is enabled
@@ -247,6 +250,9 @@ public class TestNGController implements TestSuiteController {
     	}
     	if (hasExceptionHandling) {
     		System.out.println("* HTTP Exception Handling annotation enabled");
+    	}
+    	if (hasPostContentType) {
+    		System.out.println("* HTTP POST Content-Type annotation enabled");
     	}
     	if (auth != null && auth.equals("saml2")) {
     		System.out.println("* SAML 2.0 Authentication Required");
@@ -280,6 +286,7 @@ public class TestNGController implements TestSuiteController {
         serverOptions.setHttpMethods(hasHttpMethods);
         serverOptions.setCors(hasW3CCors);
         serverOptions.setHttpExceptionHandling(hasExceptionHandling);
+        serverOptions.setHttpPostContentType(hasPostContentType);
         
         try {
 			server.registerHandler(path, serverOptions);

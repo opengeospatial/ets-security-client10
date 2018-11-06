@@ -67,6 +67,11 @@ public enum TestRunArg {
 	HTTP_EXCEPTION_HANDLING,
 	
 	/**
+	 * Whether HTTP POST Content-Type support will be added to the security annotations
+	 */
+	HTTP_POST_CONTENT_TYPE,
+	
+	/**
 	 * The request(s) from the secure client, containing the headers and body,
 	 * that will be verified by the test suite.
 	 */

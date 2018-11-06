@@ -70,6 +70,9 @@ public class SuiteFixtureListener implements ISuiteListener {
         suite.setAttribute(SuiteAttribute.TEST_HTTP_EXCEPTION_HANDLING.getName(), 
         		params.get(TestRunArg.HTTP_EXCEPTION_HANDLING.toString()));
         
+        suite.setAttribute(SuiteAttribute.TEST_HTTP_POST_CONTENT_TYPE.getName(), 
+        		params.get(TestRunArg.HTTP_POST_CONTENT_TYPE.toString()));
+        
         suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), 
         		params.get(TestRunArg.IUT.toString()));
     }

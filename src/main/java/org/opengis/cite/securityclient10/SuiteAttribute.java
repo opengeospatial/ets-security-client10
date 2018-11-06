@@ -62,6 +62,10 @@ public enum SuiteAttribute {
      */
     TEST_HTTP_EXCEPTION_HANDLING("testHttpExceptionHandling", Boolean.class),
     /**
+     * A Boolean for whether Requirement Class "HTTP POST Content-Type" is enabled.
+     */
+    TEST_HTTP_POST_CONTENT_TYPE("testHttpPostContentType", Boolean.class),
+    /**
      * A String for the filesystem path of the serialized client requests document.
      */
     TEST_IUT("testIUT", String.class);
