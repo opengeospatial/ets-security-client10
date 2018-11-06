@@ -93,6 +93,8 @@
               <p><input type="checkbox" id="w3c-cors" name="w3c-cors" value="true" /><label for="w3c-cors">W3C CORS</label></p>
 
               <p><strong>Please Note:</strong> "HTTP Methods" must be enabled for "W3C CORS" to be enabled.</p>
+
+              <p><input type="checkbox" id="http-exception-handling" name="http-exception-handling" value="true" /><label for="http-exception-handling">HTTP Exception Handling</label></p>
               
               <h4>Conformance Class</h4>
               <p>Based on the Service Type selected, the following Conformance Class will apply:</p>
@@ -191,6 +193,7 @@
             <entry key="idp_url"><xsl:value-of select="$form-data/values/value[@key='idp-url']"/></entry>
             <entry key="http_methods"><xsl:value-of select="$form-data/values/value[@key='http-methods']"/></entry>
             <entry key="w3c_cors"><xsl:value-of select="$form-data/values/value[@key='w3c-cors']"/></entry>
+            <entry key="http_exception_handling"><xsl:value-of select="$form-data/values/value[@key='http-exception-handling']"/></entry>
           </properties>
        </xsl:variable>
        <xsl:variable name="testRunDir">
