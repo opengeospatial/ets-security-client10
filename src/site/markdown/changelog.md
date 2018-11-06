@@ -1,6 +1,19 @@
 
 # Release Notes
 
+## 0.5 (2018-11-05)
+
+- Add notes about using IPv6 for addresses
+- Reset test endpoint URL popup window when starting the test run
+- Update developer information in pom.xml
+- Add support for "HTTP Methods" annotation
+- Switch to using ENUM definitions for hard-coded strings
+- Add support for "W3C CORS" annotation
+- Extract constraint builders to methods in EmulatedServer classes
+- Add support for "HTTP Exception Handling" annotation
+- Add support for "HTTP POST Content-Type" annotation
+- Add link to latest version of standard (authentication required)
+
 ## 0.4.1 (2018-10-25)
 
 - Fix case on a source class file causing compilation issues
