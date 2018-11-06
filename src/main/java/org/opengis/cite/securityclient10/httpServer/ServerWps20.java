@@ -5,6 +5,7 @@ import java.util.Enumeration;
 
 import javax.xml.transform.TransformerException;
 
+import org.opengis.cite.securityclient10.Identifiers;
 import org.opengis.cite.securityclient10.Namespaces;
 import org.opengis.cite.securityclient10.Schemas;
 import org.opengis.cite.securityclient10.util.XMLUtils;
@@ -289,7 +290,7 @@ public class ServerWps20 extends EmulatedServer {
 	 */
 	private void addHttpMethodsConstraintToElement(Document doc, Element element, String[] methods) {
 		Element constraintHttpMethods = doc.createElement("ows:Constraint");
-		constraintHttpMethods.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+		constraintHttpMethods.setAttribute("name", Identifiers.HTTP_METHODS);
 		element.appendChild(constraintHttpMethods);
 		
 		Element allowedValues = doc.createElement("ows:AllowedValues");
@@ -313,7 +314,7 @@ public class ServerWps20 extends EmulatedServer {
 	 */
 	private void addSamlConstraintToElement(Document doc, Element element) {
 		Element constraint = doc.createElementNS(Namespaces.OWS_2, "Constraint");
-		constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+		constraint.setAttribute("name", Identifiers.SAML2);
 		element.appendChild(constraint);
 		
 		Element constraintValues = doc.createElementNS(Namespaces.OWS_2, "ValuesReference");

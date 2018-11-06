@@ -3,6 +3,7 @@ package org.opengis.cite.securityclient10.httpServer;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 
+import org.opengis.cite.securityclient10.Identifiers;
 import org.opengis.cite.securityclient10.Namespaces;
 import org.opengis.cite.securityclient10.Schemas;
 import org.opengis.cite.securityclient10.util.XMLUtils;
@@ -280,7 +281,7 @@ public class ServerWms111 extends EmulatedServer {
 		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
 		
 			Element constraint = doc.createElement("ows:Constraint");
-			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			constraint.setAttribute("name", Identifiers.SAML2);
 			get.appendChild(constraint);
 			
 			Element constraintValuesReference = doc.createElement("ows:ValuesReference");
@@ -291,7 +292,7 @@ public class ServerWms111 extends EmulatedServer {
 		// Add HTTP Methods Constraint
 		if (this.options.getHttpMethods()) {
 			Element constraint = doc.createElement("ows:Constraint");
-			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			constraint.setAttribute("name", Identifiers.HTTP_METHODS);
 			get.appendChild(constraint);
 			
 			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
@@ -309,7 +310,7 @@ public class ServerWms111 extends EmulatedServer {
 		// Add W3C CORS Constraint
 		if (this.options.getCors()) {
 			Element constraint = doc.createElement("ows:Constraint");
-			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			constraint.setAttribute("name", Identifiers.W3C_CORS);
 			get.appendChild(constraint);
 			
 			Element constraintNoValues = doc.createElement("ows:NoValues");
@@ -337,7 +338,7 @@ public class ServerWms111 extends EmulatedServer {
 		if (this.options.getAuthentication().equals("saml2") && this.options.getIdpUrl() != null) {
 		
 			Element constraint = doc.createElement("ows:Constraint");
-			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:authentication:saml2");
+			constraint.setAttribute("name", Identifiers.SAML2);
 			post.appendChild(constraint);
 			
 			Element constraintValuesReference = doc.createElement("ows:ValuesReference");
@@ -348,7 +349,7 @@ public class ServerWms111 extends EmulatedServer {
 		// Add HTTP Methods Constraint
 		if (this.options.getHttpMethods()) {
 			Element constraint = doc.createElement("ows:Constraint");
-			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:http-methods");
+			constraint.setAttribute("name", Identifiers.HTTP_METHODS);
 			post.appendChild(constraint);
 			
 			Element constraintAllowedValues = doc.createElement("ows:AllowedValues");
@@ -366,7 +367,7 @@ public class ServerWms111 extends EmulatedServer {
 		// Add W3C CORS Constraint
 		if (this.options.getCors()) {
 			Element constraint = doc.createElement("ows:Constraint");
-			constraint.setAttribute("name", "urn:ogc:def:security:1.0:rc:cors");
+			constraint.setAttribute("name", Identifiers.W3C_CORS);
 			post.appendChild(constraint);
 			
 			Element constraintNoValues = doc.createElement("ows:NoValues");
