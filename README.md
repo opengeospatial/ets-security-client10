@@ -87,6 +87,11 @@ harness yourself and use a local installation.
 A detailed [guide on setting up TEAM Engine](src/site/markdown/team_setup.md) 
 is included in the site docs.
 
+#### 4. Docker
+
+This test suite comes with a Dockerfile which can be used to easily setup the OGC test harness with
+the test suite. Details can be found on https://github.com/opengeospatial/cite/wiki/How-to-create-Docker-Images-of-test-suites#create-docker-image-and-create-and-start-docker-container[Create Docker Image and create and start Docker Container].
+
 ### How to contribute
 
 If you would like to get involved, you can:
