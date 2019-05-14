@@ -6,7 +6,7 @@
   xmlns:tec="java:com.occamlab.te.TECore"
   xmlns:tng="java:org.opengis.cite.securityclient10.TestNGController">
 
-<ctl:function name="tns:run-ets-security-client10">
+<ctl:function name="tns:run-ets-${ets-code}">
     <ctl:param name="testRunArgs">A Document node containing test run arguments (as XML properties).</ctl:param>
     <ctl:param name="outputDir">The directory in which the test results will be written.</ctl:param>
     <ctl:return>The test results as a Source object (root node).</ctl:return>
@@ -17,9 +17,9 @@
     </ctl:code>
  </ctl:function>
 
-<ctl:suite name="tns:ets-security-client10-${version}">
-    <ctl:title>Test suite: ets-security-client10</ctl:title>
-    <ctl:description>Describe scope of testing.</ctl:description>
+<ctl:suite name="tns:ets-${ets-code}-${version}">
+    <ctl:title>OGC Web Service Security Client (OGC-17-007) Conformance Test Suite</ctl:title>
+    <ctl:description>Checks OGC Web Service Security 1.0 Client implementations for conformance to OGC-17-007.</ctl:description>
     <ctl:starting-test>tns:Main</ctl:starting-test>
 </ctl:suite>
  
@@ -35,7 +35,7 @@
   
           <xsl:variable name="form-data">
           <ctl:form method="POST" width="800" height="600" xmlns="http://www.w3.org/1999/xhtml">
-            <h2>Test suite: ets-security-client10</h2>
+            <h2>OGC Web Service Security Client (OGC-17-007) Conformance Test Suite</h2>
             <div style="background:#F0F8FF" bgcolor="#F0F8FF">
               <p>The client implementation under test is checked against the following specification(s):</p>
               <ul>

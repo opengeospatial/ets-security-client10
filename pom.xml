@@ -10,8 +10,8 @@
   <version>0.6-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Test suite: ets-security-client10</name>
-  <description>Describe purpose of test suite.</description>
+  <name>OGC Web Service Security Client (OGC-17-007) Conformance Test Suite</name>
+  <description>Checks OGC Web Service Security 1.0 Client implementations for conformance to OGC-17-007.</description>
   <url>http://opengeospatial.github.io/ets-security-client10/</url>
   <licenses>
     <license>
