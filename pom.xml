@@ -126,6 +126,7 @@
                 <run>
                   <ports>
                     <port>8081:8080</port>
+                    <port>10080:10080</port>
                   </ports>
                   <wait>
                     <http>
