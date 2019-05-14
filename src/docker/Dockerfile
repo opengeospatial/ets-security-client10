@@ -21,5 +21,7 @@ RUN cd /root/ && unzip -q ets-security-client10-*-ctl.zip -d /root/te_base/scrip
 ADD maven/ets-security-client10-*-deps.zip /root/
 RUN cd /root/ && unzip -q -o ets-security-client10-*-deps.zip -d /usr/local/tomcat/webapps/teamengine/WEB-INF/lib
 
+ADD maven/security.jks /root/ets-security-client10.jks
+
 # run tomcat
 CMD ["catalina.sh", "run"]

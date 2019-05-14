@@ -112,6 +112,13 @@
                             <include>*ets-*.zip</include>
                           </includes>
                         </fileSet>
+                        <fileSet>
+                          <directory>src/main/resources</directory>
+                          <outputDirectory>.</outputDirectory>
+                          <includes>
+                            <include>security.jks</include>
+                          </includes>
+                        </fileSet>
                       </fileSets>
                     </inline>
                   </assembly>
