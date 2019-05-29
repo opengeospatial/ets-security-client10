@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.zip.DeflaterOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -18,7 +19,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.opengis.cite.securityclient10.util.XMLUtils;
-import org.sonatype.plexus.components.cipher.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -120,7 +120,7 @@ public class SamlAuthRequest {
 		try {
 			outputStream.write(inputBytes, 0, inputBytes.length);
 			outputStream.close();
-			byte[] encodedBytes = Base64.encodeBase64(output.toByteArray());
+			byte[] encodedBytes = Base64.getEncoder().encode(output.toByteArray());
 			base64String = new String(encodedBytes);
 		} catch (IOException e) {
 			// When the deflate output stream does not accept a write, or close
