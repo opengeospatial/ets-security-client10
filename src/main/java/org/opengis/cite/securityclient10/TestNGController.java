@@ -12,6 +12,7 @@ import java.security.SecureRandom;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +39,8 @@ import com.occamlab.te.spi.jaxrs.TestSuiteController;
  * Main test run controller oversees execution of TestNG test suites.
  */
 public class TestNGController implements TestSuiteController {
+
+    private static final Logger LOG = Logger.getLogger(TestNGController.class.getName());
 
     private TestRunExecutor executor;
     private Properties etsProperties = new Properties();
@@ -143,51 +146,11 @@ public class TestNGController implements TestSuiteController {
         return etsProperties.getProperty("ets-code");
     }
     
-    /**
-     * Generate a random 16 character string
-     * @return String, 16 characters
-     */
-    public String getNonce() {
-        String symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
-        SecureRandom random = new SecureRandom();
-        char[] bytes = new char[16];
-        for (int i = 0; i < bytes.length; i++) {
-			bytes[i] = symbols.charAt(random.nextInt(symbols.length()));
-		}
-        return String.valueOf(bytes);
-    }
-    
-    /**
-     * Return a reference to the HTTP Server instance. If it has not been initialized (i.e. null) then
-     * a new instance is created.
-     * 
-     * @param address String representing the host interface on which to bind the Test Server
-     * @param port Integer representing the port to bind the Test Server
-     * @param jks_path Path to the Java KeyStore
-     * @param jks_password Password to unlock the KeyStore
-     * @return A TestServer instance that is the embedded Jetty web server.
-     * @throws Exception Exception if Test Server could not be initialized and started
-     */
-    public static TestServer getServer(String address, int port, String jks_path, String jks_password) throws Exception {
-    	// Use double-checked locking to prevent race condition.
-    	if (null == httpServer) {
-    		if (httpServer == null) {
-    			httpServer = new TestServer(address, port, jks_path, jks_password);
-    		}
-    	}
-    	
-    	return httpServer;
-    }
-    
-    public static TestServer getServer() {    	
-    	return httpServer;
-    }
-
     @Override
     public String getTitle() {
         return etsProperties.getProperty("ets-title");
     }
-    
+
     @Override
     public String getVersion() {
         return etsProperties.getProperty("ets-version");
@@ -205,72 +168,34 @@ public class TestNGController implements TestSuiteController {
 			e1.printStackTrace();
 			return executeWithException(e1);
 		}
-    	
+
     	validateTestRunArgs(testRunProperties);
     	
-    	// Print out information on which conformance classes will be tested
-    	System.out.println("ETS Security Client 1.0 Active Conformance Classes");
-    	System.out.println("==================================================");
-    	System.out.println("* Abstract Conformance Class Common Security");
-    	
-    	String serviceType = testRunProperties.getProperty(TestRunArg.Service_Type.toString());
-    	
-    	String httpMethods = testRunProperties.getProperty(TestRunArg.HTTP_METHODS.toString());
-        Boolean hasHttpMethods = (httpMethods != null && httpMethods.equals("true"));
-        
-        String w3cCors = testRunProperties.getProperty(TestRunArg.W3C_CORS.toString());
-        Boolean hasW3CCors = (w3cCors != null && w3cCors.equals("true"));
-        
-        String httpExceptionHandling = testRunProperties.getProperty(TestRunArg.HTTP_EXCEPTION_HANDLING.toString());
-        Boolean hasExceptionHandling = (httpExceptionHandling != null && httpExceptionHandling.equals("true"));
-        
-        String httpPostContentType = testRunProperties.getProperty(TestRunArg.HTTP_POST_CONTENT_TYPE.toString());
-        Boolean hasPostContentType = (httpPostContentType != null && httpPostContentType.equals("true"));
-        
+        String serviceType = testRunProperties.getProperty(TestRunArg.Service_Type.toString());
+        boolean hasHttpMethods = parseBooleanProperty(testRunProperties, TestRunArg.HTTP_METHODS);
+        boolean hasW3CCors = parseBooleanProperty(testRunProperties, TestRunArg.W3C_CORS);
+        boolean hasExceptionHandling = parseBooleanProperty(testRunProperties, TestRunArg.HTTP_EXCEPTION_HANDLING);
+        boolean hasPostContentType = parseBooleanProperty(testRunProperties, TestRunArg.HTTP_POST_CONTENT_TYPE);
         String auth = testRunProperties.getProperty(TestRunArg.Authentication.toString());
-        
+
         // Force-enable HTTP Methods if W3C CORS is enabled
         if (hasW3CCors) {
-        	hasHttpMethods = true;
+            hasHttpMethods = true;
         }
-    	
-    	if (serviceType.equals("wms111")) {
-    		System.out.println("* Conformance Class WMS 1.1.1");
-    	} else if (serviceType.equals("wms13")) {
-    		System.out.println("* Conformance Class WMS 1.3.0");
-    	} else {
-    		System.out.println("* Conformance Class OWS Common");
-    	}
-    	
-    	if (hasHttpMethods) {
-    		System.out.println("* HTTP Methods annotation enabled");
-    	}
-    	if (hasW3CCors) {
-    		System.out.println("* W3C CORS annotation enabled");
-    	}
-    	if (hasExceptionHandling) {
-    		System.out.println("* HTTP Exception Handling annotation enabled");
-    	}
-    	if (hasPostContentType) {
-    		System.out.println("* HTTP POST Content-Type annotation enabled");
-    	}
-    	if (auth != null && auth.equals("saml2")) {
-    		System.out.println("* SAML 2.0 Authentication Required");
-    	}
-    	System.out.println("");
-        
+
+        logConformanceClasses(serviceType, hasHttpMethods, hasW3CCors, hasExceptionHandling, hasPostContentType, auth);
+
         TestServer server;
 		try {
-			server = getServer(testRunProperties.getProperty(TestRunArg.Address.toString()), 
+			server = getServer(testRunProperties.getProperty(TestRunArg.Address.toString()),
 					Integer.parseInt(testRunProperties.getProperty(TestRunArg.Port.toString())),
-					testRunProperties.getProperty(TestRunArg.JKS_Path.toString()), 
+					testRunProperties.getProperty(TestRunArg.JKS_Path.toString()),
 					testRunProperties.getProperty(TestRunArg.JKS_Password.toString()));
 		} catch (Exception e) {
 			// If Test Server could not be started, skip to tests
-			e.printStackTrace();
 			return executeWithException(e);
 		}
-    	
+
         String path;
         if (testRunProperties.getProperty(TestRunArg.Path.toString()) == "") {
         	// Generate nonce for this test session, which will be used as the unique servlet address
@@ -278,7 +203,7 @@ public class TestNGController implements TestSuiteController {
         } else {
         	path = testRunProperties.getProperty(TestRunArg.Path.toString());
         }
-        
+
         // Register a servlet handler with the path, service type, and requirement class options
         ServerOptions serverOptions = new ServerOptions(serviceType);
         serverOptions.setAuthentication(auth);
@@ -287,66 +212,102 @@ public class TestNGController implements TestSuiteController {
         serverOptions.setCors(hasW3CCors);
         serverOptions.setHttpExceptionHandling(hasExceptionHandling);
         serverOptions.setHttpPostContentType(hasPostContentType);
-        
+
         try {
 			server.registerHandler(path, serverOptions);
 		} catch (Exception e) {
 			// If handler could not be created, skip to tests
-			e.printStackTrace();
 			return executeWithException(e);
 		}
-        
+
         // Print out the servlet test path for the test user
-        System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s", 
-        		testRunProperties.getProperty(TestRunArg.Host.toString()), 
+        System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s",
+        		testRunProperties.getProperty(TestRunArg.Host.toString()),
         		testRunProperties.getProperty(TestRunArg.Port.toString()), path));
-    	
+
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
     	try {
 			server.waitForRequest(path);
 		} catch (InterruptedException | ExecutionException e) {
 			// If the waiting thread has any errors, skip to tests
-			e.printStackTrace();
 			return executeWithException(e);
 		}
-    	
+
     	// Retrieve the request(s) from the secure client
     	RequestRepresenter requests = server.getRequests(path);
-    	
+
     	// Save to file
     	String nonce = this.getNonce();
-    	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"), 
+    	Path requestsFilePath = Paths.get(System.getProperty("java.io.tmpdir"),
     			"requests-" + nonce + ".xml");
     	try {
 			requests.saveToPath(requestsFilePath);
 		} catch (FileNotFoundException | TransformerException e) {
 			// If the requests could not be saved to the temporary file, skip to tests
-			e.printStackTrace();
 			return executeWithException(e);
 		}
-    	
+
     	// Add argument for requests document path as IUT
-    	testRunProperties.setProperty(TestRunArg.IUT.toString(), 
+    	testRunProperties.setProperty(TestRunArg.IUT.toString(),
     			requestsFilePath.toAbsolutePath().toString());
-    	
+
     	// Release the servlet as the path is not needed anymore
     	try {
 			server.unregisterHandler(path);
 		} catch (ServletException e) {
 			// If the handler could not be unregistered, skip to tests
-			e.printStackTrace();
 			return executeWithException(e);
 		}
-    	
+
     	// Remove sensitive properties from test run properties, so they are not leaked into
     	// the test results.
     	// The JKS has a path that should not be shown.
     	testRunProperties.removeProperty(TestRunArg.JKS_Path.toString());
     	// The JKS password should not be shown.
     	testRunProperties.removeProperty(TestRunArg.JKS_Password.toString());
-    	
+
         return executor.execute(testRunProperties.getDocument());
+    }
+
+    /**
+     * Return a reference to the HTTP Server instance. If it has not been initialized (i.e. null) then
+     * a new instance is created.
+     *
+     * @param address String representing the host interface on which to bind the Test Server
+     * @param port Integer representing the port to bind the Test Server
+     * @param jks_path Path to the Java KeyStore
+     * @param jks_password Password to unlock the KeyStore
+     * @return A TestServer instance that is the embedded Jetty web server.
+     * @throws Exception Exception if Test Server could not be initialized and started
+     */
+    private static TestServer getServer(String address, int port, String jks_path, String jks_password) throws Exception {
+        // Use double-checked locking to prevent race condition.
+        if (null == httpServer) {
+            if (httpServer == null) {
+                httpServer = new TestServer(address, port, jks_path, jks_password);
+            }
+        }
+
+        return httpServer;
+    }
+
+    private static TestServer getServer() {
+        return httpServer;
+    }
+
+    /**
+     * Generate a random 16 character string
+     * @return String, 16 characters
+     */
+    private String getNonce() {
+        String symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        char[] bytes = new char[16];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = symbols.charAt(random.nextInt(symbols.length()));
+        }
+        return String.valueOf(bytes);
     }
 
     /**
@@ -355,6 +316,7 @@ public class TestNGController implements TestSuiteController {
      * @return Source object with XML results of test run
      */
 	private Source executeWithException(Throwable e) {
+        LOG.log( Level.SEVERE, "Failure", e );
 		PropertiesDocument testRunProperties;
 		testRunProperties = new PropertiesDocument();
 		testRunProperties.setProperty(e.getClass().toString(), e.getMessage());
@@ -372,4 +334,42 @@ public class TestNGController implements TestSuiteController {
     private void validateTestRunArgs(PropertiesDocument testRunProperties) {
     	TestRunArgValidator.validateProperties(testRunProperties.getProperties());
     }
+
+    private boolean parseBooleanProperty(PropertiesDocument testRunProperties, TestRunArg httpMethods2) {
+        String httpMethods = testRunProperties.getProperty(httpMethods2.toString());
+        return (httpMethods != null && httpMethods.equals("true"));
+    }
+
+    private void logConformanceClasses( String serviceType, boolean hasHttpMethods, boolean hasW3CCors,
+                                        boolean hasExceptionHandling, boolean hasPostContentType, String auth ) {
+        // Print out information on which conformance classes will be tested
+        System.out.println( "ETS Security Client 1.0 Active Conformance Classes" );
+        System.out.println( "==================================================" );
+        System.out.println( "* Abstract Conformance Class Common Security" );
+        if ( serviceType.equals( "wms111" ) ) {
+            System.out.println( "* Conformance Class WMS 1.1.1" );
+        } else if ( serviceType.equals( "wms13" ) ) {
+            System.out.println( "* Conformance Class WMS 1.3.0" );
+        } else {
+            System.out.println( "* Conformance Class OWS Common" );
+        }
+
+        if ( hasHttpMethods ) {
+            System.out.println( "* HTTP Methods annotation enabled" );
+        }
+        if ( hasW3CCors ) {
+            System.out.println( "* W3C CORS annotation enabled" );
+        }
+        if ( hasExceptionHandling ) {
+            System.out.println( "* HTTP Exception Handling annotation enabled" );
+        }
+        if ( hasPostContentType ) {
+            System.out.println( "* HTTP POST Content-Type annotation enabled" );
+        }
+        if ( auth != null && auth.equals( "saml2" ) ) {
+            System.out.println( "* SAML 2.0 Authentication Required" );
+        }
+        System.out.println( "==================================================" );
+    }
+
 }
