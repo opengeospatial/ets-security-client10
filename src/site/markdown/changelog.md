@@ -1,6 +1,13 @@
 
 # Release Notes
 
+## 0.6 (2021-01-28)
+
+- [#20](https://github.com/opengeospatial/ets-security-client10/issues/20) Generated services throw error 500
+- [#19](https://github.com/opengeospatial/ets-security-client10/pull/19) Set Docker TEAM Engine version to 5.4
+- [#16](https://github.com/opengeospatial/ets-security-client10/issues/16) Introduce Dockerfile and Maven Docker plugin
+- [#18](https://github.com/opengeospatial/ets-security-client10/pull/18) Bump jetty-server from 9.4.18.v20190429 to 9.4.35.v20201120 in /embedded-dependencies-repacked
+
 ## 0.5 (2018-11-05)
 
 - Add notes about using IPv6 for addresses
