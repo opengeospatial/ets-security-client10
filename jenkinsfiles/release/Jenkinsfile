@@ -14,6 +14,7 @@ pipeline {
     stage('Release') {
       steps{
         sh 'mvn --version'
+        sh 'cd embedded-dependencies-repacked && mvn clean install && cd ..'
         sh 'mvn -Dresume=false -DdryRun=true release:prepare -Psign-artifacts-with-ogc,integration-tests,docker -DreleaseVersion=${releaseVersion} -DdevelopmentVersion=${developmentVersion}'
         sh 'mvn -Dresume=false release:prepare release:perform -Psign-artifacts-with-ogc,integration-tests,docker -DreleaseVersion=${releaseVersion} -DdevelopmentVersion=${developmentVersion}'
       }
