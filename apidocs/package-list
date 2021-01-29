@@ -1,0 +1,7 @@
+org.opengis.cite.securityclient10
+org.opengis.cite.securityclient10.httpServer
+org.opengis.cite.securityclient10.levelCommonSecurity
+org.opengis.cite.securityclient10.levelOwsCommon
+org.opengis.cite.securityclient10.levelWms111
+org.opengis.cite.securityclient10.levelWms13
+org.opengis.cite.securityclient10.util
