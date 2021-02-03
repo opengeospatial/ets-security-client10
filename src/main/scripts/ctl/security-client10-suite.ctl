@@ -115,6 +115,7 @@
             <script>
               var host = "<xsl:value-of select="$host" />";
               var port = "<xsl:value-of select="$port" />";
+              var contextPath = window.location.pathname.substring(1, window.location.pathname.indexOf("/",2)); 
             <![CDATA[
               // This script will update the active conformance class
               // text based on the service type selected in the
@@ -143,12 +144,8 @@
                   });
                 });
                 
-                // Generate nonce for test server path
-                var nonce = btoa(Math.random()).substr(5,16);
-                document.getElementById("path").value = nonce;
-                
                 // Display test endpoint URL
-                var endpointUrl = "https://" + host + ":" + port + "/" + nonce;
+                var endpointUrl = "https://" + host + ":" + port + "/" + contextPath;
                 document.getElementById("test-endpoint").innerText = endpointUrl;
 
                 // Open pop up window with test endpoint URL, in case
