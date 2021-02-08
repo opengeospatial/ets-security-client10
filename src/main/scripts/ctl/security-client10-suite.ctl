@@ -144,6 +144,10 @@
                   });
                 });
                 
+                // Generate nonce for test server path
+                var nonce = btoa(Math.random()).substr(5,16);
+                document.getElementById("path").value = nonce;
+                
                 // Display test endpoint URL
                 var endpointUrl = "https://" + host + ":" + port + "/" + contextPath;
                 document.getElementById("test-endpoint").innerText = endpointUrl;
