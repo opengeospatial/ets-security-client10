@@ -113,7 +113,6 @@
             </p>
            
             <script>
-              var protocol = window.location.protocol;
               var host = window.location.host;
               if (host.includes(":")) {
                 host = host.substring(0, host.indexOf(":"));
@@ -158,7 +157,7 @@
                 document.getElementById("path").value = contextPath + "/" + nonce;
                 
                 // Display test endpoint URL
-                var endpointUrl = protocol + "//" + host + ":" + port + "/" + contextPath + "/" + nonce;
+                var endpointUrl = "https://" + host + ":" + port + "/" + contextPath + "/" + nonce;
                 document.getElementById("test-endpoint").innerText = endpointUrl;
 
                 // Open pop up window with test endpoint URL, in case
