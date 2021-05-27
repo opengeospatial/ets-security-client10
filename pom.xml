@@ -47,7 +47,7 @@
     <spec-version>1.0</spec-version>
     <javadoc-plugin.version>2.10.4</javadoc-plugin.version>
     <testng.javadoc.url>https://jitpack.io/com/github/cbeust/testng/master/javadoc</testng.javadoc.url>
-    <docker.teamengine.version>5.4</docker.teamengine.version>
+    <docker.teamengine.version>5.4.1</docker.teamengine.version>
   </properties>
 
   <dependencies>
