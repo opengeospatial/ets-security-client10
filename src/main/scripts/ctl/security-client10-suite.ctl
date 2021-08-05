@@ -29,7 +29,6 @@
           <!--  TEAM Engine Administrator: Edit these variables -->
           <xsl:variable name="address">0.0.0.0</xsl:variable>
           <xsl:variable name="port">10080</xsl:variable>
-          <xsl:variable name="host">localhost</xsl:variable>
           <xsl:variable name="jks_path">/root/ets-security-client10.jks</xsl:variable>
           <xsl:variable name="jks_password"><![CDATA[ets-security-client]]></xsl:variable>
   
@@ -62,6 +61,7 @@
                 <option value="wps20">WPS 2.0.2</option>
               </select>
               <input type="hidden" id="path" name="path" value="" />
+              <input type="hidden" id="host" name="host" value="" />
               
               <h4>Authentication Method</h4>
               <p>
@@ -113,8 +113,12 @@
             </p>
            
             <script>
-              var host = "<xsl:value-of select="$host" />";
               var port = "<xsl:value-of select="$port" />";
+              var host = window.location.host;
+              if (host.includes(":")) {
+                host = host.substring(0, host.indexOf(":"));
+              }
+              var contextPath = window.location.pathname.substring(1, window.location.pathname.indexOf("/",2)); 
             <![CDATA[
               // This script will update the active conformance class
               // text based on the service type selected in the
@@ -145,10 +149,11 @@
                 
                 // Generate nonce for test server path
                 var nonce = btoa(Math.random()).substr(5,16);
-                document.getElementById("path").value = nonce;
+                document.getElementById("host").value = host;
+                document.getElementById("path").value = contextPath + "/" + nonce;
                 
                 // Display test endpoint URL
-                var endpointUrl = "https://" + host + ":" + port + "/" + nonce;
+                var endpointUrl = "https://" + host + ":" + port + "/" + contextPath + "/" + nonce;
                 document.getElementById("test-endpoint").innerText = endpointUrl;
 
                 // Open pop up window with test endpoint URL, in case
@@ -185,7 +190,9 @@
             </entry>
             <entry key="address"><xsl:value-of select="$address" /></entry>
             <entry key="port"><xsl:value-of select="$port" /></entry>
-            <entry key="host"><xsl:value-of select="$host" /></entry>
+            <entry key="host">
+              <xsl:value-of select="$form-data/values/value[@key='host']"/>
+            </entry>
             <entry key="path">
               <xsl:value-of select="$form-data/values/value[@key='path']"/>
             </entry>
