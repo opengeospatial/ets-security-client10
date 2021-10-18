@@ -185,25 +185,19 @@ public class TestNGController implements TestSuiteController {
 
         logConformanceClasses(serviceType, hasHttpMethods, hasW3CCors, hasExceptionHandling, hasPostContentType, auth);
 
+        URL serverUrl;
         TestServer server;
 		try {
-			server = getServer(testRunProperties.getProperty(TestRunArg.Address.toString()),
-					Integer.parseInt(testRunProperties.getProperty(TestRunArg.Port.toString())),
-					testRunProperties.getProperty(TestRunArg.JKS_Path.toString()),
-					testRunProperties.getProperty(TestRunArg.JKS_Password.toString()));
+            serverUrl = new URL( testRunProperties.getProperty( TestRunArg.Server_Url.toString() ) );
+            server = getServer( serverUrl, testRunProperties.getProperty( TestRunArg.JKS_Path.toString() ),
+                                testRunProperties.getProperty( TestRunArg.JKS_Password.toString() ) );
 		} catch (Exception e) {
 			// If Test Server could not be started, skip to tests
 			return executeWithException(e);
 		}
 
-        String path;
-        if (testRunProperties.getProperty(TestRunArg.Path.toString()) == "") {
-        	// Generate nonce for this test session, which will be used as the unique servlet address
-            path = this.getNonce();
-        } else {
-        	path = testRunProperties.getProperty(TestRunArg.Path.toString());
-        }
-
+        String path = serverUrl.getPath().substring( serverUrl.getPath().lastIndexOf( "/" ) + 1,
+                                                     serverUrl.getPath().length() );
         // Register a servlet handler with the path, service type, and requirement class options
         ServerOptions serverOptions = new ServerOptions(serviceType);
         serverOptions.setAuthentication(auth);
@@ -221,9 +215,8 @@ public class TestNGController implements TestSuiteController {
 		}
 
         // Print out the servlet test path for the test user
-        System.out.println(String.format("Your test session endpoint is at https://%s:%s/%s",
-        		testRunProperties.getProperty(TestRunArg.Host.toString()),
-        		testRunProperties.getProperty(TestRunArg.Port.toString()), path));
+        System.out.println(String.format("Your test session endpoint is at %s",
+        		testRunProperties.getProperty(TestRunArg.Server_Url.toString())));
 
     	// Wait for TestServer to receive a request for this test run,
     	// or for the timeout to be reached.
@@ -274,18 +267,17 @@ public class TestNGController implements TestSuiteController {
      * Return a reference to the HTTP Server instance. If it has not been initialized (i.e. null) then
      * a new instance is created.
      *
-     * @param address String representing the host interface on which to bind the Test Server
-     * @param port Integer representing the port to bind the Test Server
+     * @param serverUrl String representing the serverUrl on which to bind the Test Server
      * @param jks_path Path to the Java KeyStore
      * @param jks_password Password to unlock the KeyStore
      * @return A TestServer instance that is the embedded Jetty web server.
-     * @throws Exception Exception if Test Server could not be initialized and started
+     * @throws Exception if Test Server could not be initialized and started
      */
-    private static TestServer getServer(String address, int port, String jks_path, String jks_password) throws Exception {
+    private static TestServer getServer(URL serverUrl, String jks_path, String jks_password) throws Exception {
         // Use double-checked locking to prevent race condition.
         if (null == httpServer) {
             if (httpServer == null) {
-                httpServer = new TestServer(address, port, jks_path, jks_password);
+                httpServer = new TestServer(serverUrl, jks_path, jks_password);
             }
         }
 

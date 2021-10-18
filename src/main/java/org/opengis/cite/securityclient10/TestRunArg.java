@@ -10,27 +10,12 @@ public enum TestRunArg {
 	 * testing.
 	 */
 	Service_Type,
-	
+
 	/**
-	 * A string for the ip interface to bind the embedded web server
+	 * A string for the server url of the embedded web server (includes the path)
 	 */
-	Address, 
-	
-	/**
-	 * An integer for the port to bind the embedded web server
-	 */
-	Port,
-	
-	/**
-	 * A string of the domain hostname or ip address to advertise to clients
-	 */
-	Host,
-	
-	/**
-	 * A string for the URL path fragment that will be the test endpoint 
-	 */
-	Path,
-	
+	Server_Url,
+
 	/**
 	 * A path to a local file containing the Java KeyStore
 	 */

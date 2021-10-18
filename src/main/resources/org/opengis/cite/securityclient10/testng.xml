@@ -2,9 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="${ets-code}-${project.version}" verbose="0" configfailurepolicy="continue">
   <parameter name="service_type" value=""/>
-  <parameter name="host" value=""/>
-  <parameter name="port" value=""/>
-  <parameter name="path" value=""/>
+  <parameter name="serverUrl" value=""/>
   <parameter name="jks_path" value=""/>
   <parameter name="jks_password" value=""/>
   <parameter name="authentication" value=""/>

@@ -26,10 +26,6 @@
 <ctl:test name="tns:Main">
     <ctl:assertion>The test subject satisfies all applicable constraints.</ctl:assertion>
         <ctl:code>
-          <!--  TEAM Engine Administrator: Edit these variables -->
-          <xsl:variable name="address">0.0.0.0</xsl:variable>
-          <xsl:variable name="port">10080</xsl:variable>
-          <xsl:variable name="host">localhost</xsl:variable>
           <xsl:variable name="jks_path">/root/ets-security-client10.jks</xsl:variable>
           <xsl:variable name="jks_password"><![CDATA[ets-security-client]]></xsl:variable>
   
@@ -61,7 +57,6 @@
                 <option value="wms13">WMS 1.3.0</option>
                 <option value="wps20">WPS 2.0.2</option>
               </select>
-              <input type="hidden" id="path" name="path" value="" />
               
               <h4>Authentication Method</h4>
               <p>
@@ -105,6 +100,8 @@
               <h4>Test Session Endpoint URL</h4>
               <p>When the test starts, your session URL will be as follows.</p>
               <h4 id="test-endpoint"></h4>
+              <input type="hidden" id="serverUrl" name="serverUrl" value="" />
+              <input type="hidden" id="path" name="path" value="" />
             </fieldset>
             <p>Suggestion: Ensure your browser has allowed pop-up windows from this domain. This will allow you to see the test console and test session URL pop up windows.</p>
             <p>
@@ -113,8 +110,6 @@
             </p>
            
             <script>
-              var host = "<xsl:value-of select="$host" />";
-              var port = "<xsl:value-of select="$port" />";
             <![CDATA[
               // This script will update the active conformance class
               // text based on the service type selected in the
@@ -146,10 +141,14 @@
                 // Generate nonce for test server path
                 var nonce = btoa(Math.random()).substr(5,16);
                 document.getElementById("path").value = nonce;
-                
+
                 // Display test endpoint URL
-                var endpointUrl = "https://" + host + ":" + port + "/" + nonce;
-                document.getElementById("test-endpoint").innerText = endpointUrl;
+                var testSuiteEndpoint = window.location.href;
+                testSuiteEndpoint = testSuiteEndpoint.replace("8081", "8082");
+                testSuiteEndpoint = testSuiteEndpoint.substring(0, testSuiteEndpoint.lastIndexOf('/'));
+                var serverUrl = testSuiteEndpoint + "/" + nonce;
+                document.getElementById("test-endpoint").innerText = serverUrl;
+                document.getElementById("serverUrl").value = serverUrl;
 
                 // Open pop up window with test endpoint URL, in case
                 // tester submits form before copying the URL
@@ -183,12 +182,8 @@
             <entry key="service_type">
               <xsl:value-of select="$form-data/values/value[@key='service-type']"/>
             </entry>
-            <entry key="address"><xsl:value-of select="$address" /></entry>
-            <entry key="port"><xsl:value-of select="$port" /></entry>
-            <entry key="host"><xsl:value-of select="$host" /></entry>
-            <entry key="path">
-              <xsl:value-of select="$form-data/values/value[@key='path']"/>
-            </entry>
+            <entry key="server_url"><xsl:value-of select="$form-data/values/value[@key='serverUrl']" /></entry>
+            <entry key="path"><xsl:value-of select="$form-data/values/value[@key='path']"/></entry>
             <entry key="jks_path"><xsl:value-of select="$jks_path" /></entry>
             <entry key="jks_password"><xsl:value-of select="$jks_password" /></entry>
             <entry key="authentication"><xsl:value-of select="$form-data/values/value[@key='auth']"/></entry>

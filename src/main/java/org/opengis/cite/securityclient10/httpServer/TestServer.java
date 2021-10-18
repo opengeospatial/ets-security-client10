@@ -3,6 +3,7 @@ package org.opengis.cite.securityclient10.httpServer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -43,7 +44,6 @@ import org.opengis.cite.jetty.util.ssl.SslContextFactory;
  */
 public class TestServer {
 	
-	private int serverPort;
 	private Server jettyServer;
 	
 	/**
@@ -161,44 +161,49 @@ public class TestServer {
 	}
 
 	/**
-	 * @param host String of host interface to bind
-	 * @param port Integer of port to bind
+	 * @param serverUrl URL of the test service
 	 * @param jks_path Path to the Java KeyStore
      * @param jks_password Password to unlock the KeyStore 
 	 * @throws Exception for any errors starting the embedded Jetty server
 	 */
-	public TestServer(String host, int port, String jks_path, String jks_password) throws Exception {
+	public TestServer( URL serverUrl, String jks_path, String jks_password) throws Exception {
 		handlerBlocks = new HashMap<String, HandlerOptions>();
-		serverPort = port;
+		int port = serverUrl.getPort();
 		
 		jettyServer = new Server();
 		jettyServer.setStopAtShutdown(true);
 		jettyServer.setStopTimeout(1);
-		
-		// Set up HTTPS
-		// Check for Keystore
-		File keystore = new File(jks_path);
-		if (!keystore.exists()) {
-			throw new FileNotFoundException("Missing keystore: " + keystore.getAbsolutePath());
-		}
-		
-		SslContextFactory sslContextFactory = new SslContextFactory();
-		sslContextFactory.setKeyStorePath(keystore.getAbsolutePath());
-		sslContextFactory.setKeyStorePassword(jks_password);
-		sslContextFactory.setTrustStorePath(keystore.getAbsolutePath());
-		sslContextFactory.setTrustStorePassword(jks_password);
-		
-		HttpConfiguration httpsConfig = new HttpConfiguration();
-		httpsConfig.setSecureScheme("https");
-		httpsConfig.setSecurePort(port);
-		httpsConfig.addCustomizer(new SecureRequestCustomizer());
-		
-		// Use a ServerConnector so we can force the host address and port 
-		ServerConnector connector = new ServerConnector(jettyServer,
-				new UnifiedSslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString()),
-				new HttpConnectionFactory(httpsConfig));
+        ServerConnector connector;
+        if ( jks_path != null ) {
+            // Set up HTTPS
+            // Check for Keystore
+            File keystore = new File( jks_path );
+            if ( !keystore.exists() ) {
+                throw new FileNotFoundException( "Missing keystore: " + keystore.getAbsolutePath() );
+            }
+
+            SslContextFactory sslContextFactory = new SslContextFactory();
+            sslContextFactory.setKeyStorePath( keystore.getAbsolutePath() );
+            sslContextFactory.setKeyStorePassword( jks_password );
+            sslContextFactory.setTrustStorePath( keystore.getAbsolutePath() );
+            sslContextFactory.setTrustStorePassword( jks_password );
+
+            HttpConfiguration httpsConfig = new HttpConfiguration();
+            httpsConfig.setSecureScheme( serverUrl.getProtocol() );
+            httpsConfig.setSecurePort( port );
+            httpsConfig.addCustomizer( new SecureRequestCustomizer() );
+
+            // Use a ServerConnector so we can force the host address and port
+            connector = new ServerConnector( jettyServer,
+                                             new UnifiedSslConnectionFactory( sslContextFactory,
+                                                                              HttpVersion.HTTP_1_1.asString() ),
+                                             new HttpConnectionFactory( httpsConfig ) );
+        } else {
+            connector = new ServerConnector( jettyServer );
+        }
+	
 		connector.setPort(port);
-		connector.setHost(host);
+		connector.setHost(serverUrl.getHost());
 		jettyServer.setConnectors(new Connector[] { connector });
 		
 		// Use ContextHandlerCollection to add contexts/handlers *after* the server has been started
@@ -207,16 +212,7 @@ public class TestServer {
 		
 		jettyServer.start();
 	}
-	
-	/**
-	 * Return the port the server is currently using.
-	 * 
-	 * @return int Current port being used by the embedded server
-	 */
-	public int getPort() {
-		return serverPort;
-	}
-	
+
 	/**
 	 * Retrieve the HTTP Servlet Request objects for a registered path
 	 * 
@@ -249,7 +245,7 @@ public class TestServer {
 
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
-        ServletHolder baseHolder = context.addServlet(TestAsyncServlet.class, "/" + path);
+        ServletHolder baseHolder = context.addServlet(	TestAsyncServlet.class, "/" + path);
         baseHolder.setAsyncSupported(true);
         ServletHolder wildcardHolder = context.addServlet(TestAsyncServlet.class, "/" + path + "/*");
         wildcardHolder.setAsyncSupported(true);

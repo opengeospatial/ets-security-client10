@@ -36,27 +36,13 @@ public class TestRunArgValidator {
         }
         
         // Test Server address
-        String addressParam = params.get(TestRunArg.Address.toString());
+        String serverUrlParam = params.get(TestRunArg.Server_Url.toString());
         
-        if ((null == addressParam) || addressParam.isEmpty()) {
+        if ((null == serverUrlParam) || serverUrlParam.isEmpty()) {
             throw new IllegalArgumentException("Required test run parameter not found: " 
-            		+ TestRunArg.Address.toString());
+            		+ TestRunArg.Server_Url );
         }
-        
-        // Test Server Port
-        Integer portParam = Integer.parseInt(params.get(TestRunArg.Port.toString()));
-        
-        // Test Server Hostname
-        String hostParam = params.get(TestRunArg.Host.toString());
-        
-        if ((null == hostParam) || hostParam.isEmpty()) {
-            throw new IllegalArgumentException("Required test run parameter not found: " 
-            		+ TestRunArg.Host.toString());
-        }
-        
-        // Test Server Path
-        String pathParam = params.get(TestRunArg.Path.toString());
-        
+
         // Java Keystore Path
         String jksParam = params.get(TestRunArg.JKS_Path.toString());
         
