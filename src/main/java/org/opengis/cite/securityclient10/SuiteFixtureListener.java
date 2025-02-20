@@ -54,15 +54,27 @@ public class SuiteFixtureListener implements ISuiteListener {
 
 		suite.setAttribute(SuiteAttribute.TEST_IDP_URL.getName(), params.get(TestRunArg.IDP_URL.toString()));
 
-		suite.setAttribute(SuiteAttribute.TEST_HTTP_METHODS.getName(), params.get(TestRunArg.HTTP_METHODS.toString()));
+		Object httpMethods = params.get(TestRunArg.HTTP_METHODS.toString());
+		if (httpMethods == null) {
+			httpMethods = false;
+		}
+		suite.setAttribute(SuiteAttribute.TEST_HTTP_METHODS.getName(), httpMethods);
+		Object w3cCors = params.get(TestRunArg.W3C_CORS.toString());
+		if (w3cCors == null) {
+			w3cCors = false;
+		}
+		suite.setAttribute(SuiteAttribute.TEST_W3C_CORS.getName(), w3cCors);
+		Object httpExceptionHandling = params.get(TestRunArg.HTTP_EXCEPTION_HANDLING.toString());
+		if (httpExceptionHandling == null) {
+			httpExceptionHandling = false;
+		}
+		suite.setAttribute(SuiteAttribute.TEST_HTTP_EXCEPTION_HANDLING.getName(), httpExceptionHandling);
 
-		suite.setAttribute(SuiteAttribute.TEST_W3C_CORS.getName(), params.get(TestRunArg.W3C_CORS.toString()));
-
-		suite.setAttribute(SuiteAttribute.TEST_HTTP_EXCEPTION_HANDLING.getName(),
-				params.get(TestRunArg.HTTP_EXCEPTION_HANDLING.toString()));
-
-		suite.setAttribute(SuiteAttribute.TEST_HTTP_POST_CONTENT_TYPE.getName(),
-				params.get(TestRunArg.HTTP_POST_CONTENT_TYPE.toString()));
+		Object httpsPostContentType = params.get(TestRunArg.HTTP_POST_CONTENT_TYPE.toString());
+		if (httpsPostContentType == null) {
+			httpsPostContentType = false;
+		}
+		suite.setAttribute(SuiteAttribute.TEST_HTTP_POST_CONTENT_TYPE.getName(), httpsPostContentType);
 
 		suite.setAttribute(SuiteAttribute.TEST_IUT.getName(), params.get(TestRunArg.IUT.toString()));
 	}
