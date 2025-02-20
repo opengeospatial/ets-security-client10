@@ -11,56 +11,60 @@ import org.opengis.cite.jetty.io.EndPoint;
 import org.opengis.cite.jetty.util.Callback;
 
 /**
- * Subclass of EndPoint for reading the first few bytes of a client connection to determine if it is
- * a TLS handshake (HTTPS enabled) or not (HTTP only).
- * 
+ * Subclass of EndPoint for reading the first few bytes of a client connection to
+ * determine if it is a TLS handshake (HTTPS enabled) or not (HTTP only).
+ *
  * Source: https://stackoverflow.com/a/40076056/237958
  *
  */
 public class UnifiedEndPoint implements EndPoint {
-	
+
 	/**
 	 * Original endpoint being wrapped by this subclass
 	 */
 	private final EndPoint endPoint;
+
 	/**
 	 * Buffer for reading bytes from start
 	 */
 	private final ByteBuffer start;
+
 	/**
 	 * How many bytes from the start need to be read
 	 */
 	private int leftToRead;
+
 	/**
 	 * Bytes read from start
 	 */
 	private final byte[] bytes;
+
 	/**
 	 * Buffered exception for throwing later
 	 */
-	private IOException pendingException = null; 
-	
+	private IOException pendingException = null;
+
 	public UnifiedEndPoint(final EndPoint channel, final int readAheadLength) {
 		this.endPoint = channel;
 		start = ByteBuffer.wrap(bytes = new byte[readAheadLength]);
 		start.flip();
 		leftToRead = readAheadLength;
 	}
-	
+
 	@Override
 	public synchronized int fill(final ByteBuffer dst) throws IOException {
 		throwPendingException();
-		
+
 		if (leftToRead > 0) {
 			readAhead();
 		}
-		
+
 		if (leftToRead > 0) {
 			return 0;
 		}
-		
+
 		final int sr = start.remaining();
-		
+
 		if (sr > 0) {
 			dst.compact();
 			final int n = readFromStart(dst);
@@ -68,39 +72,41 @@ public class UnifiedEndPoint implements EndPoint {
 				return n;
 			}
 		}
-		
+
 		return sr + endPoint.fill(dst);
 	}
-	
+
 	public byte[] getBytes() {
 		if (pendingException == null) {
 			try {
 				readAhead();
-			} catch (final IOException e) {
+			}
+			catch (final IOException e) {
 				pendingException = e;
 			}
 		}
-		
+
 		return bytes;
 	}
-	
+
 	// TODO: Add wait for slow clients
 	private synchronized void readAhead() throws IOException {
 		if (leftToRead > 0) {
 			final int n = endPoint.fill(start);
-			
+
 			if (n == -1) {
 				leftToRead = -1;
-			} else {
+			}
+			else {
 				leftToRead -= n;
 			}
-			
+
 			if (leftToRead <= 0) {
 				start.rewind();
 			}
 		}
 	}
-	
+
 	private int readFromStart(final ByteBuffer dst) throws IOException {
 		final int n = Math.min(dst.remaining(), start.remaining());
 		if (n > 0) {
@@ -110,7 +116,7 @@ public class UnifiedEndPoint implements EndPoint {
 		}
 		return n;
 	}
-	
+
 	private void throwPendingException() throws IOException {
 		if (pendingException != null) {
 			final IOException e = pendingException;
@@ -122,7 +128,7 @@ public class UnifiedEndPoint implements EndPoint {
 	//
 	// These following methods are overridden, and defer to the superclass
 	//
-	
+
 	@Override
 	public long getIdleTimeout() {
 		return endPoint.getIdleTimeout();
@@ -232,4 +238,5 @@ public class UnifiedEndPoint implements EndPoint {
 	public void upgrade(Connection newConnection) {
 		endPoint.upgrade(newConnection);
 	}
+
 }

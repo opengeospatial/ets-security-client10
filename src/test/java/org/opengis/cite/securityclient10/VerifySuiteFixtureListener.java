@@ -18,47 +18,47 @@ import org.testng.xml.XmlSuite;
 
 public class VerifySuiteFixtureListener {
 
-    private static XmlSuite xmlSuite;
-    private static ISuite suite;
+	private static XmlSuite xmlSuite;
 
-    public VerifySuiteFixtureListener() {
-    }
+	private static ISuite suite;
 
-    @BeforeClass
-    public static void setUpClass() {
-        xmlSuite = mock(XmlSuite.class);
-        suite = mock(ISuite.class);
-        when(suite.getXmlSuite()).thenReturn(xmlSuite);
-    }
+	public VerifySuiteFixtureListener() {
+	}
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
+	@BeforeClass
+	public static void setUpClass() {
+		xmlSuite = mock(XmlSuite.class);
+		suite = mock(ISuite.class);
+		when(suite.getXmlSuite()).thenReturn(xmlSuite);
+	}
 
-    @Before
-    public void setUp() {
-    }
+	@AfterClass
+	public static void tearDownClass() {
+	}
 
-    @After
-    public void tearDown() {
-    }
-    
-    @Test
-    public void processServiceTypeParameter() {
-    	String serviceType = "wms111";
-    	Map<String, String> params = new HashMap<String, String>();
-    	params.put(TestRunArg.Service_Type.toString(), serviceType);
-    	params.put(TestRunArg.Address.toString(), "127.0.0.1");
-    	params.put(TestRunArg.Port.toString(), "10080");
-    	params.put(TestRunArg.Host.toString(), "localhost");
-    	params.put(TestRunArg.JKS_Path.toString(), "src/main/resources/security.jks");
-    	params.put(TestRunArg.JKS_Password.toString(), "ets-security-client");
-    	when(xmlSuite.getParameters()).thenReturn(params);
-    	SuiteFixtureListener iut = new SuiteFixtureListener();
-        iut.onStart(suite);
-        verify(suite).setAttribute(
-                ArgumentMatchers.eq(SuiteAttribute.TEST_SERVICE_TYPE.getName()), 
-                ArgumentMatchers.isA(String.class));
-    }
+	@Before
+	public void setUp() {
+	}
+
+	@After
+	public void tearDown() {
+	}
+
+	@Test
+	public void processServiceTypeParameter() {
+		String serviceType = "wms111";
+		Map<String, String> params = new HashMap<String, String>();
+		params.put(TestRunArg.Service_Type.toString(), serviceType);
+		params.put(TestRunArg.Address.toString(), "127.0.0.1");
+		params.put(TestRunArg.Port.toString(), "10080");
+		params.put(TestRunArg.Host.toString(), "localhost");
+		params.put(TestRunArg.JKS_Path.toString(), "src/main/resources/security.jks");
+		params.put(TestRunArg.JKS_Password.toString(), "ets-security-client");
+		when(xmlSuite.getParameters()).thenReturn(params);
+		SuiteFixtureListener iut = new SuiteFixtureListener();
+		iut.onStart(suite);
+		verify(suite).setAttribute(ArgumentMatchers.eq(SuiteAttribute.TEST_SERVICE_TYPE.getName()),
+				ArgumentMatchers.isA(String.class));
+	}
 
 }
