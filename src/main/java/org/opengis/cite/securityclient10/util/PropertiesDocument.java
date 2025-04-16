@@ -16,44 +16,48 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Class to wrap a Document that is of the XML Properties schema.
- * Useful for reading/writing Documents without having to create
- * your own DocumentBuilders.
+ * Class to wrap a Document that is of the XML Properties schema. Useful for
+ * reading/writing Documents without having to create your own DocumentBuilders.
  *
  */
 public class PropertiesDocument {
-	
+
 	private DocumentBuilderFactory documentBuilderFactory;
+
 	private DocumentBuilder documentBuilder;
-	
+
 	private Document document;
+
 	private Properties properties;
-	
+
 	/**
 	 * Create blank PropertiesDocument with blank Properties object
 	 */
 	public PropertiesDocument() {
 		this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        try {
+		try {
 			this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
+		}
+		catch (ParserConfigurationException e) {
 			// Exception with default configuration
 			e.printStackTrace();
 		}
-        this.properties = new Properties();
+		this.properties = new Properties();
 	}
-	
+
 	/**
 	 * Create a Properties Document from an input XML file
 	 * @param xmlFile File to open for parsing
 	 * @throws SAXException Exception on parsing input as XML
 	 * @throws IOException Exception if XML could not be read for properties file
-	 * @throws ParserConfigurationException Exception if Document Builder could not be created
-	 * @throws InvalidPropertiesFormatException Exception if XML is not in Properties format
+	 * @throws ParserConfigurationException Exception if Document Builder could not be
+	 * created
+	 * @throws InvalidPropertiesFormatException Exception if XML is not in Properties
+	 * format
 	 */
 	public PropertiesDocument(File xmlFile) throws ParserConfigurationException, SAXException, IOException {
 		this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		this.document = this.documentBuilder.parse(xmlFile);
 		this.properties = documentToProperties(this.document);
 	}
@@ -61,31 +65,31 @@ public class PropertiesDocument {
 	/**
 	 * Create a Properties Document using the input as the existing Document.
 	 * @param testRunArgs Document to use as base
-	 * @throws ParserConfigurationException Exception if Document Builder could not be created
+	 * @throws ParserConfigurationException Exception if Document Builder could not be
+	 * created
 	 */
 	public PropertiesDocument(Document testRunArgs) throws ParserConfigurationException {
 		this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		this.document = this.documentBuilder.newDocument();
 		this.properties = documentToProperties(testRunArgs);
 	}
-	
+
 	/**
-	 * Create a Document corresponding to the internal Properties object.
-	 * Note: You must manually set the SYSTEM DocType to "http://java.sun.com/dtd/properties.dtd" when
+	 * Create a Document corresponding to the internal Properties object. Note: You must
+	 * manually set the SYSTEM DocType to "http://java.sun.com/dtd/properties.dtd" when
 	 * transforming this Document.
-	 * 
 	 * @return Document with Properties format
 	 */
 	@SuppressWarnings("unchecked")
 	public Document getDocument() {
 		Document doc = this.documentBuilder.newDocument();
-		
+
 		Element rootElement = doc.createElement("properties");
 		doc.appendChild(rootElement);
-		
+
 		Enumeration<String> keys = (Enumeration<String>) this.properties.propertyNames();
-		
+
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
 			Element entry = doc.createElement("entry");
@@ -93,10 +97,10 @@ public class PropertiesDocument {
 			entry.setTextContent(this.getProperty(key));
 			rootElement.appendChild(entry);
 		}
-		
+
 		return doc;
 	}
-	
+
 	/**
 	 * Return the Properties object
 	 * @return Properties object
@@ -104,7 +108,7 @@ public class PropertiesDocument {
 	public Properties getProperties() {
 		return this.properties;
 	}
-	
+
 	/**
 	 * Return a value for a key in the Properties object
 	 * @param key String with key name
@@ -113,7 +117,7 @@ public class PropertiesDocument {
 	public String getProperty(String key) {
 		return this.properties.getProperty(key);
 	}
-	
+
 	/**
 	 * Delete a key and its value from the Properties object
 	 * @param key The key to remove
@@ -121,7 +125,7 @@ public class PropertiesDocument {
 	public void removeProperty(String key) {
 		this.properties.remove(key);
 	}
-	
+
 	/**
 	 * Update a value in the Properties object
 	 * @param key String with key name
@@ -130,23 +134,24 @@ public class PropertiesDocument {
 	public void setProperty(String key, String value) {
 		this.properties.setProperty(key, value);
 	}
-	
+
 	/**
 	 * Convert an input XML Document to a Properties object
 	 * @param doc Document with Properties format
 	 * @return Properties object
 	 */
-	private Properties documentToProperties(Document doc)  {
+	private Properties documentToProperties(Document doc) {
 		Properties props = new Properties();
-		
+
 		// Iterate over Document and insert entries into Properties
 		NodeList entries = doc.getDocumentElement().getElementsByTagName("entry");
-        for (int i = 0; i < entries.getLength(); i++) {
-            Element entry = (Element) entries.item(i);
-            props.setProperty(entry.getAttribute("key"), entry.getTextContent());
-        }
-		
+		for (int i = 0; i < entries.getLength(); i++) {
+			Element entry = (Element) entries.item(i);
+			props.setProperty(entry.getAttribute("key"), entry.getTextContent());
+		}
+
 		return props;
-		
+
 	}
+
 }

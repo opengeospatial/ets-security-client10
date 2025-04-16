@@ -24,29 +24,27 @@ import org.w3c.dom.Document;
 /**
  * Verifies the results of executing a test run using the main controller
  * (TestNGController).
- * 
+ *
  */
 public class VerifyTestNGController {
 
-    private static DocumentBuilder docBuilder;
-    private Properties testRunProps;
+	private static DocumentBuilder docBuilder;
 
-    @BeforeClass
-    public static void initParser() throws ParserConfigurationException {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        dbf.setValidating(false);
-        dbf.setFeature(
-                "http://apache.org/xml/features/nonvalidating/load-external-dtd",
-                false);
-        docBuilder = dbf.newDocumentBuilder();
-    }
+	private Properties testRunProps;
 
-    @Before
-    public void loadDefaultTestRunProperties()
-            throws InvalidPropertiesFormatException, IOException {
-        this.testRunProps = new Properties();
-        this.testRunProps.loadFromXML(getClass().getResourceAsStream(
-                "/test-run-props.xml"));
-    }
+	@BeforeClass
+	public static void initParser() throws ParserConfigurationException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		dbf.setValidating(false);
+		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		docBuilder = dbf.newDocumentBuilder();
+	}
+
+	@Before
+	public void loadDefaultTestRunProperties() throws InvalidPropertiesFormatException, IOException {
+		this.testRunProps = new Properties();
+		this.testRunProps.loadFromXML(getClass().getResourceAsStream("/test-run-props.xml"));
+	}
+
 }

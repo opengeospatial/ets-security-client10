@@ -13,29 +13,32 @@ import org.testng.ISuite;
 import org.testng.ITestContext;
 
 /**
- * Verifies the behavior of the CapabilityCommonSecurityTests test class. Test stubs replace
- * fixture constituents where appropriate.
+ * Verifies the behavior of the CapabilityCommonSecurityTests test class. Test stubs
+ * replace fixture constituents where appropriate.
  */
 public class VerifyCapabilityCommonSecurityTests {
 
-    private static DocumentBuilder docBuilder;
-    private static ITestContext testContext;
-    private static ISuite suite;
+	private static DocumentBuilder docBuilder;
 
-    public VerifyCapabilityCommonSecurityTests() {
-    }
+	private static ITestContext testContext;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        testContext = mock(ITestContext.class);
-        suite = mock(ISuite.class);
-        when(testContext.getSuite()).thenReturn(suite);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        dbf.setNamespaceAware(true);
-        docBuilder = dbf.newDocumentBuilder();
-    }
+	private static ISuite suite;
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
+	public VerifyCapabilityCommonSecurityTests() {
+	}
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		testContext = mock(ITestContext.class);
+		suite = mock(ISuite.class);
+		when(testContext.getSuite()).thenReturn(suite);
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		docBuilder = dbf.newDocumentBuilder();
+	}
+
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+	}
+
 }
